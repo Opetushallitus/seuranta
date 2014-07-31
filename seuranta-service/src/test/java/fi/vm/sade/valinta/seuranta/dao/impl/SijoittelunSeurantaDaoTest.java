@@ -19,14 +19,13 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
-import fi.vm.sade.valinta.seuranta.testcontext.SijoittelunSeurantaConfiguration;
 
 /**
  * 
  * @author Jussi Jartamo
  * 
  */
-@ContextConfiguration(classes = SijoittelunSeurantaConfiguration.class)
+@ContextConfiguration(classes = SeurantaConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SijoittelunSeurantaDaoTest {
 	@Autowired
