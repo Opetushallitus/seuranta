@@ -33,7 +33,8 @@ public class ResourceConfiguration extends ResourceConfig {
 		register(JacksonFeature.class);
 		// register(MultiPartFeature.class);
 
-		register(SeurantaResourceImpl.class);
+		register(LaskennanSeurantaResourceImpl.class);
+		register(SijoittelunSeurantaResourceImpl.class);
 		/**
 		 * CORS Filter
 		 */

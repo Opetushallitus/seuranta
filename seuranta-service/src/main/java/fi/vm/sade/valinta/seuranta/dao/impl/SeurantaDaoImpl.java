@@ -52,8 +52,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		ObjectId oid = new ObjectId(uuid);
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
 				.get();
-		System.out.println(new GsonBuilder().setPrettyPrinting().create()
-				.toJson(m));
+//		System.out.println(new GsonBuilder().setPrettyPrinting().create()
+//				.toJson(m));
 		List<HakukohdeDto> hakukohteet = Lists.newArrayList();
 		Map<String, List<IlmoitusDto>> ilmots = Maps.newHashMap();
 		for (Entry<IlmoitusTyyppi, Collection<Ilmoitus>> ilmot : m

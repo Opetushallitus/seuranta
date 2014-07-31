@@ -24,7 +24,7 @@ import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
 
 @Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
-public class SeurantaResourceImpl implements SeurantaResource {
+public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@Autowired
 	private SeurantaDao seurantaDao;
@@ -32,7 +32,6 @@ public class SeurantaResourceImpl implements SeurantaResource {
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public Collection<YhteenvetoDto> hae(String hakuOid) {
-		
 		return seurantaDao.haeYhteenvedotHaulle(hakuOid);
 	}
 	
