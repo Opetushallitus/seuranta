@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.code.morphia.Datastore;
@@ -23,7 +24,7 @@ import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 
 	private final Datastore datastore;
-	
+	@Autowired
 	public SijoittelunSeurantaDaoImpl(Datastore datastore) {
 		this.datastore = datastore;
 	}

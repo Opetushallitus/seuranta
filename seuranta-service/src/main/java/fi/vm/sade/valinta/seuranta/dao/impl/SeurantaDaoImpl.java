@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.code.morphia.Datastore;
@@ -45,6 +46,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
 	private Datastore datastore;
 
+	@Autowired
 	public SeurantaDaoImpl(Datastore datastore) {
 		this.datastore = datastore;
 	}
