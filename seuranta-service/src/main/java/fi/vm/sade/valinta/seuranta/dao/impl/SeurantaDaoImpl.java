@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+import org.springframework.stereotype.Component;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.query.Query;
@@ -39,6 +40,7 @@ import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
  * @author Jussi Jartamo
  * 
  */
+@Component
 public class SeurantaDaoImpl implements SeurantaDao {
 
 	private Datastore datastore;
