@@ -48,8 +48,8 @@ public class SeurantaDaoTest {
 		YhteenvetoDto yhteenveto =seurantaDao.haeYhteenveto(uuid);
 		
 		LaskentaDto laskenta =seurantaDao.haeLaskenta(uuid);
-		System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(yhteenveto));
-		System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(laskenta));
+		//System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(yhteenveto));
+		//System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(laskenta));
 
 	}
 }
