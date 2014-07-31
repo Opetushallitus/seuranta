@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.query.Query;
 import com.google.common.collect.Lists;
@@ -12,6 +14,12 @@ import fi.vm.sade.valinta.seuranta.dao.SijoittelunSeurantaDao;
 import fi.vm.sade.valinta.seuranta.sijoittelu.domain.Sijoittelu;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 
+/**
+ * 
+ * @author Jussi Jartamo
+ * 
+ */
+@Component
 public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 
 	private final Datastore datastore;
