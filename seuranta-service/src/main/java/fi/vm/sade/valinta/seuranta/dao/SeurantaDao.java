@@ -57,6 +57,10 @@ public interface SeurantaDao {
 	 */
 	String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids);
 
+	/**
+	 * 
+	 * @param uuid
+	 */
 	void poistaLaskenta(String uuid);
 
 	/**
