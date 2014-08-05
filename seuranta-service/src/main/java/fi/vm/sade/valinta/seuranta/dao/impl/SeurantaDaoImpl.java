@@ -35,6 +35,7 @@ import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
+import fi.vm.sade.valinta.seuranta.resource.impl.LaskennanSeurantaResourceImpl;
 
 /**
  * 
@@ -56,8 +57,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		ObjectId oid = new ObjectId(uuid);
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
 				.get();
-//		System.out.println(new GsonBuilder().setPrettyPrinting().create()
-//				.toJson(m));
+		// System.out.println(new GsonBuilder().setPrettyPrinting().create()
+		// .toJson(m));
 		List<HakukohdeDto> hakukohteet = Lists.newArrayList();
 		Map<String, List<IlmoitusDto>> ilmots = Maps.newHashMap();
 		for (Entry<IlmoitusTyyppi, Collection<Ilmoitus>> ilmot : m
@@ -83,72 +84,89 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		return new LaskentaDto(m.getUuid().toString(), m.getHakuOid(),
 				m.getLuotu(), m.getTila(), hakukohteet);
 	}
-@Override
-public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
-	Collection<YhteenvetoDto> y = Lists.newArrayList();
-	for(Laskenta l : datastore.find(Laskenta.class).field("hakuOid").equal(hakuOid)
-			.fetch()) {
-		y.add(laskentaToYhteenveto(l));
+
+	@Override
+	public Collection<YhteenvetoDto> haeKaynnissaOlevienYhteenvedotHaulle(
+			String hakuOid) {
+		Collection<YhteenvetoDto> y = Lists.newArrayList();
+		for (Laskenta l : datastore.find(Laskenta.class).field("hakuOid")
+				.equal(hakuOid).field("tila").equal(LaskentaTila.MENEILLAAN)
+				.fetch()) {
+			y.add(laskentaToYhteenveto(l));
+		}
+		return y;
 	}
-	return y;
-}
+
+	@Override
+	public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
+		Collection<YhteenvetoDto> y = Lists.newArrayList();
+		for (Laskenta l : datastore.find(Laskenta.class).field("hakuOid")
+				.equal(hakuOid).fetch()) {
+			y.add(laskentaToYhteenveto(l));
+		}
+		return y;
+	}
+
 	public YhteenvetoDto haeYhteenveto(String uuid) {
 		ObjectId oid = new ObjectId(uuid);
-//		DBCollection collection = datastore.getCollection(Laskenta.class);
-//
-//		AggregationOutput aggregation = collection
-//				.aggregate(
-//						// Haetaan valintatapajono oidin mukaan
-//						new BasicDBObject("$match", new BasicDBObject(
-//								"_id",oid)),
-//						new BasicDBObject("$unwind", "$hakukohteet.VALMIS"),
-//						new BasicDBObject("$group", new BasicDBObject(
-//										"_id",oid).append("count", new BasicDBObject("$sum",1))));
-//		
-//		DBObject result = aggregation.results().iterator().next();
-		
+		// DBCollection collection = datastore.getCollection(Laskenta.class);
+		//
+		// AggregationOutput aggregation = collection
+		// .aggregate(
+		// // Haetaan valintatapajono oidin mukaan
+		// new BasicDBObject("$match", new BasicDBObject(
+		// "_id",oid)),
+		// new BasicDBObject("$unwind", "$hakukohteet.VALMIS"),
+		// new BasicDBObject("$group", new BasicDBObject(
+		// "_id",oid).append("count", new BasicDBObject("$sum",1))));
+		//
+		// DBObject result = aggregation.results().iterator().next();
+
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
 				.get();
 		return laskentaToYhteenveto(m);
 	}
+
 	private YhteenvetoDto laskentaToYhteenveto(Laskenta m) {
 		Collection<String> tmp = null;
 		int valmiit = 0;
-		 tmp = m.getHakukohteet().get(HakukohdeTila.VALMIS);
-		if(tmp != null) {
-		valmiit = tmp.size();
+		tmp = m.getHakukohteet().get(HakukohdeTila.VALMIS);
+		if (tmp != null) {
+			valmiit = tmp.size();
 		}
 		int keskeytetty = 0;
-		 tmp = m.getHakukohteet().get(HakukohdeTila.KESKEYTETTY);
-		if(tmp != null) {
+		tmp = m.getHakukohteet().get(HakukohdeTila.KESKEYTETTY);
+		if (tmp != null) {
 			keskeytetty = tmp.size();
 		}
 		int tekematta = 0;
 		tmp = m.getHakukohteet().get(HakukohdeTila.TEKEMATTA);
-		if(tmp != null) {
+		if (tmp != null) {
 			tekematta = tmp.size();
 		}
 		return new YhteenvetoDto(m.getUuid().toString(), m.getHakuOid(),
 				m.getLuotu(), m.getTila(), tekematta + valmiit + keskeytetty,
 				(int) valmiit, (int) keskeytetty);
 	}
+
 	@Override
 	public void poistaLaskenta(String uuid) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 				.field("_id").equal(new ObjectId(uuid));
 		datastore.delete(query);
 	}
-	
+
 	@Override
 	public void merkkaaTila(String uuid, LaskentaTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 				.field("_id").equal(new ObjectId(uuid));
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
-		ops.set("tila" ,tila);
+		ops.set("tila", tila);
 
 		datastore.update(query, ops);
 	}
+
 	@Override
 	public void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)

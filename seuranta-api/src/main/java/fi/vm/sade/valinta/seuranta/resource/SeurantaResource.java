@@ -36,7 +36,19 @@ public interface SeurantaResource {
 	@Path("/hae/{hakuOid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid);
-	
+
+	/**
+	 * Yhteenvedot olemassa olevista laskennoista haulle
+	 * 
+	 * @param hakuOid
+	 * @return
+	 */
+	@GET
+	@Path("/hae/{hakuOid}/kaynnissa")
+	@Produces(MediaType.APPLICATION_JSON)
+	Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(
+			@PathParam("hakuOid") String hakuOid);
+
 	/**
 	 * Kaikki yksityiskohdat
 	 * 
@@ -58,7 +70,9 @@ public interface SeurantaResource {
 	@PUT
 	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid, @PathParam("hakukohdeOid") String hakukohdeOid, @PathParam("tila") HakukohdeTila tila);
+	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+			@PathParam("hakukohdeOid") String hakukohdeOid,
+			@PathParam("tila") HakukohdeTila tila);
 
 	/**
 	 * Paivittaa laskennan tilan
@@ -70,8 +84,9 @@ public interface SeurantaResource {
 	@PUT
 	@Path("/laskenta/{uuid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid, @PathParam("tila") LaskentaTila tila);
-	
+	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+			@PathParam("tila") LaskentaTila tila);
+
 	/**
 	 * Luo uuden laskennan seurantaan
 	 * 
@@ -82,8 +97,9 @@ public interface SeurantaResource {
 	@POST
 	@Path("/laskenta/{hakuOid}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response luoLaskenta(@PathParam("hakuOid") String hakuOid, List<String> hakukohdeOids);
-	
+	Response luoLaskenta(@PathParam("hakuOid") String hakuOid,
+			List<String> hakukohdeOids);
+
 	/**
 	 * Poistaa laskennan
 	 * 

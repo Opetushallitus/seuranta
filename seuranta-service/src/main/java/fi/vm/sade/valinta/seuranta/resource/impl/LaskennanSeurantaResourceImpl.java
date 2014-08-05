@@ -22,32 +22,44 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
 
+/**
+ * 
+ * @author Jussi Jartamo
+ * 
+ */
 @Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
 public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@Autowired
 	private SeurantaDao seurantaDao;
-	
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public Collection<YhteenvetoDto> hae(String hakuOid) {
 		return seurantaDao.haeYhteenvedotHaulle(hakuOid);
 	}
-	
+
+	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
+	public Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(String hakuOid) {
+		return seurantaDao.haeKaynnissaOlevienYhteenvedotHaulle(hakuOid);
+	}
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
 	public LaskentaDto laskenta(String uuid) {
 		return seurantaDao.haeLaskenta(uuid);
 	}
-	
-	
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
 	public Response luoLaskenta(String hakuOid, List<String> hakukohdeOids) {
-		return Response.ok().entity(seurantaDao.luoLaskenta(hakuOid, hakukohdeOids)).build();
+		return Response.ok()
+				.entity(seurantaDao.luoLaskenta(hakuOid, hakukohdeOids))
+				.build();
 	}
-	
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
 	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
@@ -55,20 +67,20 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 		seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
 		return Response.ok().build();
 	}
-	
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
-	public Response merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
+	public Response merkkaaLaskennanTila(String uuid,
+			fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
 		seurantaDao.merkkaaTila(uuid, tila);
 		return Response.ok().build();
 	}
-	
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Poistaa laskennan", response = Response.class)
 	public Response poistaLaskenta(String uuid) {
 		seurantaDao.poistaLaskenta(uuid);
 		return Response.ok().build();
 	}
-	
-	
+
 }

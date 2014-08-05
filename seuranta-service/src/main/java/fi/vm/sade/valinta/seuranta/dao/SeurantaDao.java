@@ -23,7 +23,7 @@ public interface SeurantaDao {
 	 * @return
 	 */
 	LaskentaDto haeLaskenta(String uuid);
-	
+
 	/**
 	 * Yhteenveto laskennan kulusta
 	 * 
@@ -31,7 +31,7 @@ public interface SeurantaDao {
 	 * @return
 	 */
 	YhteenvetoDto haeYhteenveto(String uuid);
-	
+
 	/**
 	 * Yhteenvedot laskennan kulusta
 	 * 
@@ -39,6 +39,16 @@ public interface SeurantaDao {
 	 * @return
 	 */
 	Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid);
+
+	/**
+	 * Yhteenvedot kaynnissa olevien laskentojen kulusta
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	Collection<YhteenvetoDto> haeKaynnissaOlevienYhteenvedotHaulle(
+			String hakuOid);
+
 	/**
 	 * 
 	 * @param hakuOid
@@ -46,9 +56,9 @@ public interface SeurantaDao {
 	 * @return uuid
 	 */
 	String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids);
-	
-	
+
 	void poistaLaskenta(String uuid);
+
 	/**
 	 * 
 	 * @param uuid
@@ -56,6 +66,7 @@ public interface SeurantaDao {
 	 * @param tila
 	 */
 	void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila);
+
 	/**
 	 * 
 	 * @param uuid
@@ -63,6 +74,7 @@ public interface SeurantaDao {
 	 * @param tila
 	 */
 	void merkkaaTila(String uuid, LaskentaTila tila);
+
 	/**
 	 * 
 	 * 
