@@ -11,8 +11,8 @@ public class SijoitteluDto {
 
     private final String hakuOid;
     private final boolean ajossa;
-    private final Date viimeksiAjettu;
-    private final String virhe;
+    private Date viimeksiAjettu;
+    private String virhe;
     
     public SijoitteluDto() {
 		this.hakuOid = null;
@@ -42,5 +42,12 @@ public class SijoitteluDto {
     public boolean getAjossa() {
 		return ajossa;
 	}
-    
+
+    public void setViimeksiAjettu(final Date viimeksiAjettu) {
+        this.viimeksiAjettu = viimeksiAjettu;
+    }
+
+    public void setVirhe(final String virhe) {
+        this.virhe = virhe;
+    }
 }
