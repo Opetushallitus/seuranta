@@ -98,8 +98,8 @@ public interface SeurantaResource {
 	@POST
 	@Path("/laskenta/{hakuOid}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	Response luoLaskenta(@PathParam("hakuOid") String hakuOid,
+	@Produces(MediaType.TEXT_PLAIN)
+	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
 			List<String> hakukohdeOids);
 
 	/**

@@ -54,10 +54,8 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-	public Response luoLaskenta(String hakuOid, List<String> hakukohdeOids) {
-		return Response.ok()
-				.entity(seurantaDao.luoLaskenta(hakuOid, hakukohdeOids))
-				.build();
+	public String luoLaskenta(String hakuOid, List<String> hakukohdeOids) {
+		return seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
 	}
 
 	@PreAuthorize("isAuthenticated()")
