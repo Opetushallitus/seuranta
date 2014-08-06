@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.resource;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -96,6 +97,7 @@ public interface SeurantaResource {
 	 */
 	@POST
 	@Path("/laskenta/{hakuOid}")
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	Response luoLaskenta(@PathParam("hakuOid") String hakuOid,
 			List<String> hakukohdeOids);
