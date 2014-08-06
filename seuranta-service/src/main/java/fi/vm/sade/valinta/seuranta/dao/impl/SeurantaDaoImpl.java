@@ -58,6 +58,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		ObjectId oid = new ObjectId(uuid);
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
 				.get();
+		if (m == null) {
+			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
+					+ uuid);
+		}
 		// System.out.println(new GsonBuilder().setPrettyPrinting().create()
 		// .toJson(m));
 		List<HakukohdeDto> hakukohteet;
@@ -83,9 +87,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			hakukohteet = Lists.newArrayList();
 			for (Entry<HakukohdeTila, Collection<String>> entry : m
 					.getHakukohteet().entrySet()) {
-				for (String hakukohdeOid : entry.getValue()) {
-					hakukohteet.add(new HakukohdeDto(hakukohdeOid, entry
-							.getKey(), ilmots.get(hakukohdeOid)));
+				if (entry == null || entry.getValue() != null) {
+					for (String hakukohdeOid : entry.getValue()) {
+						hakukohteet.add(new HakukohdeDto(hakukohdeOid, entry
+								.getKey(), ilmots.get(hakukohdeOid)));
+					}
 				}
 			}
 		} else {
