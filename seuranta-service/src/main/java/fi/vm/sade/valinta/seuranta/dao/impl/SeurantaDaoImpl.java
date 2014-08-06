@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.dao.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,27 +60,36 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.get();
 		// System.out.println(new GsonBuilder().setPrettyPrinting().create()
 		// .toJson(m));
-		List<HakukohdeDto> hakukohteet = Lists.newArrayList();
-		Map<String, List<IlmoitusDto>> ilmots = Maps.newHashMap();
-		for (Entry<IlmoitusTyyppi, Collection<Ilmoitus>> ilmot : m
-				.getIlmoitukset().entrySet()) {
-			for (Ilmoitus i0 : ilmot.getValue()) {
-				String hk = i0.getHakukohdeOid();
-				if (!ilmots.containsKey(hk)) {
-					ilmots.put(hk, Lists.newArrayList());
+		List<HakukohdeDto> hakukohteet;
+		Map<String, List<IlmoitusDto>> ilmots;
+		if (m.getIlmoitukset() != null) {
+			ilmots = Maps.newHashMap();
+			for (Entry<IlmoitusTyyppi, Collection<Ilmoitus>> ilmot : m
+					.getIlmoitukset().entrySet()) {
+				for (Ilmoitus i0 : ilmot.getValue()) {
+					String hk = i0.getHakukohdeOid();
+					if (!ilmots.containsKey(hk)) {
+						ilmots.put(hk, Lists.newArrayList());
+					}
+					ilmots.get(hk).add(
+							new IlmoitusDto(ilmot.getKey(), i0.getOtsikko(), i0
+									.getData()));
 				}
-				ilmots.get(hk).add(
-						new IlmoitusDto(ilmot.getKey(), i0.getOtsikko(), i0
-								.getData()));
 			}
+		} else {
+			ilmots = Collections.emptyMap();
 		}
-
-		for (Entry<HakukohdeTila, Collection<String>> entry : m
-				.getHakukohteet().entrySet()) {
-			for (String hakukohdeOid : entry.getValue()) {
-				hakukohteet.add(new HakukohdeDto(hakukohdeOid, entry.getKey(),
-						ilmots.get(hakukohdeOid)));
+		if (m.getHakukohteet() != null) {
+			hakukohteet = Lists.newArrayList();
+			for (Entry<HakukohdeTila, Collection<String>> entry : m
+					.getHakukohteet().entrySet()) {
+				for (String hakukohdeOid : entry.getValue()) {
+					hakukohteet.add(new HakukohdeDto(hakukohdeOid, entry
+							.getKey(), ilmots.get(hakukohdeOid)));
+				}
 			}
+		} else {
+			hakukohteet = Collections.emptyList();
 		}
 		return new LaskentaDto(m.getUuid().toString(), m.getHakuOid(),
 				m.getLuotu(), m.getTila(), hakukohteet);
