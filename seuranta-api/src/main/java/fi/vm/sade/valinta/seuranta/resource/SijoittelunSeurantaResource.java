@@ -2,17 +2,10 @@ package fi.vm.sade.valinta.seuranta.resource;
 
 import java.util.Collection;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 
 /**
@@ -52,11 +45,23 @@ public interface SijoittelunSeurantaResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/sijoittelu/{hakuOid}/ajossa/{ajossa}")
+	@Path("/sijoittelu/{hakuOid}/ajossa/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	SijoitteluDto merkkaaSijoittelunAjossaTila(@PathParam("hakuOid") String hakuOid, @PathParam("tila") boolean ajossa);
-	
-	/**
+	SijoitteluDto merkkaaSijoittelunAjossaTila(@PathParam("hakuOid") String hakuOid, @PathParam("tila") boolean tila);
+
+    /**
+     * Asettaa sijoittelun virheen
+     *
+     * @param hakuOid
+     * @return
+     */
+    @PUT
+    @Path("/sijoittelu/{hakuOid}/virhe")
+    @Produces(MediaType.APPLICATION_JSON)
+    SijoitteluDto merkkaaSijoittelunAjossaVirhe(@PathParam("hakuOid") String hakuOid, @QueryParam("virhe") String virhe);
+
+
+    /**
 	 * Paivittaa sijoittelun viimeksiajettupaivamaaran tamanhetkiseksi aikaleimaksi
 	 * 
 	 * @param hakuOid

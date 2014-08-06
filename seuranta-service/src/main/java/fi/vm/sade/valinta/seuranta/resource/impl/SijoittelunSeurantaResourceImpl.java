@@ -42,10 +42,16 @@ public class SijoittelunSeurantaResourceImpl implements SijoittelunSeurantaResou
 	
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Asettaa jatkuvan sijoittelun haulle", response = Collection.class)
-	public SijoitteluDto merkkaaSijoittelunAjossaTila(String hakuOid, boolean ajossa) {
+	public SijoitteluDto merkkaaSijoittelunAjossaTila(String hakuOid, boolean tila) {
 		return null;
 	}
-	
+
+    @PreAuthorize("isAuthenticated()")
+    @ApiOperation(value = "Asettaa jatkuvan sijoittelun haulle", response = Collection.class)
+    public SijoitteluDto merkkaaSijoittelunAjossaVirhe(String hakuOid, String virhe) {
+        return null;
+    }
+
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Poistaa hakuun liittyvat sijoittelutilat kannasta", response = Collection.class)
 	public Response poistaSijoittelu(String hakuOid) {
