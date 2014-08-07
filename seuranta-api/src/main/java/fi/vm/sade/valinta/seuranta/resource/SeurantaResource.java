@@ -96,7 +96,7 @@ public interface SeurantaResource {
 	@PUT
 	@Path("/laskenta/{uuid}/resetoi")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response resetoiTilat(@PathParam("uuid") String uuid);
+	LaskentaDto resetoiTilat(@PathParam("uuid") String uuid);
 
 	/**
 	 * Paivittaa laskennan tilan

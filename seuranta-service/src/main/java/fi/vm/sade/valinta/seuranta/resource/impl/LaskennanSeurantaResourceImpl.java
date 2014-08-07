@@ -42,9 +42,8 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
-	public Response resetoiTilat(String uuid) {
-		seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
-		return Response.ok().build();
+	public LaskentaDto resetoiTilat(String uuid) {
+		return seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
 	}
 
 	@PreAuthorize("isAuthenticated()")

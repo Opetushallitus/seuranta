@@ -85,7 +85,8 @@ public interface SeurantaDao {
 	 * @param hakukohdeOid
 	 * @param tila
 	 */
-	void resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset);
+	LaskentaDto resetoiEiValmiitHakukohteet(String uuid,
+			boolean nollaaIlmoitukset);
 
 	/**
 	 * 

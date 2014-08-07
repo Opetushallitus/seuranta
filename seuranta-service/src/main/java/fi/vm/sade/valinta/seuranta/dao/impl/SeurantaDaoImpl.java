@@ -57,36 +57,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
 					+ uuid);
 		}
-		System.out.println(new GsonBuilder().setPrettyPrinting().create()
-				.toJson(m));
-		List<HakukohdeDto> hakukohteet = Lists.newArrayListWithCapacity(m
-				.getHakukohteitaYhteensa());
-		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getValmiit(),
-				HakukohdeTila.VALMIS, m.getIlmoitukset()));
-		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getTekematta(),
-				HakukohdeTila.TEKEMATTA, m.getIlmoitukset()));
-		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getOhitettu(),
-				HakukohdeTila.KESKEYTETTY, m.getIlmoitukset()));
-		return new LaskentaDto(m.getUuid().toString(), m.getHakuOid(),
-				m.getLuotu(), m.getTila(), hakukohteet);
-	}
-
-	private List<HakukohdeDto> ilmoituksetHakukohteelle(
-			Collection<String> hakukohdeOids, HakukohdeTila tila,
-			Map<String, List<Ilmoitus>> ilmoitukset) {
-		return hakukohdeOids
-				.stream()
-				.map(v -> new HakukohdeDto(v, tila, ilmoituksetHakukohteelle(v,
-						ilmoitukset))).collect(Collectors.toList());
-	}
-
-	private List<IlmoitusDto> ilmoituksetHakukohteelle(String hakukohdeOid,
-			Map<String, List<Ilmoitus>> ilmoitukset) {
-		if (ilmoitukset == null || !ilmoitukset.containsKey(hakukohdeOid)) {
-			return null; // Collections.emptyList();
-		}
-		return ilmoitukset.get(hakukohdeOid).stream().map(i -> i.asDto())
-				.collect(Collectors.toList());
+		return m.asDto();
 	}
 
 	@Override
@@ -151,7 +122,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	@Override
-	public void resetoiEiValmiitHakukohteet(String uuid,
+	public LaskentaDto resetoiEiValmiitHakukohteet(String uuid,
 			boolean nollaaIlmoitukset) {
 		ObjectId oid = new ObjectId(uuid);
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
@@ -177,7 +148,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		if (nollaaIlmoitukset) {
 			ops.set("ilmoitukset", Collections.emptyMap());
 		}
-		datastore.findAndModify(query, ops);
+		Laskenta uusi = datastore.findAndModify(query, ops);
+		return uusi.asDto();
 	}
 
 	@Override

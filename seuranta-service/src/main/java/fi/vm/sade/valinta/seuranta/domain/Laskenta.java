@@ -12,6 +12,10 @@ import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Id;
 import com.google.common.collect.Lists;
 
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 
 /**
@@ -104,5 +108,36 @@ public class Laskenta {
 
 	public ObjectId getUuid() {
 		return uuid;
+	}
+
+	public LaskentaDto asDto() {
+		List<HakukohdeDto> hakukohteet = Lists
+				.newArrayListWithCapacity(getHakukohteitaYhteensa());
+		hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(),
+				HakukohdeTila.VALMIS, getIlmoitukset()));
+		hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(),
+				HakukohdeTila.TEKEMATTA, getIlmoitukset()));
+		hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(),
+				HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
+		return new LaskentaDto(getUuid().toString(), getHakuOid(), getLuotu(),
+				getTila(), hakukohteet);
+	}
+
+	private List<HakukohdeDto> ilmoituksetHakukohteelle(
+			Collection<String> hakukohdeOids, HakukohdeTila tila,
+			Map<String, List<Ilmoitus>> ilmoitukset) {
+		return hakukohdeOids
+				.stream()
+				.map(v -> new HakukohdeDto(v, tila, ilmoituksetHakukohteelle(v,
+						ilmoitukset))).collect(Collectors.toList());
+	}
+
+	private List<IlmoitusDto> ilmoituksetHakukohteelle(String hakukohdeOid,
+			Map<String, List<Ilmoitus>> ilmoitukset) {
+		if (ilmoitukset == null || !ilmoitukset.containsKey(hakukohdeOid)) {
+			return null; // Collections.emptyList();
+		}
+		return ilmoitukset.get(hakukohdeOid).stream().map(i -> i.asDto())
+				.collect(Collectors.toList());
 	}
 }
