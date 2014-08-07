@@ -62,6 +62,17 @@ public interface SeurantaResource {
 	LaskentaDto laskenta(@PathParam("uuid") String uuid);
 
 	/**
+	 * Kaikki yksityiskohdat
+	 * 
+	 * @param hakuOid
+	 * @return
+	 */
+	@GET
+	@Path("/yhteenveto/{uuid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	YhteenvetoDto yhteenveto(@PathParam("uuid") String uuid);
+
+	/**
 	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa
 	 * 
 	 * @param hakuOid
