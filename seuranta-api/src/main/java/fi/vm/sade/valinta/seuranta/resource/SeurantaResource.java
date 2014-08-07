@@ -87,6 +87,18 @@ public interface SeurantaResource {
 			@PathParam("tila") HakukohdeTila tila);
 
 	/**
+	 * Resetoi hakukohteiden tilat. Poistaa logit. Sailoo valmiit tilat.
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOid
+	 * @return
+	 */
+	@PUT
+	@Path("/laskenta/{uuid}/resetoi")
+	@Produces(MediaType.APPLICATION_JSON)
+	Response resetoiTilat(@PathParam("uuid") String uuid);
+
+	/**
 	 * Paivittaa laskennan tilan
 	 * 
 	 * @param hakuOid

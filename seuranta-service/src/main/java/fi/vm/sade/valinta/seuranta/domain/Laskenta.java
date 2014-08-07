@@ -3,15 +3,15 @@ package fi.vm.sade.valinta.seuranta.domain;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Id;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 
 /**
@@ -26,33 +26,67 @@ public class Laskenta {
 	private final String hakuOid;
 	private final Date luotu;
 	private final LaskentaTila tila;
-	private final Map<HakukohdeTila, Collection<String>> hakukohteet;
-	private final Map<IlmoitusTyyppi, Collection<Ilmoitus>> ilmoitukset;
+	private final int hakukohteitaYhteensa;
+	private final int hakukohteitaTekematta;
+	private final int hakukohteitaOhitettu;
+	private final List<String> valmiit;
+	private final List<String> ohitettu;
+	private final List<String> tekematta;
+	private final Map<String, List<Ilmoitus>> ilmoitukset;
 
 	public Laskenta() {
+		this.hakukohteitaYhteensa = 0;
+		this.hakukohteitaTekematta = 0;
+		this.hakukohteitaOhitettu = 0;
 		this.uuid = null;
 		this.hakuOid = null;
 		this.tila = null;
-		this.hakukohteet = null;
 		this.ilmoitukset = null;
 		this.luotu = null;
+		this.valmiit = null;
+		this.ohitettu = null;
+		this.tekematta = null;
 	}
 
 	public Laskenta(String hakuOid, Collection<String> hakukohdeOids) {
+		this.hakukohteitaYhteensa = hakukohdeOids.size();
+		this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
+		this.hakukohteitaOhitettu = 0;
 		this.uuid = null;
 		this.hakuOid = hakuOid;
 		this.luotu = new Date();
 		this.tila = LaskentaTila.MENEILLAAN;
-		this.hakukohteet = Maps.newHashMap();
-		this.hakukohteet.put(HakukohdeTila.TEKEMATTA, hakukohdeOids);
 		this.ilmoitukset = Collections.emptyMap();
+		this.valmiit = Collections.emptyList();
+		this.ohitettu = Collections.emptyList();
+		this.tekematta = Lists.newArrayList(hakukohdeOids);
 	}
 
-	public Map<HakukohdeTila, Collection<String>> getHakukohteet() {
-		return hakukohteet;
+	public List<String> getOhitettu() {
+		return ohitettu;
 	}
 
-	public Map<IlmoitusTyyppi, Collection<Ilmoitus>> getIlmoitukset() {
+	public List<String> getValmiit() {
+		return valmiit;
+	}
+
+	public List<String> getTekematta() {
+		return tekematta;
+	}
+
+	public int getHakukohteitaOhitettu() {
+		return hakukohteitaOhitettu;
+	}
+
+	public int getHakukohteitaTekematta() {
+		return hakukohteitaTekematta;
+	}
+
+	public int getHakukohteitaYhteensa() {
+		return hakukohteitaYhteensa;
+	}
+
+	public Map<String, List<Ilmoitus>> getIlmoitukset() {
 		return ilmoitukset;
 	}
 

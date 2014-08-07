@@ -81,10 +81,18 @@ public interface SeurantaDao {
 
 	/**
 	 * 
+	 * @param uuid
+	 * @param hakukohdeOid
+	 * @param tila
+	 */
+	void resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset);
+
+	/**
+	 * 
 	 * 
 	 * @param uuid
 	 * @param tyyppi
 	 * @param ilmoitus
 	 */
-	void lisaaIlmoitus(String uuid, IlmoitusTyyppi tyyppi, Ilmoitus ilmoitus);
+	void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus);
 }

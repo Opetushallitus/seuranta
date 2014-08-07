@@ -2,10 +2,10 @@ package fi.vm.sade.valinta.seuranta.dao.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,11 @@ import com.google.code.morphia.query.Query;
 import com.google.code.morphia.query.UpdateOperations;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.gson.GsonBuilder;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
@@ -24,7 +28,6 @@ import fi.vm.sade.valinta.seuranta.domain.Laskenta;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
@@ -38,6 +41,7 @@ import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 public class SeurantaDaoImpl implements SeurantaDao {
 
 	private Datastore datastore;
+	private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
 
 	@Autowired
 	public SeurantaDaoImpl(Datastore datastore) {
@@ -53,107 +57,90 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
 					+ uuid);
 		}
-		// System.out.println(new GsonBuilder().setPrettyPrinting().create()
-		// .toJson(m));
-		List<HakukohdeDto> hakukohteet;
-		Map<String, List<IlmoitusDto>> ilmots;
-		if (m.getIlmoitukset() != null) {
-			ilmots = Maps.newHashMap();
-			for (Entry<IlmoitusTyyppi, Collection<Ilmoitus>> ilmot : m
-					.getIlmoitukset().entrySet()) {
-				for (Ilmoitus i0 : ilmot.getValue()) {
-					String hk = i0.getHakukohdeOid();
-					if (!ilmots.containsKey(hk)) {
-						ilmots.put(hk, Lists.newArrayList());
-					}
-					ilmots.get(hk).add(
-							new IlmoitusDto(ilmot.getKey(), i0.getOtsikko(), i0
-									.getData()));
-				}
-			}
-		} else {
-			ilmots = Collections.emptyMap();
-		}
-		if (m.getHakukohteet() != null) {
-			hakukohteet = Lists.newArrayList();
-			for (Entry<HakukohdeTila, Collection<String>> entry : m
-					.getHakukohteet().entrySet()) {
-				if (entry == null || entry.getValue() != null) {
-					for (String hakukohdeOid : entry.getValue()) {
-						hakukohteet.add(new HakukohdeDto(hakukohdeOid, entry
-								.getKey(), ilmots.get(hakukohdeOid)));
-					}
-				}
-			}
-		} else {
-			hakukohteet = Collections.emptyList();
-		}
+		System.out.println(new GsonBuilder().setPrettyPrinting().create()
+				.toJson(m));
+		List<HakukohdeDto> hakukohteet = Lists.newArrayListWithCapacity(m
+				.getHakukohteitaYhteensa());
+		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getValmiit(),
+				HakukohdeTila.VALMIS, m.getIlmoitukset()));
+		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getTekematta(),
+				HakukohdeTila.TEKEMATTA, m.getIlmoitukset()));
+		hakukohteet.addAll(ilmoituksetHakukohteelle(m.getOhitettu(),
+				HakukohdeTila.KESKEYTETTY, m.getIlmoitukset()));
 		return new LaskentaDto(m.getUuid().toString(), m.getHakuOid(),
 				m.getLuotu(), m.getTila(), hakukohteet);
+	}
+
+	private List<HakukohdeDto> ilmoituksetHakukohteelle(
+			Collection<String> hakukohdeOids, HakukohdeTila tila,
+			Map<String, List<Ilmoitus>> ilmoitukset) {
+		return hakukohdeOids
+				.stream()
+				.map(v -> new HakukohdeDto(v, tila, ilmoituksetHakukohteelle(v,
+						ilmoitukset))).collect(Collectors.toList());
+	}
+
+	private List<IlmoitusDto> ilmoituksetHakukohteelle(String hakukohdeOid,
+			Map<String, List<Ilmoitus>> ilmoitukset) {
+		if (ilmoitukset == null || !ilmoitukset.containsKey(hakukohdeOid)) {
+			return null; // Collections.emptyList();
+		}
+		return ilmoitukset.get(hakukohdeOid).stream().map(i -> i.asDto())
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public Collection<YhteenvetoDto> haeKaynnissaOlevienYhteenvedotHaulle(
 			String hakuOid) {
-		Collection<YhteenvetoDto> y = Lists.newArrayList();
-		for (Laskenta l : datastore.find(Laskenta.class).field("hakuOid")
-				.equal(hakuOid).field("tila").equal(LaskentaTila.MENEILLAAN)
-				.fetch()) {
-			y.add(laskentaToYhteenveto(l));
-		}
-		return y;
+		Map<String, Object> eqs = Maps.newHashMap();
+		eqs.put("hakuOid", hakuOid);
+		eqs.put("tila", LaskentaTila.MENEILLAAN);
+		DBCollection collection = datastore.getCollection(Laskenta.class);
+		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
+				"$match", new BasicDBObject(eqs)), new BasicDBObject(
+				"$project", new BasicDBObject(YHTEENVETO_FIELDS)));
+		return Lists.newArrayList(aggregation.results().iterator()).stream()
+				.map(result -> dbObjectAsYhteenvetoDto(result))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
-		Collection<YhteenvetoDto> y = Lists.newArrayList();
-		for (Laskenta l : datastore.find(Laskenta.class).field("hakuOid")
-				.equal(hakuOid).fetch()) {
-			y.add(laskentaToYhteenveto(l));
-		}
-		return y;
+		DBCollection collection = datastore.getCollection(Laskenta.class);
+		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
+				"$match", new BasicDBObject("hakuOid", hakuOid)),
+				new BasicDBObject("$project", new BasicDBObject(
+						YHTEENVETO_FIELDS)));
+		return Lists.newArrayList(aggregation.results().iterator()).stream()
+				.map(result -> dbObjectAsYhteenvetoDto(result))
+				.collect(Collectors.toList());
 	}
 
 	public YhteenvetoDto haeYhteenveto(String uuid) {
-		ObjectId oid = new ObjectId(uuid);
-		// DBCollection collection = datastore.getCollection(Laskenta.class);
-		//
-		// AggregationOutput aggregation = collection
-		// .aggregate(
-		// // Haetaan valintatapajono oidin mukaan
-		// new BasicDBObject("$match", new BasicDBObject(
-		// "_id",oid)),
-		// new BasicDBObject("$unwind", "$hakukohteet.VALMIS"),
-		// new BasicDBObject("$group", new BasicDBObject(
-		// "_id",oid).append("count", new BasicDBObject("$sum",1))));
-		//
-		// DBObject result = aggregation.results().iterator().next();
-
-		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
-				.get();
-		return laskentaToYhteenveto(m);
+		DBCollection collection = datastore.getCollection(Laskenta.class);
+		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
+				"$match", new BasicDBObject("_id", new ObjectId(uuid))),
+				new BasicDBObject("$project", new BasicDBObject(
+						YHTEENVETO_FIELDS)));
+		return dbObjectAsYhteenvetoDto(aggregation.results().iterator().next());
 	}
 
-	private YhteenvetoDto laskentaToYhteenveto(Laskenta m) {
-		Collection<String> tmp = null;
-		int valmiit = 0;
-		tmp = m.getHakukohteet().get(HakukohdeTila.VALMIS);
-		if (tmp != null) {
-			valmiit = tmp.size();
-		}
-		int keskeytetty = 0;
-		tmp = m.getHakukohteet().get(HakukohdeTila.KESKEYTETTY);
-		if (tmp != null) {
-			keskeytetty = tmp.size();
-		}
-		int tekematta = 0;
-		tmp = m.getHakukohteet().get(HakukohdeTila.TEKEMATTA);
-		if (tmp != null) {
-			tekematta = tmp.size();
-		}
-		return new YhteenvetoDto(m.getUuid().toString(), m.getHakuOid(),
-				m.getLuotu(), m.getTila(), tekematta + valmiit + keskeytetty,
-				(int) valmiit, (int) keskeytetty);
+	private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result) {
+		String uuid = result.get("_id").toString();
+		String hakuOid = result.get("hakuOid").toString();
+		Date luotu = (Date) result.get("luotu");
+		LaskentaTila tila = LaskentaTila.valueOf(result.get("tila").toString());
+		int hakukohteitaYhteensa = (Integer) result.get("hakukohteitaYhteensa");
+		int hakukohteitaKeskeytetty = (Integer) result
+				.get("hakukohteitaOhitettu");
+		int hakukohteitaTekematta = (Integer) result
+				.get("hakukohteitaTekematta");
+		int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty)
+				- hakukohteitaTekematta;
+
+		return new YhteenvetoDto(uuid, hakuOid, luotu, tila,
+				hakukohteitaYhteensa, hakukohteitaValmiina,
+				hakukohteitaKeskeytetty);
 	}
 
 	@Override
@@ -164,30 +151,74 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	@Override
+	public void resetoiEiValmiitHakukohteet(String uuid,
+			boolean nollaaIlmoitukset) {
+		ObjectId oid = new ObjectId(uuid);
+		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
+				.get();
+		if (m == null) {
+			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
+					+ uuid);
+		}
+		List<String> o = m.getOhitettu();
+		List<String> t = m.getTekematta();
+		List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size()
+				+ t.size());
+		uusiTekematta.addAll(o);
+		uusiTekematta.addAll(t);
+		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+				.field("_id").equal(new ObjectId(uuid));
+		UpdateOperations<Laskenta> ops = datastore
+				.createUpdateOperations(Laskenta.class)
+				.set("hakukohteitaTekematta", uusiTekematta.size())
+				.set("hakukohteitaOhitettu", 0).set("valmiit", m.getValmiit())
+				.set("tekematta", uusiTekematta)
+				.set("ohitettu", Collections.emptyList());
+		if (nollaaIlmoitukset) {
+			ops.set("ilmoitukset", Collections.emptyMap());
+		}
+		datastore.findAndModify(query, ops);
+	}
+
+	@Override
 	public void merkkaaTila(String uuid, LaskentaTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 				.field("_id").equal(new ObjectId(uuid));
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
-
 		datastore.update(query, ops);
 	}
 
 	@Override
 	public void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila) {
-		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid));
-		Set<HakukohdeTila> s = Sets.newHashSet(HakukohdeTila.values());
-		s.remove(tila);
-		UpdateOperations<Laskenta> ops = datastore
-				.createUpdateOperations(Laskenta.class);
-		for (HakukohdeTila h : s) {
-			ops.removeAll("hakukohteet." + h.name(), hakukohdeOid);
+		// Valmistui
+		if (HakukohdeTila.VALMIS.equals(tila)) {
+			// Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+			// .field("_id").equal(new
+			// ObjectId(uuid)).field("valmiit").not().contains(hakukohdeOid);
+			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
+					.contains(hakukohdeOid);
+			UpdateOperations<Laskenta> ops = datastore
+					.createUpdateOperations(Laskenta.class)
+					.dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
+					.removeAll("tekematta", hakukohdeOid);
+			datastore.findAndModify(query, ops);
+		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
+			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
+					.contains(hakukohdeOid);
+			UpdateOperations<Laskenta> ops = datastore
+					.createUpdateOperations(Laskenta.class)
+					.inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
+					.add("ohitettu", hakukohdeOid)
+					.removeAll("tekematta", hakukohdeOid);
+			datastore.findAndModify(query, ops);
+		} else {
+			throw new RuntimeException(
+					"Tekematta tilaa ei saa asettaa manuaalisesti");
 		}
-		ops.add("hakukohteet." + tila.name(), hakukohdeOid);
-
-		datastore.update(query, ops);
 	}
 
 	public String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids) {
@@ -196,12 +227,24 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		return l.getUuid().toString();
 	}
 
-	public void lisaaIlmoitus(String uuid, IlmoitusTyyppi tyyppi,
+	public void lisaaIlmoitus(String uuid, String hakukohdeOid,
 			Ilmoitus ilmoitus) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 				.field("_id").equal(new ObjectId(uuid));
 		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(
-				Laskenta.class).add("ilmoitukset." + tyyppi.name(), ilmoitus);
+				Laskenta.class).add("ilmoitukset." + hakukohdeOid, ilmoitus);
 		datastore.update(query, ops);
+	}
+
+	private static Map<String, Integer> createYhteenvetoFields() {
+		Map<String, Integer> fields = Maps.newHashMap();
+		fields.put("_id", 1);
+		fields.put("hakuOid", 1);
+		fields.put("luotu", 1);
+		fields.put("tila", 1);
+		fields.put("hakukohteitaYhteensa", 1);
+		fields.put("hakukohteitaTekematta", 1);
+		fields.put("hakukohteitaOhitettu", 1);
+		return fields;
 	}
 }

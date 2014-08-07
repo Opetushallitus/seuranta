@@ -34,22 +34,27 @@ public class SeurantaDaoTest {
 
 	@Autowired
 	private SeurantaDao seurantaDao;
-	
+
 	@Test
-	public void testaaSeuranta() {
+	public void testaaSeuranta() throws InterruptedException {
 		String hakuOid = "hakuOid";
-		Collection<String> hakukohdeOids = Arrays.asList("hk1","hk2","hk3");
-		
+		Collection<String> hakukohdeOids = Arrays.asList("hk1", "hk2", "hk3");
+
 		String uuid = seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
-		//YhteenvetoDto yhteenveto =seurantaDao.haeYhteenveto(uuid);
-		seurantaDao.lisaaIlmoitus(uuid, IlmoitusTyyppi.VAROITUS,new Ilmoitus("hk1","i1",Arrays.asList("d1","d2")));
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
-		//seurantaDao.
-		YhteenvetoDto yhteenveto =seurantaDao.haeYhteenveto(uuid);
-		
-		LaskentaDto laskenta =seurantaDao.haeLaskenta(uuid);
-		//System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(yhteenveto));
-		//System.err.println(new GsonBuilder().setPrettyPrinting().create().toJson(laskenta));
+		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
+		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
+		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
+		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
+		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS);
+		seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
+		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
+				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
+
+		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
+				.haeYhteenvedotHaulle(hakuOid);
+		LaskentaDto laskenta = seurantaDao.haeLaskenta(uuid);
+		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
 
 	}
 }
