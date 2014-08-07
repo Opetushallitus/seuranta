@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +14,9 @@ import org.springframework.stereotype.Component;
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.query.Query;
 import com.google.code.morphia.query.UpdateOperations;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.gson.GsonBuilder;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
@@ -36,7 +28,6 @@ import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
-import fi.vm.sade.valinta.seuranta.resource.impl.LaskennanSeurantaResourceImpl;
 
 /**
  * 
@@ -211,7 +202,6 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.field("_id").equal(new ObjectId(uuid));
 		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(
 				Laskenta.class).add("ilmoitukset." + tyyppi.name(), ilmoitus);
-
 		datastore.update(query, ops);
 	}
 }
