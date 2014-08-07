@@ -16,6 +16,13 @@ public class IlmoitusDto {
 	private Date paivamaara;
 	private List<String> data;
 
+	public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko) {
+		this.tyyppi = tyyppi;
+		this.otsikko = otsikko;
+		this.data = null;
+		this.paivamaara = new Date();
+	}
+
 	public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko, List<String> data) {
 		this.tyyppi = tyyppi;
 		this.otsikko = otsikko;

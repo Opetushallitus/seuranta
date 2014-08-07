@@ -163,6 +163,51 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	@Override
+	public void lisaaIlmoitus(String uuid, String hakukohdeOid,
+			IlmoitusDto ilmoitus) {
+		Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(),
+				ilmoitus.getData());
+		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+				.field("_id").equal(new ObjectId(uuid));
+		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(
+				Laskenta.class).add("ilmoitukset." + hakukohdeOid, i, true);
+		datastore.findAndModify(query, ops);
+	}
+
+	@Override
+	public void merkkaaTila(String uuid, String hakukohdeOid,
+			HakukohdeTila tila, IlmoitusDto ilmoitus) {
+		// Valmistui
+		Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(),
+				ilmoitus.getData());
+		if (HakukohdeTila.VALMIS.equals(tila)) {
+			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
+					.contains(hakukohdeOid);
+			UpdateOperations<Laskenta> ops = datastore
+					.createUpdateOperations(Laskenta.class)
+					.dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
+					.removeAll("tekematta", hakukohdeOid)
+					.add("ilmoitukset." + hakukohdeOid, i, true);
+			datastore.findAndModify(query, ops);
+		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
+			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
+					.contains(hakukohdeOid);
+			UpdateOperations<Laskenta> ops = datastore
+					.createUpdateOperations(Laskenta.class)
+					.inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
+					.add("ohitettu", hakukohdeOid)
+					.removeAll("tekematta", hakukohdeOid)
+					.add("ilmoitukset." + hakukohdeOid, i, true);
+			datastore.findAndModify(query, ops);
+		} else {
+			throw new RuntimeException(
+					"Tekematta tilaa ei saa asettaa manuaalisesti");
+		}
+	}
+
+	@Override
 	public void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila) {
 		// Valmistui
 		if (HakukohdeTila.VALMIS.equals(tila)) {

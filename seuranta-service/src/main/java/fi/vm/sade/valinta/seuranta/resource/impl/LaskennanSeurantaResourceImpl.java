@@ -18,6 +18,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
@@ -75,6 +76,22 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
 			HakukohdeTila tila) {
 		seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
+		return Response.ok().build();
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
+	public Response lisaaIlmoitusHakukohteelle(String uuid,
+			String hakukohdeOid, IlmoitusDto ilmoitus) {
+		seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid, ilmoitus);
+		return Response.ok().build();
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
+	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
+			HakukohdeTila tila, IlmoitusDto ilmoitus) {
+		seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila, ilmoitus);
 		return Response.ok().build();
 	}
 

@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
@@ -85,6 +86,35 @@ public interface SeurantaResource {
 	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
 			@PathParam("hakukohdeOid") String hakukohdeOid,
 			@PathParam("tila") HakukohdeTila tila);
+
+	/**
+	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa ja jattaa ilmoituksen
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOid
+	 * @return
+	 */
+	@POST
+	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+			@PathParam("hakukohdeOid") String hakukohdeOid,
+			@PathParam("tila") HakukohdeTila tila, IlmoitusDto ilmoitus);
+
+	/**
+	 * Jattaa ilmoituksen
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOid
+	 * @return
+	 */
+	@POST
+	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
+			@PathParam("hakukohdeOid") String hakukohdeOid, IlmoitusDto ilmoitus);
 
 	/**
 	 * Resetoi hakukohteiden tilat. Poistaa logit. Sailoo valmiit tilat.

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
@@ -70,6 +71,23 @@ public interface SeurantaDao {
 	 * @param tila
 	 */
 	void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila);
+
+	/**
+	 * 
+	 * @param uuid
+	 * @param hakukohdeOid
+	 * @param tila
+	 */
+	void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila,
+			IlmoitusDto ilmoitus);
+
+	/**
+	 * 
+	 * @param uuid
+	 * @param hakukohdeOid
+	 * @param tila
+	 */
+	void lisaaIlmoitus(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus);
 
 	/**
 	 * 

@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
@@ -53,8 +54,14 @@ public class SeurantaDaoTest {
 
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
 				.haeYhteenvedotHaulle(hakuOid);
-		LaskentaDto laskenta = seurantaDao.haeLaskenta(uuid);
+		// seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
+		// IlmoitusTyyppi.VAROITUS, "Hehei1"));
 		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
-
+		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS,
+				new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
+		seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
+				IlmoitusTyyppi.VAROITUS, "Hehei3"));
+		// System.err.println(new GsonBuilder().setPrettyPrinting().create()
+		// .toJson(seurantaDao.haeLaskenta(uuid)));
 	}
 }
