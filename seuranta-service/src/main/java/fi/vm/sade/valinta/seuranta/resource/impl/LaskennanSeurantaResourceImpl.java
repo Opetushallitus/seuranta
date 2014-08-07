@@ -62,6 +62,17 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 	}
 
 	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
+	public Response lataa(String uuid) {
+		LaskentaDto laskenta = seurantaDao.haeLaskenta(uuid);
+		return Response
+				.ok(laskenta)
+				.header("Content-Disposition",
+						"attachment; filename=laskenta_" + laskenta.getUuid()
+								+ ".json").build();
+	}
+
+	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
 	public String luoLaskenta(String hakuOid, List<String> hakukohdeOids) {
 		return seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);

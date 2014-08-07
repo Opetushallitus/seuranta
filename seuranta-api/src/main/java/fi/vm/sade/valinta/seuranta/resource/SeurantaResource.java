@@ -69,6 +69,17 @@ public interface SeurantaResource {
 	 * @return
 	 */
 	@GET
+	@Path("/lataa/{uuid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Response lataa(@PathParam("uuid") String uuid);
+
+	/**
+	 * Kaikki yksityiskohdat
+	 * 
+	 * @param hakuOid
+	 * @return
+	 */
+	@GET
 	@Path("/yhteenveto/{uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	YhteenvetoDto yhteenveto(@PathParam("uuid") String uuid);
