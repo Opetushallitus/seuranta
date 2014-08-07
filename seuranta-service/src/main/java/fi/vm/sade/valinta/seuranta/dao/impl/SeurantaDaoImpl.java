@@ -141,6 +141,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.field("_id").equal(new ObjectId(uuid));
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class)
+				.set("tila", LaskentaTila.MENEILLAAN)
 				.set("hakukohteitaTekematta", uusiTekematta.size())
 				.set("hakukohteitaOhitettu", 0).set("valmiit", m.getValmiit())
 				.set("tekematta", uusiTekematta)
