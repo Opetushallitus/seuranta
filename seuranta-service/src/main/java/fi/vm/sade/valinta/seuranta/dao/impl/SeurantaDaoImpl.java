@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.dao.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,7 +71,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
 				"$match", new BasicDBObject(eqs)), new BasicDBObject(
 				"$project", new BasicDBObject(YHTEENVETO_FIELDS)));
-		return Lists.newArrayList(aggregation.results().iterator()).stream()
+		Iterator<DBObject> i = aggregation.results().iterator();
+		if (!i.hasNext()) {
+			return Collections.emptyList();
+		}
+		return Lists.newArrayList(i).stream()
 				.map(result -> dbObjectAsYhteenvetoDto(result))
 				.collect(Collectors.toList());
 	}
@@ -82,7 +87,12 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				"$match", new BasicDBObject("hakuOid", hakuOid)),
 				new BasicDBObject("$project", new BasicDBObject(
 						YHTEENVETO_FIELDS)));
-		return Lists.newArrayList(aggregation.results().iterator()).stream()
+
+		Iterator<DBObject> i = aggregation.results().iterator();
+		if (!i.hasNext()) {
+			return Collections.emptyList();
+		}
+		return Lists.newArrayList(i).stream()
 				.map(result -> dbObjectAsYhteenvetoDto(result))
 				.collect(Collectors.toList());
 	}
@@ -93,10 +103,17 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				"$match", new BasicDBObject("_id", new ObjectId(uuid))),
 				new BasicDBObject("$project", new BasicDBObject(
 						YHTEENVETO_FIELDS)));
-		return dbObjectAsYhteenvetoDto(aggregation.results().iterator().next());
+		Iterator<DBObject> i = aggregation.results().iterator();
+		if (!i.hasNext()) {
+			return null;
+		}
+		return dbObjectAsYhteenvetoDto(i.next());
 	}
 
 	private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result) {
+		if (result == null) {
+			return null;
+		}
 		String uuid = result.get("_id").toString();
 		String hakuOid = result.get("hakuOid").toString();
 		Date luotu = (Date) result.get("luotu");
@@ -108,7 +125,6 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.get("hakukohteitaTekematta");
 		int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty)
 				- hakukohteitaTekematta;
-
 		return new YhteenvetoDto(uuid, hakuOid, luotu, tila,
 				hakukohteitaYhteensa, hakukohteitaValmiina,
 				hakukohteitaKeskeytetty);

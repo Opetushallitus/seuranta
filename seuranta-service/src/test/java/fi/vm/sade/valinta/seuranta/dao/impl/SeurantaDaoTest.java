@@ -51,7 +51,7 @@ public class SeurantaDaoTest {
 		seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
 		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
 				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
-
+		seurantaDao.haeYhteenvedotHaulle("");
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
 				.haeYhteenvedotHaulle(hakuOid);
 		// seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
