@@ -56,11 +56,12 @@ public class SeurantaDaoTest {
 				.haeYhteenvedotHaulle(hakuOid);
 		// seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
 		// IlmoitusTyyppi.VAROITUS, "Hehei1"));
-		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
+
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS,
 				new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
 		seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
 				IlmoitusTyyppi.VAROITUS, "Hehei3"));
+		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
 		// System.err.println(new GsonBuilder().setPrettyPrinting().create()
 		// .toJson(seurantaDao.haeLaskenta(uuid)));
 	}

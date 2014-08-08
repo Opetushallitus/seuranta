@@ -1,7 +1,5 @@
 package fi.vm.sade.valinta.seuranta.dto;
 
-import java.util.Date;
-
 /**
  * 
  * @author Jussi Jartamo
@@ -11,13 +9,13 @@ public class YhteenvetoDto {
 
 	private final String uuid;
 	private final String hakuOid;
-	private final Date luotu;
+	private final Long luotu;
 	private final LaskentaTila tila;
 	private final int hakukohteitaYhteensa;
 	private final int hakukohteitaValmiina;
 	private final int hakukohteitaKeskeytetty;
 
-	public YhteenvetoDto(String uuid, String hakuOid, Date luotu,
+	public YhteenvetoDto(String uuid, String hakuOid, Long luotu,
 			LaskentaTila tila, int hakukohteitaYhteensa,
 			int hakukohteitaValmiina, int hakukohteitaKeskeytetty) {
 		this.uuid = uuid;
@@ -45,7 +43,7 @@ public class YhteenvetoDto {
 		return hakukohteitaYhteensa;
 	}
 
-	public Date getLuotu() {
+	public Long getLuotu() {
 		return luotu;
 	}
 

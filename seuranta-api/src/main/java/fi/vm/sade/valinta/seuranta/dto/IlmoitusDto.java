@@ -13,32 +13,32 @@ public class IlmoitusDto {
 
 	private IlmoitusTyyppi tyyppi;
 	private String otsikko;
-	private Date paivamaara;
+	private long paivamaara;
 	private List<String> data;
 
 	public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko) {
 		this.tyyppi = tyyppi;
 		this.otsikko = otsikko;
 		this.data = null;
-		this.paivamaara = new Date();
+		this.paivamaara = new Date().getTime();
 	}
 
 	public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko, List<String> data) {
 		this.tyyppi = tyyppi;
 		this.otsikko = otsikko;
 		this.data = data;
-		this.paivamaara = new Date();
+		this.paivamaara = new Date().getTime();
 	}
 
 	public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko,
-			List<String> data, Date paivamaara) {
+			List<String> data, long paivamaara) {
 		this.tyyppi = tyyppi;
 		this.otsikko = otsikko;
 		this.data = data;
 		this.paivamaara = paivamaara;
 	}
 
-	public Date getPaivamaara() {
+	public long getPaivamaara() {
 		return paivamaara;
 	}
 

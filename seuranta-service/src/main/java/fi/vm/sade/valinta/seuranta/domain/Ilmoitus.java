@@ -33,7 +33,9 @@ public class Ilmoitus {
 	}
 
 	public IlmoitusDto asDto() {
-		return new IlmoitusDto(tyyppi, otsikko, data, paivamaara);
+		return new IlmoitusDto(tyyppi, otsikko, data,
+				paivamaara == null ? new Date().getTime()
+						: paivamaara.getTime());
 	}
 
 	public List<String> getData() {

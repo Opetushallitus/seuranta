@@ -17,7 +17,6 @@ import com.google.code.morphia.query.Query;
 import com.google.code.morphia.query.UpdateOperations;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.GsonBuilder;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -26,7 +25,6 @@ import com.mongodb.DBObject;
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.domain.Laskenta;
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
@@ -125,7 +123,13 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.get("hakukohteitaTekematta");
 		int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty)
 				- hakukohteitaTekematta;
-		return new YhteenvetoDto(uuid, hakuOid, luotu, tila,
+		long luotuTimestamp;
+		if (luotu == null) {
+			luotuTimestamp = new Date().getTime();
+		} else {
+			luotuTimestamp = luotu.getTime();
+		}
+		return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila,
 				hakukohteitaYhteensa, hakukohteitaValmiina,
 				hakukohteitaKeskeytetty);
 	}
@@ -147,8 +151,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
 					+ uuid);
 		}
-		List<String> o = m.getOhitettu();
-		List<String> t = m.getTekematta();
+		List<String> o = orEmpty(m.getOhitettu());
+		List<String> t = orEmpty(m.getTekematta());
 		List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size()
 				+ t.size());
 		uusiTekematta.addAll(o);
@@ -159,7 +163,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.createUpdateOperations(Laskenta.class)
 				.set("tila", LaskentaTila.MENEILLAAN)
 				.set("hakukohteitaTekematta", uusiTekematta.size())
-				.set("hakukohteitaOhitettu", 0).set("valmiit", m.getValmiit())
+				.set("hakukohteitaOhitettu", 0)
+				//
+				.set("valmiit", orEmpty(m.getValmiit()))
+				//
 				.set("tekematta", uusiTekematta)
 				.set("ohitettu", Collections.emptyList());
 		if (nollaaIlmoitukset) {
@@ -167,6 +174,13 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		}
 		Laskenta uusi = datastore.findAndModify(query, ops);
 		return uusi.asDto();
+	}
+
+	private static <T> List<T> orEmpty(List<T> t) {
+		if (t == null) {
+			return Collections.emptyList();
+		}
+		return t;
 	}
 
 	@Override

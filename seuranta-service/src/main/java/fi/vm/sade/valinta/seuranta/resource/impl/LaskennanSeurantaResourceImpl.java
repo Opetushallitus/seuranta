@@ -1,10 +1,13 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,9 @@ import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
 @Component
 public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
+	private final static Logger LOG = LoggerFactory
+			.getLogger(LaskennanSeurantaResourceImpl.class);
+
 	@Autowired
 	private SeurantaDao seurantaDao;
 
@@ -40,7 +46,14 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public LaskentaDto resetoiTilat(String uuid) {
-		return seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
+		try {
+			return seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
+		} catch (Exception e) {
+			LOG.error(
+					"Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",
+					uuid, e.getMessage(), Arrays.toString(e.getStackTrace()));
+			throw e;
+		}
 	}
 
 	@PreAuthorize("isAuthenticated()")

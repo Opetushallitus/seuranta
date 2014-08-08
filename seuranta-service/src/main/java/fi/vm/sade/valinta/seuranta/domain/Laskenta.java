@@ -119,7 +119,8 @@ public class Laskenta {
 				HakukohdeTila.TEKEMATTA, getIlmoitukset()));
 		hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(),
 				HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
-		return new LaskentaDto(getUuid().toString(), getHakuOid(), getLuotu(),
+		return new LaskentaDto(getUuid().toString(), getHakuOid(),
+				luotu == null ? new Date().getTime() : luotu.getTime(),
 				getTila(), hakukohteet);
 	}
 
