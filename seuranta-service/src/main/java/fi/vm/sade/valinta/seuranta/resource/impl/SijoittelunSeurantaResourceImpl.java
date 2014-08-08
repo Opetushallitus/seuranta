@@ -25,13 +25,13 @@ public class SijoittelunSeurantaResourceImpl implements SijoittelunSeurantaResou
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Palauttaa kaikki kantaan tallennetut sijoittelutilat", response = Collection.class)
 	public Collection<SijoitteluDto> hae() {
-		return null;
+		return sijoittelunSeurantaDao.hae();
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Palauttaa haun sijoittelun tilan", response = Collection.class)
 	public SijoitteluDto hae(String hakuOid) {
-		return null;
+		return sijoittelunSeurantaDao.hae(hakuOid);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -43,7 +43,7 @@ public class SijoittelunSeurantaResourceImpl implements SijoittelunSeurantaResou
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Asettaa jatkuvan sijoittelun haulle", response = Collection.class)
 	public SijoitteluDto merkkaaSijoittelunAjossaTila(String hakuOid, boolean tila) {
-		return null;
+		return sijoittelunSeurantaDao.asetaJatkuvaSijoittelu(hakuOid, tila);
 	}
 
     @PreAuthorize("isAuthenticated()")
@@ -55,7 +55,8 @@ public class SijoittelunSeurantaResourceImpl implements SijoittelunSeurantaResou
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Poistaa hakuun liittyvat sijoittelutilat kannasta", response = Collection.class)
 	public Response poistaSijoittelu(String hakuOid) {
-		return null;
+        sijoittelunSeurantaDao.poistaSijoittelu(hakuOid);
+        return Response.ok().build();
 	}
 	
 }

@@ -39,8 +39,4 @@ public class SijoitteluDto {
     public boolean isAjossa() {
         return ajossa;
     }
-    public boolean getAjossa() {
-        return ajossa;
-    }
-
 }
