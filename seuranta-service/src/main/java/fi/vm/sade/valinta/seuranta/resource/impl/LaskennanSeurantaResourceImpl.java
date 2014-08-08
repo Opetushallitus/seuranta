@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -45,9 +46,12 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
-	public LaskentaDto resetoiTilat(String uuid) {
+	public String resetoiTilat(String uuid) {
 		try {
-			return seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
+			LaskentaDto ldto = seurantaDao.resetoiEiValmiitHakukohteet(uuid,
+					true);
+			// LOG.error("LDTO\r\n{}", );
+			return new GsonBuilder().create().toJson(ldto);
 		} catch (Exception e) {
 			LOG.error(
 					"Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",

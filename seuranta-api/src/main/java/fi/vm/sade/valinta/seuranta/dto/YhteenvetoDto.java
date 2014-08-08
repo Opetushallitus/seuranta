@@ -9,7 +9,7 @@ public class YhteenvetoDto {
 
 	private final String uuid;
 	private final String hakuOid;
-	private final Long luotu;
+	private final long luotu;
 	private final LaskentaTila tila;
 	private final int hakukohteitaYhteensa;
 	private final int hakukohteitaValmiina;
@@ -43,7 +43,7 @@ public class YhteenvetoDto {
 		return hakukohteitaYhteensa;
 	}
 
-	public Long getLuotu() {
+	public long getLuotu() {
 		return luotu;
 	}
 
