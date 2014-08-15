@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
-import com.google.code.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Id;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;

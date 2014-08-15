@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.query.Query;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.valinta.seuranta.dao.SijoittelunSeurantaDao;
