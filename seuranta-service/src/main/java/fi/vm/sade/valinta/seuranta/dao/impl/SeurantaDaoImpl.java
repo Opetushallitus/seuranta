@@ -270,6 +270,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	public String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids) {
+		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
+			throw new RuntimeException(
+					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "
+							+ hakuOid);
+		}
 		Laskenta l = new Laskenta(hakuOid, hakukohdeOids);
 		datastore.save(l);
 		return l.getUuid().toString();
