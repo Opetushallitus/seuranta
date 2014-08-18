@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.ws.Action;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 
@@ -41,19 +44,21 @@ public class SeurantaDaoTest {
 		String hakuOid = "hakuOid";
 		Collection<String> hakukohdeOids = Arrays.asList("hk1", "hk2", "hk3");
 
-		String uuid = seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
+		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
+				hakukohdeOids);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS);
-		seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, hakukohdeOids);
 		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
 				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
-		seurantaDao.haeYhteenvedotHaulle("");
+		seurantaDao.haeYhteenvedotHaulle(hakuOid);
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
-				.haeYhteenvedotHaulle(hakuOid);
+				.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
+		Assert.assertEquals(2, yhteenvedot.size());
 		// seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
 		// IlmoitusTyyppi.VAROITUS, "Hehei1"));
 

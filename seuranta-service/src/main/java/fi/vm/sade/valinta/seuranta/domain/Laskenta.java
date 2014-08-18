@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-
 import org.mongodb.morphia.annotations.Id;
+
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
@@ -17,6 +17,7 @@ import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 
 /**
  * 
@@ -30,6 +31,7 @@ public class Laskenta {
 	private final String hakuOid;
 	private final Date luotu;
 	private final LaskentaTila tila;
+	private final LaskentaTyyppi tyyppi;
 	private final int hakukohteitaYhteensa;
 	private final int hakukohteitaTekematta;
 	private final int hakukohteitaOhitettu;
@@ -50,9 +52,11 @@ public class Laskenta {
 		this.valmiit = null;
 		this.ohitettu = null;
 		this.tekematta = null;
+		this.tyyppi = null;
 	}
 
-	public Laskenta(String hakuOid, Collection<String> hakukohdeOids) {
+	public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Collection<String> hakukohdeOids) {
 		this.hakukohteitaYhteensa = hakukohdeOids.size();
 		this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
 		this.hakukohteitaOhitettu = 0;
@@ -64,6 +68,7 @@ public class Laskenta {
 		this.valmiit = Collections.emptyList();
 		this.ohitettu = Collections.emptyList();
 		this.tekematta = Lists.newArrayList(hakukohdeOids);
+		this.tyyppi = tyyppi;
 	}
 
 	public List<String> getOhitettu() {
@@ -76,6 +81,10 @@ public class Laskenta {
 
 	public List<String> getTekematta() {
 		return tekematta;
+	}
+
+	public LaskentaTyyppi getTyyppi() {
+		return tyyppi;
 	}
 
 	public int getHakukohteitaOhitettu() {

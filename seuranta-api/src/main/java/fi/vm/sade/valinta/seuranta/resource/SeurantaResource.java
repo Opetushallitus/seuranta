@@ -18,6 +18,7 @@ import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
 /**
@@ -38,6 +39,18 @@ public interface SeurantaResource {
 	@Path("/hae/{hakuOid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid);
+
+	/**
+	 * Yhteenvedot olemassa olevista tietyn tyyppisista laskennoista haulle
+	 * 
+	 * @param hakuOid
+	 * @return
+	 */
+	@GET
+	@Path("/hae/{hakuOid}/tyyppi/{tyyppi}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid,
+			@PathParam("tyyppi") LaskentaTyyppi tyyppi);
 
 	/**
 	 * Yhteenvedot olemassa olevista laskennoista haulle
@@ -160,10 +173,11 @@ public interface SeurantaResource {
 	 * @return 200 OK jos onnistui
 	 */
 	@POST
-	@Path("/laskenta/{hakuOid}")
+	@Path("/laskenta/{hakuOid}/tyyppi/{tyyppi}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
+			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
 			List<String> hakukohdeOids);
 
 	/**

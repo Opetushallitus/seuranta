@@ -20,6 +20,7 @@ import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
 
@@ -42,6 +43,13 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public Collection<YhteenvetoDto> hae(String hakuOid) {
 		return seurantaDao.haeYhteenvedotHaulle(hakuOid);
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
+	public Collection<YhteenvetoDto> hae(String hakuOid, LaskentaTyyppi tyyppi) {
+		// TODO Auto-generated method stub
+		return seurantaDao.haeYhteenvedotHaulle(hakuOid, tyyppi);
 	}
 
 	@PreAuthorize("isAuthenticated()")
@@ -91,8 +99,9 @@ public class LaskennanSeurantaResourceImpl implements SeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-	public String luoLaskenta(String hakuOid, List<String> hakukohdeOids) {
-		return seurantaDao.luoLaskenta(hakuOid, hakukohdeOids);
+	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			List<String> hakukohdeOids) {
+		return seurantaDao.luoLaskenta(hakuOid, tyyppi, hakukohdeOids);
 	}
 
 	@PreAuthorize("isAuthenticated()")

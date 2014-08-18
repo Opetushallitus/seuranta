@@ -8,6 +8,7 @@ import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
 /**
@@ -42,6 +43,15 @@ public interface SeurantaDao {
 	Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid);
 
 	/**
+	 * Yhteenvedot laskennan kulusta
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid,
+			LaskentaTyyppi tyyppi);
+
+	/**
 	 * Yhteenvedot kaynnissa olevien laskentojen kulusta
 	 * 
 	 * @param uuid
@@ -56,7 +66,8 @@ public interface SeurantaDao {
 	 * @param hakukohdeOids
 	 * @return uuid
 	 */
-	String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids);
+	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Collection<String> hakukohdeOids);
 
 	/**
 	 * 

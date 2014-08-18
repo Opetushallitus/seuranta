@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mongodb.AggregationOutput;
@@ -29,6 +31,7 @@ import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
 /**
@@ -38,7 +41,8 @@ import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
  */
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
-
+	private final static Logger LOG = LoggerFactory
+			.getLogger(SeurantaDaoImpl.class);
 	private Datastore datastore;
 	private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
 
@@ -81,10 +85,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	@Override
 	public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
 		DBCollection collection = datastore.getCollection(Laskenta.class);
-		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
-				"$match", new BasicDBObject("hakuOid", hakuOid)),
-				new BasicDBObject("$project", new BasicDBObject(
-						YHTEENVETO_FIELDS)));
+		AggregationOutput aggregation = collection.aggregate(dbobjs(
+		// $match
+				dbobj("$match", dbobj("hakuOid", hakuOid)),
+				// $project
+				dbobjmap("$project", YHTEENVETO_FIELDS)));
 
 		Iterator<DBObject> i = aggregation.results().iterator();
 		if (!i.hasNext()) {
@@ -93,6 +98,45 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		return Lists.newArrayList(i).stream()
 				.map(result -> dbObjectAsYhteenvetoDto(result))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid,
+			LaskentaTyyppi tyyppi) {
+		if (tyyppi == null) {
+			LOG.error("Laskentatyyppi null kutsussa hakea yhteenvedot tietylle laskentatyypille haussa.");
+			throw new RuntimeException(
+					"Laskentatyyppi null kutsussa hakea yhteenvedot tietylle laskentatyypille haussa.");
+		}
+		DBCollection collection = datastore.getCollection(Laskenta.class);
+		Map<String, Object> matchValues = Maps.newHashMap();
+		matchValues.put("hakuOid", hakuOid);
+		matchValues.put("tyyppi", tyyppi.toString());
+		AggregationOutput aggregation = collection.aggregate(
+		// $match
+				dbobjs(dbobjmap("$match", matchValues),
+				// $project
+						dbobjmap("$project", YHTEENVETO_FIELDS)));
+
+		Iterator<DBObject> i = aggregation.results().iterator();
+		if (!i.hasNext()) {
+			return Collections.emptyList();
+		}
+		return Lists.newArrayList(i).stream()
+				.map(result -> dbObjectAsYhteenvetoDto(result))
+				.collect(Collectors.toList());
+	}
+
+	public BasicDBObject dbobjmap(String key, Map<?, ?> value) {
+		return new BasicDBObject(key, value);
+	}
+
+	public BasicDBObject dbobj(String key, Object value) {
+		return new BasicDBObject(key, value);
+	}
+
+	public List<DBObject> dbobjs(BasicDBObject... objs) {
+		return Lists.newArrayList(objs);
 	}
 
 	public YhteenvetoDto haeYhteenveto(String uuid) {
@@ -269,13 +313,14 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		}
 	}
 
-	public String luoLaskenta(String hakuOid, Collection<String> hakukohdeOids) {
+	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Collection<String> hakukohdeOids) {
 		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
 			throw new RuntimeException(
 					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "
 							+ hakuOid);
 		}
-		Laskenta l = new Laskenta(hakuOid, hakukohdeOids);
+		Laskenta l = new Laskenta(hakuOid, tyyppi, hakukohdeOids);
 		datastore.save(l);
 		return l.getUuid().toString();
 	}
