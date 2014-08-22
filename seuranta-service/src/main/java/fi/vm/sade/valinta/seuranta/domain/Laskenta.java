@@ -39,6 +39,8 @@ public class Laskenta {
 	private final List<String> ohitettu;
 	private final List<String> tekematta;
 	private final Map<String, List<Ilmoitus>> ilmoitukset;
+	private final Integer valinnanvaihe;
+	private final Boolean valintakoelaskenta;
 
 	public Laskenta() {
 		this.hakukohteitaYhteensa = 0;
@@ -53,9 +55,12 @@ public class Laskenta {
 		this.ohitettu = null;
 		this.tekematta = null;
 		this.tyyppi = null;
+		this.valinnanvaihe = null;
+		this.valintakoelaskenta = null;
 	}
 
 	public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			Collection<String> hakukohdeOids) {
 		this.hakukohteitaYhteensa = hakukohdeOids.size();
 		this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
@@ -69,6 +74,8 @@ public class Laskenta {
 		this.ohitettu = Collections.emptyList();
 		this.tekematta = Lists.newArrayList(hakukohdeOids);
 		this.tyyppi = tyyppi;
+		this.valinnanvaihe = valinnanvaihe;
+		this.valintakoelaskenta = valintakoelaskenta;
 	}
 
 	public List<String> getOhitettu() {
@@ -130,7 +137,7 @@ public class Laskenta {
 				HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
 		return new LaskentaDto(getUuid().toString(), getHakuOid(),
 				luotu == null ? new Date().getTime() : luotu.getTime(),
-				getTila(), hakukohteet);
+				getTila(), hakukohteet, valinnanvaihe, valintakoelaskenta);
 	}
 
 	private List<HakukohdeDto> ilmoituksetHakukohteelle(

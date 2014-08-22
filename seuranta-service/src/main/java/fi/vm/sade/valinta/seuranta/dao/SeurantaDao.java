@@ -71,6 +71,16 @@ public interface SeurantaDao {
 
 	/**
 	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOids
+	 * @return uuid
+	 */
+	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			int valinnanvaihe, boolean valintakoelaskenta,
+			Collection<String> hakukohdeOids);
+
+	/**
+	 * 
 	 * @param uuid
 	 */
 	void poistaLaskenta(String uuid);

@@ -14,14 +14,27 @@ public class LaskentaDto {
 	private final long luotu;
 	private final LaskentaTila tila;
 	private final List<HakukohdeDto> hakukohteet;
+	private final Integer valinnanvaihe;
+	private final Boolean valintakoelaskenta;
 
 	public LaskentaDto(String uuid, String hakuOid, long luotu,
-			LaskentaTila tila, List<HakukohdeDto> hakukohteet) {
+			LaskentaTila tila, List<HakukohdeDto> hakukohteet,
+			Integer valinnanvaihe, Boolean valintakoelaskenta) {
 		this.uuid = uuid;
 		this.hakuOid = hakuOid;
 		this.luotu = luotu;
 		this.tila = tila;
 		this.hakukohteet = hakukohteet;
+		this.valinnanvaihe = valinnanvaihe;
+		this.valintakoelaskenta = valintakoelaskenta;
+	}
+
+	public Integer getValinnanvaihe() {
+		return valinnanvaihe;
+	}
+
+	public Boolean getValintakoelaskenta() {
+		return valintakoelaskenta;
 	}
 
 	public LaskentaTila getTila() {

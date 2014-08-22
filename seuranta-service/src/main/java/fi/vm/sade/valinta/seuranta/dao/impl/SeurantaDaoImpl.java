@@ -70,9 +70,9 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		eqs.put("hakuOid", hakuOid);
 		eqs.put("tila", LaskentaTila.MENEILLAAN);
 		DBCollection collection = datastore.getCollection(Laskenta.class);
-		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
-				"$match", new BasicDBObject(eqs)), new BasicDBObject(
-				"$project", new BasicDBObject(YHTEENVETO_FIELDS)));
+		AggregationOutput aggregation = collection.aggregate(dbobjs(
+				dbobjmap("$match", eqs),
+				dbobjmap("$project", YHTEENVETO_FIELDS)));
 		Iterator<DBObject> i = aggregation.results().iterator();
 		if (!i.hasNext()) {
 			return Collections.emptyList();
@@ -141,10 +141,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
 	public YhteenvetoDto haeYhteenveto(String uuid) {
 		DBCollection collection = datastore.getCollection(Laskenta.class);
-		AggregationOutput aggregation = collection.aggregate(new BasicDBObject(
-				"$match", new BasicDBObject("_id", new ObjectId(uuid))),
-				new BasicDBObject("$project", new BasicDBObject(
-						YHTEENVETO_FIELDS)));
+		AggregationOutput aggregation = collection.aggregate(dbobjs(
+		// $match
+				dbobj("$match", dbobj("_id", new ObjectId(uuid))),
+				// $project
+				dbobjmap("$project", YHTEENVETO_FIELDS)));
 		Iterator<DBObject> i = aggregation.results().iterator();
 		if (!i.hasNext()) {
 			return null;
@@ -257,8 +258,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				ilmoitus.getData());
 		if (HakukohdeTila.VALMIS.equals(tila)) {
 			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
-					.contains(hakukohdeOid);
+					.field("_id").equal(new ObjectId(uuid));// .field("tekematta").contains(hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
@@ -267,8 +267,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			datastore.findAndModify(query, ops);
 		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
 			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
-					.contains(hakukohdeOid);
+					.field("_id").equal(new ObjectId(uuid));
+			// .field("tekematta").contains(hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
@@ -292,6 +292,9 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
 					.contains(hakukohdeOid);
+			;
+			System.err.println(query.toString());
+			//
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
@@ -299,8 +302,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			datastore.findAndModify(query, ops);
 		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
 			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
-					.contains(hakukohdeOid);
+					.field("_id").equal(new ObjectId(uuid));
+			// .field("tekematta").contains(hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
@@ -320,7 +323,21 @@ public class SeurantaDaoImpl implements SeurantaDao {
 					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "
 							+ hakuOid);
 		}
-		Laskenta l = new Laskenta(hakuOid, tyyppi, hakukohdeOids);
+		Laskenta l = new Laskenta(hakuOid, tyyppi, null, null, hakukohdeOids);
+		datastore.save(l);
+		return l.getUuid().toString();
+	}
+
+	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			int valinnanvaihe, boolean valintakoelaskenta,
+			Collection<String> hakukohdeOids) {
+		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
+			throw new RuntimeException(
+					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "
+							+ hakuOid);
+		}
+		Laskenta l = new Laskenta(hakuOid, tyyppi, valinnanvaihe,
+				valintakoelaskenta, hakukohdeOids);
 		datastore.save(l);
 		return l.getUuid().toString();
 	}

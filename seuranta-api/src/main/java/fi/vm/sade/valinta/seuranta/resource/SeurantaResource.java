@@ -181,6 +181,23 @@ public interface SeurantaResource {
 			List<String> hakukohdeOids);
 
 	/**
+	 * Luo uuden laskennan seurantaan valinnanvaiheella
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOids
+	 * @return 200 OK jos onnistui
+	 */
+	@POST
+	@Path("/laskenta/{hakuOid}/tyyppi/{tyyppi}/valinnanvaihe/{valinnanvaihe}/valintakoelaskenta/{valintakoelaskenta}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
+			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
+			@PathParam("valinnanvaihe") int valinnanvaihe,
+			@PathParam("valintakoelaskenta") boolean valintakoelaskenta,
+			List<String> hakukohdeOids);
+
+	/**
 	 * Poistaa laskennan
 	 * 
 	 * @param hakuOid
