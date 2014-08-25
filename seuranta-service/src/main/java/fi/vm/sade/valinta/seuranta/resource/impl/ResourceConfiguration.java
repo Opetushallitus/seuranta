@@ -7,6 +7,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.sse.SseFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -29,7 +30,7 @@ public class ResourceConfiguration extends ResourceConfig {
 						"*");
 			}
 		});
-
+		register(SseFeature.class);
 		register(JacksonFeature.class);
 		// register(MultiPartFeature.class);
 

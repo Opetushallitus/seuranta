@@ -29,6 +29,20 @@ public class LaskentaDto {
 		this.valintakoelaskenta = valintakoelaskenta;
 	}
 
+	public YhteenvetoDto asYhteenveto() {
+		int valmiit = 0;
+		int keskeytetty = 0;
+		for (HakukohdeDto h : hakukohteet) {
+			if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
+				++keskeytetty;
+			} else if (HakukohdeTila.VALMIS.equals(h.getTila())) {
+				++valmiit;
+			}
+		}
+		return new YhteenvetoDto(uuid, hakuOid, luotu, tila,
+				hakukohteet.size(), valmiit, keskeytetty);
+	}
+
 	public Integer getValinnanvaihe() {
 		return valinnanvaihe;
 	}

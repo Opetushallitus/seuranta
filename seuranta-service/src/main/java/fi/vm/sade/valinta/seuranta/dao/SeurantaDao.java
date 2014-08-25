@@ -91,7 +91,8 @@ public interface SeurantaDao {
 	 * @param hakukohdeOid
 	 * @param tila
 	 */
-	void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila);
+	YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid,
+			HakukohdeTila tila);
 
 	/**
 	 * 
@@ -99,7 +100,16 @@ public interface SeurantaDao {
 	 * @param hakukohdeOid
 	 * @param tila
 	 */
-	void merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila,
+	YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid,
+			HakukohdeTila tila, IlmoitusDto ilmoitus);
+
+	/**
+	 * 
+	 * @param uuid
+	 * @param hakukohdeOid
+	 * @param tila
+	 */
+	YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid,
 			IlmoitusDto ilmoitus);
 
 	/**
@@ -108,15 +118,7 @@ public interface SeurantaDao {
 	 * @param hakukohdeOid
 	 * @param tila
 	 */
-	void lisaaIlmoitus(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus);
-
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	void merkkaaTila(String uuid, LaskentaTila tila);
+	YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila);
 
 	/**
 	 * 

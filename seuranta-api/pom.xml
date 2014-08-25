@@ -8,7 +8,9 @@
 	</parent>
 	<artifactId>seuranta-api</artifactId>
 	<name>Seurantapalvelu :: Api</name>
-
+	<properties>
+		<jersey.version>2.10.3</jersey.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>javax</groupId>
@@ -18,6 +20,12 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-sse</artifactId>
+			<version>${jersey.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
