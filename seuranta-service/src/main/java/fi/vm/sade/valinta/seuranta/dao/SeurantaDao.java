@@ -2,7 +2,6 @@ package fi.vm.sade.valinta.seuranta.dao;
 
 import java.util.Collection;
 
-import fi.vm.sade.valinta.seuranta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
@@ -10,6 +9,7 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
+import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 
 /**
  * 

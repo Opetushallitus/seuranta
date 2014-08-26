@@ -14,6 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.SseFeature;
+
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
@@ -27,7 +30,17 @@ import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
  * 
  */
 @Path("seuranta")
-public interface SeurantaResource {
+public interface LaskentaSeurantaResource {
+	/**
+	 * Kaikki yksityiskohdat
+	 * 
+	 * @param hakuOid
+	 * @return
+	 */
+	@GET
+	@Path("/yhteenveto/{uuid}/sse")
+	@Produces(SseFeature.SERVER_SENT_EVENTS)
+	EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
 
 	/**
 	 * Yhteenvedot olemassa olevista laskennoista haulle

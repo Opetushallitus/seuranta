@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.domain;
+package fi.vm.sade.valinta.seuranta.laskenta.domain;
 
 import java.util.Date;
 import java.util.List;

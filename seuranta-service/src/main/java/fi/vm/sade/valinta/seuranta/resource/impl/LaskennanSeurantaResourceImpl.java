@@ -1,26 +1,18 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.OutboundEvent;
-import org.glassfish.jersey.media.sse.SseBroadcaster;
-import org.glassfish.jersey.media.sse.SseFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -29,11 +21,9 @@ import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
-import fi.vm.sade.valinta.seuranta.resource.SeurantaResource;
-import fi.vm.sade.valinta.seuranta.resource.SeurantaSSEventResource;
+import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
 import fi.vm.sade.valinta.seuranta.service.SeurantaSSEService;
 
 /**
@@ -43,8 +33,7 @@ import fi.vm.sade.valinta.seuranta.service.SeurantaSSEService;
  */
 @Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
-public class LaskennanSeurantaResourceImpl implements SeurantaResource,
-		SeurantaSSEventResource {
+public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	private final static Logger LOG = LoggerFactory
 			.getLogger(LaskennanSeurantaResourceImpl.class);
