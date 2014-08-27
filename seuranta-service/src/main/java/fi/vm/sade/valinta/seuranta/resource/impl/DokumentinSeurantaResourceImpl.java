@@ -8,8 +8,18 @@ import org.glassfish.jersey.media.sse.EventOutput;
 
 import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 
+/**
+ * 
+ * @author Jussi Jartamo
+ * 
+ */
 public class DokumentinSeurantaResourceImpl implements
 		DokumentinSeurantaResource {
+
+	@Override
+	public Response keskeyta(String uuid) {
+		return null;
+	}
 
 	@Override
 	public Response paivitaOid(String uuid, String oid, String json) {

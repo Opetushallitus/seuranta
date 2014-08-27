@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -45,6 +46,19 @@ public interface DokumentinSeurantaResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	String luoDokumentti(List<String> oids);
+
+	/**
+	 * Luo uuden dokumentin seurantaan
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOids
+	 * @return 200 OK jos onnistui
+	 */
+	@DELETE
+	@Path("/{uuid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
+	Response keskeyta(@PathParam("uuid") String uuid);
 
 	/**
 	 * Luo uuden dokumentin seurantaan
