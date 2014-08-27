@@ -86,7 +86,7 @@ public interface LaskentaSeurantaResource {
 	@GET
 	@Path("/laskenta/{uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
-	LaskentaDto laskenta(@PathParam("uuid") String uuid);
+	String laskenta(@PathParam("uuid") String uuid);
 
 	/**
 	 * Kaikki yksityiskohdat
