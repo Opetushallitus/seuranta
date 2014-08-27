@@ -1,6 +1,9 @@
 package fi.vm.sade.valinta.seuranta.service.impl;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MediaType;
@@ -33,66 +36,109 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SeurantaSSEServiceImpl.class);
-	private final Cache<String, EventOutput> EVENT_CACHE = CacheBuilder
-			.newBuilder().expireAfterAccess(45, TimeUnit.MINUTES)
-			.removalListener(new RemovalListener<String, EventOutput>() {
-				public void onRemoval(
-						RemovalNotification<String, EventOutput> notification) {
-					try {
-						if (!notification.getValue().isClosed()) {
-							LOG.error(
-									"Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}",
-									notification.getKey());
-							notification.getValue().close();
+	private final Cache<String, CopyOnWriteArrayList<EventOutput>> EVENT_CACHE = CacheBuilder
+			.newBuilder()
+			.expireAfterAccess(45, TimeUnit.MINUTES)
+			.removalListener(
+					new RemovalListener<String, CopyOnWriteArrayList<EventOutput>>() {
+						public void onRemoval(
+								RemovalNotification<String, CopyOnWriteArrayList<EventOutput>> notification) {
+							for (EventOutput eo : notification.getValue()) {
+								try {
+									if (!eo.isClosed()) {
+										LOG.error(
+												"Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}",
+												notification.getKey());
+										eo.close();
+									}
+								} catch (Exception e) {
+								}
+							}
 						}
-					} catch (Exception e) {
-					}
-				}
-			}).build();
-	private SseBroadcaster broadcaster = new SseBroadcaster();
+					}).build();
 
 	public void paivita(YhteenvetoDto yhteenveto) {
-
 		if (yhteenveto == null) {
 			LOG.error("Yhteenveto oli null SSE paivitysta yritettaessa!");
 			throw new RuntimeException(
 					"Yhteenveto oli null SSE paivitysta yritettaessa!");
 		}
-		EventOutput output = EVENT_CACHE.getIfPresent(yhteenveto.getUuid());
-		if (output == null) {
+		CopyOnWriteArrayList<EventOutput> outputs = EVENT_CACHE
+				.getIfPresent(yhteenveto.getUuid());
+		if (outputs == null) {
 			return;
-		}
-		if (output.isClosed()) {
-			LOG.error("Yhteys selaimeen on sammutettu {}", yhteenveto.getUuid());
-			EVENT_CACHE.invalidate(yhteenveto.getUuid());
 		}
 		final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 		eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
 		eventBuilder.data(yhteenveto);
 		final OutboundEvent event = eventBuilder.build();
-		try {
-			output.write(event);
-		} catch (IOException e) {
-			LOG.error("Eventin kirjoitus epaonnistui! {}", e.getMessage());
+		for (EventOutput output : outputs) {
+			try {
+				try {
+					if (output.isClosed()) {
+						outputs.remove(output);
+					}
+				} catch (Exception e) {
+					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
+							e.getMessage());
+				}
+				output.write(event);
+			} catch (IOException e) {
+				LOG.error("Eventin kirjoitus epaonnistui! {}", e.getMessage());
+			}
+		}
+		if (outputs.isEmpty()) { // synkataan vaan siina kornerkeississa etta
+									// tyhjeni
+			synchronized (EVENT_CACHE) {
+				if (outputs.isEmpty()) {
+					EVENT_CACHE.invalidate(yhteenveto.getUuid());
+				}
+			}
 		}
 	}
 
-	public void rekisteroi(String uuid, EventOutput event) {
-		sammuta(uuid); // sammutetaan varmuuden vuoksi ensin
-		if (!event.isClosed()) {
-			EVENT_CACHE.put(uuid, event);
-		} else {
-			LOG.error(
-					"Yhteys selaimeen sulkeutui ennen kuin ehdittiin rekisteroida {}",
-					uuid);
+	public void rekisteroi(String uuid, final EventOutput event) {
+		CopyOnWriteArrayList<EventOutput> outputs;
+		try {
+			outputs = EVENT_CACHE.get(uuid,
+					new Callable<CopyOnWriteArrayList<EventOutput>>() {
+						@Override
+						public CopyOnWriteArrayList<EventOutput> call()
+								throws Exception {
+							return new CopyOnWriteArrayList<EventOutput>();
+						}
+					});
+			outputs.add(event);
+			for (EventOutput output : outputs) {
+				try {
+					if (output.isClosed()) {
+						outputs.remove(output);
+					}
+				} catch (Exception e) {
+					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
+							e.getMessage());
+				}
+			}
+		} catch (ExecutionException e) {
+			LOG.error("Eventoutputin lisays cacheen epaonnistui! {}",
+					e.getMessage());
 		}
 	}
 
 	public void sammuta(String uuid) {
-		EventOutput oldOutput = EVENT_CACHE.getIfPresent(uuid);
-		if (oldOutput != null) {
-			LOG.error("Invalidointiin vanha yhteys selaimeen {}!", uuid);
-			EVENT_CACHE.invalidate(uuid);
+		CopyOnWriteArrayList<EventOutput> outputs = EVENT_CACHE.asMap().remove(
+				uuid);
+		if (outputs != null) {
+			for (EventOutput output : outputs) {
+				if (!output.isClosed()) {
+					try {
+						output.close();
+					} catch (IOException e) {
+						LOG.error("Invalidointiin vanha yhteys selaimeen {}!",
+								uuid);
+					}
+				}
+			}
 		}
 	}
 
