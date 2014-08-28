@@ -47,8 +47,16 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	// @PreAuthorize("isAuthenticated()") ei tarvi, ei tarvisi muissakaan
 	@ApiOperation(value = "SSE Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public EventOutput yhteenvetoSSE(String uuid) {
+		LOG.error("NYTTULIYHDISTYSPYYNTO");
 		final EventOutput eventOutput = new EventOutput();
 		seurantaSSEService.rekisteroi(uuid, eventOutput);
+		try {
+			seurantaSSEService.paivita(seurantaDao.haeYhteenveto(uuid));
+		} catch (Exception e) {
+			LOG.error(
+					"Yhteenvetoa ei ole viela saatavilla {}. Ehka laskentaa ei ole ehditty viela muodostaa. {}",
+					uuid, e.getMessage());
+		}
 		return eventOutput;
 	}
 
