@@ -74,6 +74,10 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 		final OutboundEvent event = eventBuilder.build();
 		for (EventOutput output : outputs) {
 			try {
+				if (output == null) {
+					outputs.remove(null);
+					continue;
+				}
 				try {
 					if (output.isClosed()) {
 						outputs.remove(output);
