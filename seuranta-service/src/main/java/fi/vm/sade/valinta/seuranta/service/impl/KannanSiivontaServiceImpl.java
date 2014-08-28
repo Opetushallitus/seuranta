@@ -29,6 +29,7 @@ public class KannanSiivontaServiceImpl extends TimerTask {
 	private final Timer timer;
 	private final SeurantaDao seurantaDao;
 
+	@Autowired
 	public KannanSiivontaServiceImpl(SeurantaDao seurantaDao) {
 		super();
 		this.seurantaDao = seurantaDao;
