@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.dao;
 
 import java.util.Collection;
+import java.util.Date;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
@@ -17,6 +18,11 @@ import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
  * 
  */
 public interface SeurantaDao {
+
+	/**
+	 * Siivoaa ylimaaraiset laskennat pois
+	 */
+	void siivoa(Date viimeinenSailottavaPaivamaara);
 
 	/**
 	 * Kaikki laskentaan liittyva tieto

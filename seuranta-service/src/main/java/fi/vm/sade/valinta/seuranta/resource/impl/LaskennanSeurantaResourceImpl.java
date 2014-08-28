@@ -47,7 +47,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	// @PreAuthorize("isAuthenticated()") ei tarvi, ei tarvisi muissakaan
 	@ApiOperation(value = "SSE Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public EventOutput yhteenvetoSSE(String uuid) {
-		LOG.error("NYTTULIYHDISTYSPYYNTO");
 		final EventOutput eventOutput = new EventOutput();
 		seurantaSSEService.rekisteroi(uuid, eventOutput);
 		try {

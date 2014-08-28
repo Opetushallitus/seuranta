@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.joda.time.DateTime;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
@@ -23,6 +24,7 @@ import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
@@ -49,6 +51,14 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	@Autowired
 	public SeurantaDaoImpl(Datastore datastore) {
 		this.datastore = datastore;
+	}
+
+	@Override
+	public void siivoa(Date asti) {
+		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+				.field("luotu").lessThanOrEq(asti);
+		WriteResult wr = datastore.delete(query);
+		LOG.info("Seurantakannasta poistettiin {} laskentaa!", wr.getN());
 	}
 
 	@Override

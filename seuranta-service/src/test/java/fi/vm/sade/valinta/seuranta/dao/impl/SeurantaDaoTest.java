@@ -8,8 +8,11 @@ import javax.xml.ws.Action;
 
 import junit.framework.Assert;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,7 +38,8 @@ import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 @ContextConfiguration(classes = SeurantaConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SeurantaDaoTest {
-
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SeurantaDaoTest.class);
 	@Autowired
 	private SeurantaDao seurantaDao;
 
@@ -59,15 +63,20 @@ public class SeurantaDaoTest {
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
 				.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
 		Assert.assertEquals(2, yhteenvedot.size());
-		// seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
-		// IlmoitusTyyppi.VAROITUS, "Hehei1"));
 
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS,
 				new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
 		seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
 				IlmoitusTyyppi.VAROITUS, "Hehei3"));
 		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
-		// System.err.println(new GsonBuilder().setPrettyPrinting().create()
-		// .toJson(seurantaDao.haeLaskenta(uuid)));
+		org.junit.Assert.assertEquals(2,
+				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+		seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
+		org.junit.Assert.assertEquals(2,
+				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+		seurantaDao.siivoa(DateTime.now().plusHours(1).toDate());
+		org.junit.Assert.assertEquals(0,
+				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+
 	}
 }
