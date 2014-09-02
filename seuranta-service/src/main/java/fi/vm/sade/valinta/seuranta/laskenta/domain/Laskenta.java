@@ -143,6 +143,9 @@ public class Laskenta {
 	private List<HakukohdeDto> ilmoituksetHakukohteelle(
 			Collection<String> hakukohdeOids, HakukohdeTila tila,
 			Map<String, List<Ilmoitus>> ilmoitukset) {
+		if (hakukohdeOids == null) {
+			return null;
+		}
 		return hakukohdeOids
 				.stream()
 				.map(v -> new HakukohdeDto(v, tila, ilmoituksetHakukohteelle(v,

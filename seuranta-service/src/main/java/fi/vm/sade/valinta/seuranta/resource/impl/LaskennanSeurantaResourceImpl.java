@@ -119,7 +119,20 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
 	public String laskenta(String uuid) {
-		return new Gson().toJson(seurantaDao.haeLaskenta(uuid));
+		try {
+			LaskentaDto l = seurantaDao.haeLaskenta(uuid);
+			if (l == null) {
+				LOG.error("SeurantaDao palautti null olion uuid:lle {}", uuid);
+				throw new RuntimeException(
+						"SeurantaDao palautti null olion uuid:lle " + uuid);
+			}
+			return new Gson().toJson(l);
+		} catch (Exception e) {
+			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
+					e.getMessage());
+			throw new RuntimeException("Ei saatu laskentaa uuid:lle " + uuid
+					+ ": " + e.getMessage());
+		}
 	}
 
 	@PreAuthorize("isAuthenticated()")

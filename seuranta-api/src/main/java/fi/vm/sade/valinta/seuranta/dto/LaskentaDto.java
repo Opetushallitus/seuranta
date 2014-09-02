@@ -32,6 +32,10 @@ public class LaskentaDto {
 	public YhteenvetoDto asYhteenveto() {
 		int valmiit = 0;
 		int keskeytetty = 0;
+		if (hakukohteet == null) {
+			return new YhteenvetoDto(uuid, hakuOid, luotu, tila, 0, valmiit,
+					keskeytetty);
+		}
 		for (HakukohdeDto h : hakukohteet) {
 			if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
 				++keskeytetty;
