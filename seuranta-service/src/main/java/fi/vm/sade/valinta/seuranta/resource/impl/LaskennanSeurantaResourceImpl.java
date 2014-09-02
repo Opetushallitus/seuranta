@@ -2,10 +2,12 @@ package fi.vm.sade.valinta.seuranta.resource.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
@@ -50,7 +53,14 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		final EventOutput eventOutput = new EventOutput();
 		seurantaSSEService.rekisteroi(uuid, eventOutput);
 		try {
-			seurantaSSEService.paivita(seurantaDao.haeYhteenveto(uuid));
+			YhteenvetoDto y = null;
+			try {
+				seurantaDao.haeYhteenveto(uuid);
+			} catch (Exception e) {
+				y = new YhteenvetoDto(uuid, StringUtils.EMPTY,
+						new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
+			}
+			seurantaSSEService.paivita(y);
 		} catch (Exception e) {
 			LOG.error(
 					"Yhteenvetoa ei ole viela saatavilla {}. Ehka laskentaa ei ole ehditty viela muodostaa. {}",
