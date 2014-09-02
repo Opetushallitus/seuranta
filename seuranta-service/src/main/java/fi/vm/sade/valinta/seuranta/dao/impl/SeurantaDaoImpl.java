@@ -68,6 +68,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		Laskenta m = datastore.find(Laskenta.class).field("_id").equal(oid)
 				.get();
 		if (m == null) {
+			LOG.error("Laskentaa ei ole olemassa uuid:lla {}", uuid);
 			throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla "
 					+ uuid);
 		}

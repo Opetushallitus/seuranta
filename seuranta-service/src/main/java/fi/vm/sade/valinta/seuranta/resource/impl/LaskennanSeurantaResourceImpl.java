@@ -130,8 +130,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		} catch (Exception e) {
 			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
 					e.getMessage());
-			throw new RuntimeException("Ei saatu laskentaa uuid:lle " + uuid
-					+ ": " + e.getMessage());
+			throw e;
 		}
 	}
 

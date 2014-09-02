@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -25,7 +27,7 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
  * 
  */
 public class Laskenta {
-
+	private static final Logger LOG = LoggerFactory.getLogger(Laskenta.class);
 	@Id
 	private ObjectId uuid;
 	private final String hakuOid;
@@ -79,14 +81,23 @@ public class Laskenta {
 	}
 
 	public List<String> getOhitettu() {
+		if (ohitettu == null) {
+			return Collections.emptyList();
+		}
 		return ohitettu;
 	}
 
 	public List<String> getValmiit() {
+		if (valmiit == null) {
+			return Collections.emptyList();
+		}
 		return valmiit;
 	}
 
 	public List<String> getTekematta() {
+		if (tekematta == null) {
+			return Collections.emptyList();
+		}
 		return tekematta;
 	}
 
@@ -107,6 +118,9 @@ public class Laskenta {
 	}
 
 	public Map<String, List<Ilmoitus>> getIlmoitukset() {
+		if (ilmoitukset == null) {
+			return Collections.emptyMap();
+		}
 		return ilmoitukset;
 	}
 
@@ -127,17 +141,24 @@ public class Laskenta {
 	}
 
 	public LaskentaDto asDto() {
-		List<HakukohdeDto> hakukohteet = Lists
-				.newArrayListWithCapacity(getHakukohteitaYhteensa());
-		hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(),
-				HakukohdeTila.VALMIS, getIlmoitukset()));
-		hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(),
-				HakukohdeTila.TEKEMATTA, getIlmoitukset()));
-		hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(),
-				HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
-		return new LaskentaDto(getUuid().toString(), getHakuOid(),
-				luotu == null ? new Date().getTime() : luotu.getTime(),
-				getTila(), hakukohteet, valinnanvaihe, valintakoelaskenta);
+		try {
+			List<HakukohdeDto> hakukohteet = Lists
+					.newArrayListWithCapacity(getHakukohteitaYhteensa());
+			hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(),
+					HakukohdeTila.VALMIS, getIlmoitukset()));
+			hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(),
+					HakukohdeTila.TEKEMATTA, getIlmoitukset()));
+			hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(),
+					HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
+			return new LaskentaDto(getUuid().toString(), getHakuOid(),
+					luotu == null ? new Date().getTime() : luotu.getTime(),
+					getTila(), hakukohteet, valinnanvaihe, valintakoelaskenta);
+		} catch (Exception e) {
+			LOG.error(
+					"LaskentaDto:n muodostus Laskentaentiteetista epaonnistui! {}",
+					e.getMessage());
+			throw e;
+		}
 	}
 
 	private List<HakukohdeDto> ilmoituksetHakukohteelle(
