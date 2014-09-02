@@ -20,6 +20,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.gson.Gson;
 
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
@@ -70,7 +71,7 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 		}
 		final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 		eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
-		eventBuilder.data(yhteenveto);
+		eventBuilder.data(new Gson().toJson(yhteenveto));
 		for (EventOutput output : outputs) {
 			try {
 				if (output == null) {
