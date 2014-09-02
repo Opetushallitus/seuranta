@@ -80,6 +80,7 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 				try {
 					if (output.isClosed()) {
 						outputs.remove(output);
+						continue;
 					}
 				} catch (Exception e) {
 					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
