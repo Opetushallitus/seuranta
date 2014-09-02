@@ -1,5 +1,6 @@
 package fi.vm.sade.valinta.seuranta.dao.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -291,8 +292,9 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(),
 				ilmoitus.getData());
 		if (HakukohdeTila.VALMIS.equals(tila)) {
-			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid));// .field("tekematta").contains(hakukohdeOid);
+			Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(
+					uuid, hakukohdeOid);
+			muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
@@ -300,8 +302,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 					.add("ilmoitukset." + hakukohdeOid, i, true);
 			return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
 		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
-			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid));
+			Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(
+					uuid, hakukohdeOid);
 			// .field("tekematta").contains(hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
@@ -316,6 +318,13 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		}
 	}
 
+	private Query<Laskenta> muodostaLaskennanPaivitysQueryHakukohteelle(
+			String uuid, String hakukohdeOid) {
+		return datastore.createQuery(Laskenta.class).field("_id")
+				.equal(new ObjectId(uuid)).field("tekematta")
+				.hasAllOf(Arrays.asList(hakukohdeOid));
+	}
+
 	@Override
 	public YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid,
 			HakukohdeTila tila) {
@@ -324,11 +333,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			// Query<Laskenta> query = datastore.createQuery(Laskenta.class)
 			// .field("_id").equal(new
 			// ObjectId(uuid)).field("valmiit").not().contains(hakukohdeOid);
-			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid)).field("tekematta")
-					.contains(hakukohdeOid);
-			;
-			System.err.println(query.toString());
+			Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(
+					uuid, hakukohdeOid);
+
+			// .field("tekematta").contains(hakukohdeOid);
 			//
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
@@ -336,9 +344,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 					.removeAll("tekematta", hakukohdeOid);
 			return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
 		} else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
-			Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-					.field("_id").equal(new ObjectId(uuid));
-			// .field("tekematta").contains(hakukohdeOid);
+			Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(
+					uuid, hakukohdeOid);
 			UpdateOperations<Laskenta> ops = datastore
 					.createUpdateOperations(Laskenta.class)
 					.inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
