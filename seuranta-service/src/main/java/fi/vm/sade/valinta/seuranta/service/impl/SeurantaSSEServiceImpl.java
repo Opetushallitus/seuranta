@@ -71,7 +71,6 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 		final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 		eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
 		eventBuilder.data(yhteenveto);
-		final OutboundEvent event = eventBuilder.build();
 		for (EventOutput output : outputs) {
 			try {
 				if (output == null) {
@@ -86,7 +85,7 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
 							e.getMessage());
 				}
-				output.write(event);
+				output.write(eventBuilder.build());
 			} catch (IOException e) {
 				LOG.error("Eventin kirjoitus epaonnistui! {}", e.getMessage());
 			}
