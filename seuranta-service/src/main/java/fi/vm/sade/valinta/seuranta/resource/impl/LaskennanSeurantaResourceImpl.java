@@ -165,15 +165,22 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
 	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
 			HakukohdeTila tila) {
-		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
-		if (y == null) {
+		try {
+			YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
+			if (y == null) {
+				LOG.error(
+						"Seurantaan markattiin hakukohteen {} tila {} laskentaan {} mutta ei saatu yhteenvetoa lisayksesta!",
+						hakukohdeOid, tila, uuid);
+			} else {
+				seurantaSSEService.paivita(y);
+			}
+			return Response.ok().build();
+		} catch (Exception e) {
 			LOG.error(
-					"Seurantaan markattiin hakukohteen {} tila {} laskentaan {} mutta ei saatu yhteenvetoa lisayksesta!",
-					hakukohdeOid, tila, uuid);
-		} else {
-			seurantaSSEService.paivita(y);
+					"Tilan merkkauksessa tapahtui poikkeus {}. Kayttoliittymaa ei ehka paivitetty",
+					e.getMessage());
 		}
-		return Response.ok().build();
+		return Response.serverError().build();
 	}
 
 	@PreAuthorize("isAuthenticated()")
