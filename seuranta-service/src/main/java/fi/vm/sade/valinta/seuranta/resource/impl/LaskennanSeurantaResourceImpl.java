@@ -50,8 +50,13 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	// @PreAuthorize("isAuthenticated()") ei tarvi, ei tarvisi muissakaan
 	@ApiOperation(value = "SSE Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public EventOutput yhteenvetoSSE(String uuid) {
+		LOG.debug("REKISTEROIDAAN KUUNTELIJA {}", uuid);
 		final EventOutput eventOutput = new EventOutput();
-		seurantaSSEService.rekisteroi(uuid, eventOutput);
+		try {
+			seurantaSSEService.rekisteroi(uuid, eventOutput);
+		} catch (Exception e) {
+			LOG.error("Rekisterointi epaonnistui! {}: {}", uuid, e.getMessage());
+		}
 		try {
 			YhteenvetoDto y = null;
 			try {
@@ -66,6 +71,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 					"Yhteenvetoa ei ole viela saatavilla {}. Ehka laskentaa ei ole ehditty viela muodostaa. {}",
 					uuid, e.getMessage());
 		}
+		LOG.debug("REKISTEROITY {}", uuid);
 		return eventOutput;
 	}
 

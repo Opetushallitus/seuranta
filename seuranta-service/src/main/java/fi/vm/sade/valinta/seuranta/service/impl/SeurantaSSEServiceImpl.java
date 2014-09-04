@@ -37,26 +37,20 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SeurantaSSEServiceImpl.class);
-	private final Cache<String, CopyOnWriteArrayList<EventOutput>> EVENT_CACHE = CacheBuilder
-			.newBuilder()
-			.expireAfterAccess(45, TimeUnit.MINUTES)
-			.removalListener(
-					new RemovalListener<String, CopyOnWriteArrayList<EventOutput>>() {
-						public void onRemoval(
-								RemovalNotification<String, CopyOnWriteArrayList<EventOutput>> notification) {
-							for (EventOutput eo : notification.getValue()) {
-								try {
-									if (!eo.isClosed()) {
-										LOG.error(
-												"Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}",
-												notification.getKey());
-										eo.close();
-									}
-								} catch (Exception e) {
-								}
-							}
-						}
-					}).build();
+	private final Cache<String, SseBroadcaster> EVENT_CACHE = CacheBuilder
+			.newBuilder().expireAfterAccess(45, TimeUnit.MINUTES)
+			.removalListener(new RemovalListener<String, SseBroadcaster>() {
+				public void onRemoval(
+						RemovalNotification<String, SseBroadcaster> notification) {
+					try {
+						notification.getValue().closeAll();
+					} catch (Exception e) {
+						LOG.error(
+								"Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}",
+								notification.getKey());
+					}
+				}
+			}).build();
 
 	public void paivita(YhteenvetoDto yhteenveto) {
 		if (yhteenveto == null) {
@@ -64,66 +58,28 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 			throw new RuntimeException(
 					"Yhteenveto oli null SSE paivitysta yritettaessa!");
 		}
-		CopyOnWriteArrayList<EventOutput> outputs = EVENT_CACHE
-				.getIfPresent(yhteenveto.getUuid());
+		SseBroadcaster outputs = EVENT_CACHE.getIfPresent(yhteenveto.getUuid());
 		if (outputs == null) {
+			LOG.debug("KUKAAN EI KUUNTELE {}", yhteenveto.getUuid());
 			return;
 		}
 		final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
 		eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
 		eventBuilder.data(new Gson().toJson(yhteenveto));
-		for (EventOutput output : outputs) {
-			try {
-				if (output == null) {
-					outputs.remove(null);
-					continue;
-				}
-				try {
-					if (output.isClosed()) {
-						outputs.remove(output);
-						continue;
-					}
-				} catch (Exception e) {
-					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
-							e.getMessage());
-				}
-				output.write(eventBuilder.build());
-			} catch (IOException e) {
-				LOG.error("Eventin kirjoitus epaonnistui! {}", e.getMessage());
-			}
-		}
-		if (outputs.isEmpty()) { // synkataan vaan siina kornerkeississa etta
-									// tyhjeni
-			synchronized (EVENT_CACHE) {
-				if (outputs.isEmpty()) {
-					EVENT_CACHE.invalidate(yhteenveto.getUuid());
-				}
-			}
-		}
+		outputs.broadcast(eventBuilder.build());
+		LOG.debug("VIESTI LAHETETTY KIINNOSTUNEILLE {}", yhteenveto.getUuid());
 	}
 
 	public void rekisteroi(String uuid, final EventOutput event) {
-		CopyOnWriteArrayList<EventOutput> outputs;
+		SseBroadcaster outputs;
 		try {
-			outputs = EVENT_CACHE.get(uuid,
-					new Callable<CopyOnWriteArrayList<EventOutput>>() {
-						@Override
-						public CopyOnWriteArrayList<EventOutput> call()
-								throws Exception {
-							return new CopyOnWriteArrayList<EventOutput>();
-						}
-					});
-			outputs.add(event);
-			for (EventOutput output : outputs) {
-				try {
-					if (output.isClosed()) {
-						outputs.remove(output);
-					}
-				} catch (Exception e) {
-					LOG.error("Virhe suljetun yhteyden poistamisessa! {}",
-							e.getMessage());
+			outputs = EVENT_CACHE.get(uuid, new Callable<SseBroadcaster>() {
+				@Override
+				public SseBroadcaster call() throws Exception {
+					return new SseBroadcaster();
 				}
-			}
+			});
+			outputs.add(event);
 		} catch (ExecutionException e) {
 			LOG.error("Eventoutputin lisays cacheen epaonnistui! {}",
 					e.getMessage());
@@ -131,20 +87,9 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
 	}
 
 	public void sammuta(String uuid) {
-		CopyOnWriteArrayList<EventOutput> outputs = EVENT_CACHE.asMap().remove(
-				uuid);
-		if (outputs != null) {
-			for (EventOutput output : outputs) {
-				if (!output.isClosed()) {
-					try {
-						output.close();
-					} catch (IOException e) {
-						LOG.error("Invalidointiin vanha yhteys selaimeen {}!",
-								uuid);
-					}
-				}
-			}
-		}
+		LOG.error("SAMMUTETAAN SSE BROADCASTER UUID:LLE {}", uuid);
+		SseBroadcaster outputs = EVENT_CACHE.asMap().remove(uuid);
+		outputs.closeAll();
 	}
 
 }
