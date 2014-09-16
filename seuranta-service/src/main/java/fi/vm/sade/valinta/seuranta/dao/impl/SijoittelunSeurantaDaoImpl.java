@@ -47,7 +47,7 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 		return sijoitteluAsSijoitteluDto(s);
 	}
 	private SijoitteluDto sijoitteluAsSijoitteluDto(Sijoittelu s) {
-		return new SijoitteluDto(s.getHakuOid(), s.isJatkuvaSijoitteluPaalla(), s.getViimeksiAjettu(), null);
+		return new SijoitteluDto(s.getHakuOid(), s.isJatkuvaSijoitteluPaalla(), s.getViimeksiAjettu(), null, s.getAloitusajankohta(), s.getAjotiheys());
 	}
 	@Override
 	public SijoitteluDto asetaJatkuvaSijoittelu(String hakuOid, boolean jatkuvaSijoittelu) {

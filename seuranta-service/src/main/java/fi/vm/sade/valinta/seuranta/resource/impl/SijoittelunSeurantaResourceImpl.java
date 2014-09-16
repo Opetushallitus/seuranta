@@ -69,4 +69,10 @@ public class SijoittelunSeurantaResourceImpl implements
 		return Response.ok().build();
 	}
 
+
+    @PreAuthorize("isAuthenticated()")
+    @ApiOperation(value = "Päivittää sijoittelun aloitus ajankohdan", response = Collection.class)
+    public Response paivitaSijoittelunAloitusAjankohta(String hakuOid) {
+        return Response.ok().build();
+    }
 }

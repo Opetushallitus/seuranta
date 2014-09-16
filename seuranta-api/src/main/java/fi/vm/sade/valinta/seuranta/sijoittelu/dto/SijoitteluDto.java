@@ -13,19 +13,26 @@ public class SijoitteluDto {
     private final boolean ajossa;
     private final Date viimeksiAjettu;
     private final String virhe;
+    private Date aloitusajankohta;
+    private Integer ajotiheys;
 
     public SijoitteluDto() {
         this.hakuOid = null;
         this.ajossa = false;
         this.viimeksiAjettu = null;
         this.virhe = null;
+        this.aloitusajankohta = null;
+        this.ajotiheys = null;
     }
 
-    public SijoitteluDto(String hakuOid, boolean ajossa, Date viimeksiAjettu, String virhe) {
+    public SijoitteluDto(String hakuOid, boolean ajossa, Date viimeksiAjettu, String virhe, Date aloitusajankohta,
+                         Integer ajotiheys) {
         this.hakuOid = hakuOid;
         this.ajossa = ajossa;
         this.viimeksiAjettu = viimeksiAjettu;
         this.virhe = virhe;
+        this.aloitusajankohta = aloitusajankohta;
+        this.ajotiheys = ajotiheys;
     }
     public String getVirhe() {
         return virhe;
@@ -38,5 +45,21 @@ public class SijoitteluDto {
     }
     public boolean isAjossa() {
         return ajossa;
+    }
+
+    public Date getAloitusajankohta() {
+        return aloitusajankohta;
+    }
+
+    public void setAloitusajankohta(Date aloitusajankohta) {
+        this.aloitusajankohta = aloitusajankohta;
+    }
+
+    public Integer getAjotiheys() {
+        return ajotiheys;
+    }
+
+    public void setAjotiheys(Integer ajotiheys) {
+        this.ajotiheys = ajotiheys;
     }
 }

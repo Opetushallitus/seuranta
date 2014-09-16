@@ -81,4 +81,14 @@ public interface SijoittelunSeurantaResource {
 	@DELETE
 	@Path("/sijoittelu/{hakuOid}")
 	Response poistaSijoittelu(@PathParam("hakuOid") String hakuOid);
+
+    /**
+     * Päivittää sijoittelun aloitus ajankohdan
+     *
+     * @param hakuOid
+     * @return 200 OK jos onnistui
+     */
+    @PUT
+    @Path("/sijoittelu/{hakuOid}")
+    Response paivitaSijoittelunAloitusAjankohta(@PathParam("hakuOid") String hakuOid);
 }
