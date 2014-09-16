@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.ws.rs.core.Response;
 
@@ -72,7 +73,8 @@ public class SijoittelunSeurantaResourceImpl implements
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Päivittää sijoittelun aloitus ajankohdan", response = Collection.class)
-    public Response paivitaSijoittelunAloitusAjankohta(String hakuOid) {
+    public Response paivitaSijoittelunAloitusAjankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys) {
+        sijoittelunSeurantaDao.paivitaAloitusAjankohta(hakuOid, aloitusajankohta, ajotiheys);
         return Response.ok().build();
     }
 }
