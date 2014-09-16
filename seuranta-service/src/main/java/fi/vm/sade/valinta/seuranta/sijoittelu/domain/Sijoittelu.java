@@ -16,21 +16,28 @@ public class Sijoittelu {
     private boolean jatkuvaSijoitteluPaalla;
     private Date viimeksiAjettu;
     private final List<Ilmoitus> ilmoitukset;
-    
+    private Date aloitusajankohta;
+    private Integer ajotiheys;
+
     public Sijoittelu() {
 		this.uuid = null;
 		this.hakuOid = null;
 		this.jatkuvaSijoitteluPaalla = false;
 		this.viimeksiAjettu = null;
 		this.ilmoitukset = null;
+        this.aloitusajankohta = null;
+        this.ajotiheys = null;
 	}
     
-    public Sijoittelu(String hakuOid, boolean jatkuvaSijoitteluPaalla, Date viimeksiAjettu) {
+    public Sijoittelu(String hakuOid, boolean jatkuvaSijoitteluPaalla, Date viimeksiAjettu, Date aloitusajankohta,
+                      Integer ajotiheys) {
 		this.uuid = null;
 		this.hakuOid = hakuOid;
 		this.jatkuvaSijoitteluPaalla = jatkuvaSijoitteluPaalla;
 		this.viimeksiAjettu = viimeksiAjettu;
 		this.ilmoitukset = Collections.emptyList();
+        this.aloitusajankohta = aloitusajankohta;
+        this.ajotiheys = ajotiheys;
 	}
     
     public String getHakuOid() {
@@ -54,4 +61,20 @@ public class Sijoittelu {
     public void setViimeksiAjettu(Date viimeksiAjettu) {
 		this.viimeksiAjettu = viimeksiAjettu;
 	}
+
+    public Date getAloitusajankohta() {
+        return aloitusajankohta;
+    }
+
+    public void setAloitusajankohta(Date aloitusajankohta) {
+        this.aloitusajankohta = aloitusajankohta;
+    }
+
+    public Integer getAjotiheys() {
+        return ajotiheys;
+    }
+
+    public void setAjotiheys(Integer ajotiheys) {
+        this.ajotiheys = ajotiheys;
+    }
 }

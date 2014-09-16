@@ -42,7 +42,7 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 		Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
 				.get();
 		if(s == null) {
-			s = new Sijoittelu(hakuOid, false, null);
+			s = new Sijoittelu(hakuOid, false, null, null, null);
 		}
 		return sijoitteluAsSijoitteluDto(s);
 	}
@@ -54,7 +54,7 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 		Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
 				.get();
 		if(s == null) {
-			s = new Sijoittelu(hakuOid, jatkuvaSijoittelu, null);	
+			s = new Sijoittelu(hakuOid, jatkuvaSijoittelu, null, null, null);
 		} else {
 			s.setJatkuvaSijoitteluPaalla(jatkuvaSijoittelu);
 		}
@@ -66,7 +66,7 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 		Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
 				.get();
 		if(s == null) {
-			s = new Sijoittelu(hakuOid, false, new Date());	
+			s = new Sijoittelu(hakuOid, false, new Date(), new Date(), 0);
 		} else {
 			s.setViimeksiAjettu(new Date());
 		}
