@@ -17,5 +17,5 @@ public interface SijoittelunSeurantaDao {
 
 	void poistaSijoittelu(String hakuOid);
 
-    SijoitteluDto paivitaAloitusAjankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys);
+    SijoitteluDto paivitaAloitusajankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys);
 }

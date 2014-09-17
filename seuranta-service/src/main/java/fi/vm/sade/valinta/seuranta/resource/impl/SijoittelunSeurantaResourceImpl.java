@@ -72,9 +72,9 @@ public class SijoittelunSeurantaResourceImpl implements
 
 
     @PreAuthorize("isAuthenticated()")
-    @ApiOperation(value = "Päivittää sijoittelun aloitus ajankohdan", response = Collection.class)
-    public Response paivitaSijoittelunAloitusAjankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys) {
-        sijoittelunSeurantaDao.paivitaAloitusAjankohta(hakuOid, aloitusajankohta, ajotiheys);
+    @ApiOperation(value = "Päivittää sijoittelun aloitusajankohdan", response = Response.class)
+    public Response paivitaSijoittelunAloitusajankohta(String hakuOid, Long aloitusajankohta, Integer ajotiheys) {
+        sijoittelunSeurantaDao.paivitaAloitusajankohta(hakuOid, new Date(aloitusajankohta), ajotiheys);
         return Response.ok().build();
     }
 }

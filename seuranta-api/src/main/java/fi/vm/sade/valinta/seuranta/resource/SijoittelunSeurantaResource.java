@@ -84,12 +84,12 @@ public interface SijoittelunSeurantaResource {
 	Response poistaSijoittelu(@PathParam("hakuOid") String hakuOid);
 
     /**
-     * Päivittää sijoittelun aloitus ajankohdan
+     * Päivittää sijoittelun aloitusajankohdan
      *
      * @param hakuOid
      * @return 200 OK jos onnistui
      */
     @PUT
     @Path("/sijoittelu/{hakuOid}/paivita")
-    Response paivitaSijoittelunAloitusAjankohta(@PathParam("hakuOid") String hakuOid, @QueryParam("aloitusajankohta") Date aloitusajankohta, @QueryParam("ajotiheys") Integer ajotiheys);
+    Response paivitaSijoittelunAloitusajankohta(@PathParam("hakuOid") String hakuOid, @QueryParam("aloitusajankohta") Long aloitusajankohta, @QueryParam("ajotiheys") Integer ajotiheys);
 }

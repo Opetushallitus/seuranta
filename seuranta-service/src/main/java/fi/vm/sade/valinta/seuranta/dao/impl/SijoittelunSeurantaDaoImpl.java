@@ -80,12 +80,14 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
 	}
 
     @Override
-    public SijoitteluDto paivitaAloitusAjankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys) {
+    public SijoitteluDto paivitaAloitusajankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys) {
         Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
                 .get();
         if(s == null) {
             s = new Sijoittelu(hakuOid, false, new Date(), new Date(), 0);
         } else {
+            s.setAloitusajankohta(aloitusajankohta);
+            s.setAjotiheys(ajotiheys);
         }
         datastore.save(s);
         return sijoitteluAsSijoitteluDto(s);
