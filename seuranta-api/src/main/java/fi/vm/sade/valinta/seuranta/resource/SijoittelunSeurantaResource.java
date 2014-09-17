@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.resource;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -89,6 +90,6 @@ public interface SijoittelunSeurantaResource {
      * @return 200 OK jos onnistui
      */
     @PUT
-    @Path("/sijoittelu/{hakuOid}")
-    Response paivitaSijoittelunAloitusAjankohta(@PathParam("hakuOid") String hakuOid);
+    @Path("/sijoittelu/{hakuOid}/paivita")
+    Response paivitaSijoittelunAloitusAjankohta(@PathParam("hakuOid") String hakuOid, @QueryParam("aloitusajankohta") Date aloitusajankohta, @QueryParam("ajotiheys") Integer ajotiheys);
 }
