@@ -84,7 +84,7 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
         Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
                 .get();
         if(s == null) {
-            s = new Sijoittelu(hakuOid, false, new Date(), new Date(), 0);
+            s = new Sijoittelu(hakuOid, false, new Date(), aloitusajankohta, ajotiheys);
         } else {
             s.setAloitusajankohta(aloitusajankohta);
             s.setAjotiheys(ajotiheys);
