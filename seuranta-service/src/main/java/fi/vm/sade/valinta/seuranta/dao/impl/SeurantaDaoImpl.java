@@ -267,7 +267,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	@Override
 	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid));
+				.field("_id").equal(new ObjectId(uuid)).field("tila")
+				.notEqual(LaskentaTila.VALMIS);
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
