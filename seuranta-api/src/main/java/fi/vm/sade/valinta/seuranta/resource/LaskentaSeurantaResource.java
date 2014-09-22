@@ -206,8 +206,8 @@ public interface LaskentaSeurantaResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
 			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
-			@PathParam("valinnanvaihe") int valinnanvaihe,
-			@PathParam("valintakoelaskenta") boolean valintakoelaskenta,
+			@PathParam("valinnanvaihe") Integer valinnanvaihe,
+			@PathParam("valintakoelaskenta") Boolean valintakoelaskenta,
 			List<String> hakukohdeOids);
 
 	/**

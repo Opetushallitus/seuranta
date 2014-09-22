@@ -373,7 +373,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
-			int valinnanvaihe, boolean valintakoelaskenta,
+			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			Collection<String> hakukohdeOids) {
 		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
 			throw new RuntimeException(
