@@ -11,6 +11,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -191,23 +192,8 @@ public interface LaskentaSeurantaResource {
 	@Produces(MediaType.TEXT_PLAIN)
 	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
 			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
-			List<String> hakukohdeOids);
-
-	/**
-	 * Luo uuden laskennan seurantaan valinnanvaiheella
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return 200 OK jos onnistui
-	 */
-	@POST
-	@Path("/laskenta/{hakuOid}/tyyppi/{tyyppi}/valinnanvaihe/{valinnanvaihe}/valintakoelaskenta/{valintakoelaskenta}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
-			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
-			@PathParam("valinnanvaihe") Integer valinnanvaihe,
-			@PathParam("valintakoelaskenta") Boolean valintakoelaskenta,
+			@QueryParam("valinnanvaihe") Integer valinnanvaihe,
+			@QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
 			List<String> hakukohdeOids);
 
 	/**

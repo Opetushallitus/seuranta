@@ -154,13 +154,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
-			List<String> hakukohdeOids) {
-		return seurantaDao.luoLaskenta(hakuOid, tyyppi, hakukohdeOids);
-	}
-
-	@PreAuthorize("isAuthenticated()")
-	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			List<String> hakukohdeOids) {
 		return seurantaDao.luoLaskenta(hakuOid, tyyppi, valinnanvaihe,
