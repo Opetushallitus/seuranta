@@ -157,6 +157,28 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			List<HakukohdeDto> hakukohdeOids) {
+		if (hakukohdeOids == null) {
+			LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
+			throw new NullPointerException(
+					"Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
+		}
+		if (hakukohdeOids.isEmpty()) {
+			LOG.error("Laskentaa ei luoda tyhjalle (koko on nolla) hakukohdedto joukolle!");
+			throw new NullPointerException(
+					"Laskentaa ei luoda tyhjalle (koko on nolla) hakukohdedto joukolle!");
+		}
+		hakukohdeOids
+				.forEach(hk -> {
+					if (hk.getHakukohdeOid() == null
+							|| hk.getOrganisaatioOid() == null) {
+						LOG.error(
+								"Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli hakukohde \r\n{}",
+								new GsonBuilder().setPrettyPrinting().create()
+										.toJson(hk));
+						throw new NullPointerException(
+								"Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
+					}
+				});
 		return seurantaDao.luoLaskenta(hakuOid, tyyppi, valinnanvaihe,
 				valintakoelaskenta, hakukohdeOids);
 	}

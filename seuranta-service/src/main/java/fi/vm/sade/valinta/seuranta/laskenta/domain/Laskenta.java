@@ -40,7 +40,7 @@ public class Laskenta {
 	private final List<String> valmiit;
 	private final List<String> ohitettu;
 	private final List<String> tekematta;
-	private final Map<String, String> hakukohdeOidJaOrganisaatioOid;
+	private final List<HakukohdeJaOrganisaatio> hakukohdeOidJaOrganisaatioOids;
 	private final Map<String, List<Ilmoitus>> ilmoitukset;
 	private final Integer valinnanvaihe;
 	private final Boolean valintakoelaskenta;
@@ -60,7 +60,7 @@ public class Laskenta {
 		this.tyyppi = null;
 		this.valinnanvaihe = null;
 		this.valintakoelaskenta = null;
-		this.hakukohdeOidJaOrganisaatioOid = null;
+		this.hakukohdeOidJaOrganisaatioOids = null;
 	}
 
 	public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
@@ -76,9 +76,10 @@ public class Laskenta {
 		this.ilmoitukset = Collections.emptyMap();
 		this.valmiit = Collections.emptyList();
 		this.ohitettu = Collections.emptyList();
-		this.hakukohdeOidJaOrganisaatioOid = hakukohdeOids.stream().collect(
-				Collectors.toMap(hk -> hk.getHakukohdeOid(),
-						hk -> hk.getOrganisaatioOid()));
+		this.hakukohdeOidJaOrganisaatioOids = hakukohdeOids
+				.stream()
+				.map(hk -> new HakukohdeJaOrganisaatio(hk.getHakukohdeOid(), hk
+						.getOrganisaatioOid())).collect(Collectors.toList());
 		this.tekematta = hakukohdeOids.stream().map(hk -> hk.getHakukohdeOid())
 				.collect(Collectors.toList());
 		this.tyyppi = tyyppi;
@@ -86,8 +87,8 @@ public class Laskenta {
 		this.valintakoelaskenta = valintakoelaskenta;
 	}
 
-	public Map<String, String> getHakukohdeOidJaOrganisaatioOid() {
-		return hakukohdeOidJaOrganisaatioOid;
+	public List<HakukohdeJaOrganisaatio> getHakukohdeOidJaOrganisaatioOids() {
+		return hakukohdeOidJaOrganisaatioOids;
 	}
 
 	public List<String> getOhitettu() {
@@ -177,10 +178,14 @@ public class Laskenta {
 		if (hakukohdeOids == null) {
 			return null;
 		}
+		Map<String, String> hkJaOrg = hakukohdeOidJaOrganisaatioOids.stream()
+				.collect(
+						Collectors.toMap(h -> h.getHakukohdeOid(),
+								h -> h.getOrganisaatioOid()));
 		return hakukohdeOids
 				.stream()
-				.map(v -> new HakukohdeDto(v, hakukohdeOidJaOrganisaatioOid
-						.get(v), tila, ilmoituksetHakukohteelle(v, ilmoitukset)))
+				.map(v -> new HakukohdeDto(v, hkJaOrg.get(v), tila,
+						ilmoituksetHakukohteelle(v, ilmoitukset)))
 				.collect(Collectors.toList());
 	}
 
