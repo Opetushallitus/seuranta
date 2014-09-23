@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.dao;
 import java.util.Collection;
 import java.util.Date;
 
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
@@ -73,17 +74,8 @@ public interface SeurantaDao {
 	 * @return uuid
 	 */
 	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
-			Collection<String> hakukohdeOids);
-
-	/**
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return uuid
-	 */
-	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			Collection<String> hakukohdeOids);
+			Collection<HakukohdeDto> hakukohdeOids);
 
 	/**
 	 * 

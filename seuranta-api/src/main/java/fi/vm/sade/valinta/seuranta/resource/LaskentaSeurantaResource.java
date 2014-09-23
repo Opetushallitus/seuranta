@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
 
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
@@ -194,7 +195,7 @@ public interface LaskentaSeurantaResource {
 			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
 			@QueryParam("valinnanvaihe") Integer valinnanvaihe,
 			@QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
-			List<String> hakukohdeOids);
+			List<HakukohdeDto> hakukohdeOids);
 
 	/**
 	 * Poistaa laskennan

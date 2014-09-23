@@ -21,6 +21,7 @@ import org.mongodb.morphia.query.UpdateOperations;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.GsonBuilder;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -28,6 +29,7 @@ import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
@@ -361,20 +363,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
-			Collection<String> hakukohdeOids) {
-		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
-			throw new RuntimeException(
-					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "
-							+ hakuOid);
-		}
-		Laskenta l = new Laskenta(hakuOid, tyyppi, null, null, hakukohdeOids);
-		datastore.save(l);
-		return l.getUuid().toString();
-	}
-
-	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			Collection<String> hakukohdeOids) {
+			Collection<HakukohdeDto> hakukohdeOids) {
 		if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
 			throw new RuntimeException(
 					"Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = "

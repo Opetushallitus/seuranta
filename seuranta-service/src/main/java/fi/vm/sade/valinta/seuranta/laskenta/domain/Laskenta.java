@@ -40,6 +40,7 @@ public class Laskenta {
 	private final List<String> valmiit;
 	private final List<String> ohitettu;
 	private final List<String> tekematta;
+	private final Map<String, String> hakukohdeOidJaOrganisaatioOid;
 	private final Map<String, List<Ilmoitus>> ilmoitukset;
 	private final Integer valinnanvaihe;
 	private final Boolean valintakoelaskenta;
@@ -59,11 +60,12 @@ public class Laskenta {
 		this.tyyppi = null;
 		this.valinnanvaihe = null;
 		this.valintakoelaskenta = null;
+		this.hakukohdeOidJaOrganisaatioOid = null;
 	}
 
 	public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			Collection<String> hakukohdeOids) {
+			Collection<HakukohdeDto> hakukohdeOids) {
 		this.hakukohteitaYhteensa = hakukohdeOids.size();
 		this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
 		this.hakukohteitaOhitettu = 0;
@@ -74,10 +76,18 @@ public class Laskenta {
 		this.ilmoitukset = Collections.emptyMap();
 		this.valmiit = Collections.emptyList();
 		this.ohitettu = Collections.emptyList();
-		this.tekematta = Lists.newArrayList(hakukohdeOids);
+		this.hakukohdeOidJaOrganisaatioOid = hakukohdeOids.stream().collect(
+				Collectors.toMap(hk -> hk.getHakukohdeOid(),
+						hk -> hk.getOrganisaatioOid()));
+		this.tekematta = hakukohdeOids.stream().map(hk -> hk.getHakukohdeOid())
+				.collect(Collectors.toList());
 		this.tyyppi = tyyppi;
 		this.valinnanvaihe = valinnanvaihe;
 		this.valintakoelaskenta = valintakoelaskenta;
+	}
+
+	public Map<String, String> getHakukohdeOidJaOrganisaatioOid() {
+		return hakukohdeOidJaOrganisaatioOid;
 	}
 
 	public List<String> getOhitettu() {
@@ -169,8 +179,9 @@ public class Laskenta {
 		}
 		return hakukohdeOids
 				.stream()
-				.map(v -> new HakukohdeDto(v, tila, ilmoituksetHakukohteelle(v,
-						ilmoitukset))).collect(Collectors.toList());
+				.map(v -> new HakukohdeDto(v, hakukohdeOidJaOrganisaatioOid
+						.get(v), tila, ilmoituksetHakukohteelle(v, ilmoitukset)))
+				.collect(Collectors.toList());
 	}
 
 	private List<IlmoitusDto> ilmoituksetHakukohteelle(String hakukohdeOid,

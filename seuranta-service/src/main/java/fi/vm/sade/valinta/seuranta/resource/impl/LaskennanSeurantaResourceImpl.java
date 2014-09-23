@@ -21,6 +21,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
@@ -155,7 +156,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			List<String> hakukohdeOids) {
+			List<HakukohdeDto> hakukohdeOids) {
 		return seurantaDao.luoLaskenta(hakuOid, tyyppi, valinnanvaihe,
 				valintakoelaskenta, hakukohdeOids);
 	}

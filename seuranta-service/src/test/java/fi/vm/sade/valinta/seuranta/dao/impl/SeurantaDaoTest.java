@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
+import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
 import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
@@ -47,23 +48,36 @@ public class SeurantaDaoTest {
 	@Test
 	public void testaaSeuranta() throws InterruptedException {
 		String hakuOid = "hakuOid";
-		Collection<String> hakukohdeOids = Arrays.asList("hk1", "hk2", "hk3");
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
+				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				hakukohdeOids);
+				null, null, hakukohdeOids);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS);
-		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, hakukohdeOids);
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, null, null,
+				hakukohdeOids);
 		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
 				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
 		seurantaDao.haeYhteenvedotHaulle(hakuOid);
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
 				.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
 		Assert.assertEquals(2, yhteenvedot.size());
+		LaskentaDto l = seurantaDao.haeLaskenta(uuid);
+		l.getHakukohteet().forEach(
+				hk -> {
+					LOG.info("Hakukohde {} ja organisaatio {}",
+							hk.getHakukohdeOid(), hk.getOrganisaatioOid());
+					Assert.assertTrue("Organisaatio Oid puuttui",
+							hk.getOrganisaatioOid() != null);
+					Assert.assertTrue("HakukohdeOid puuttui",
+							hk.getHakukohdeOid() != null);
+				});
 		Assert.assertEquals(LaskentaTila.MENEILLAAN,
 				seurantaDao.haeLaskenta(uuid).getTila());
 		seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS);
