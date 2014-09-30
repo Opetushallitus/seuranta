@@ -9,8 +9,9 @@
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.service.impl"/>
-    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.dao.impl"/>
+    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.service.impl"/>
+    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.dao.impl"/>
+    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.resource.impl"/>
 
     <context:property-placeholder
