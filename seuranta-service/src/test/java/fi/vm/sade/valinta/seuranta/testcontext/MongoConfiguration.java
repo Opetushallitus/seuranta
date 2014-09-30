@@ -1,6 +1,8 @@
 package fi.vm.sade.valinta.seuranta.testcontext;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ public class MongoConfiguration {
 			.getLogger(MongoConfiguration.class);
 	public static final String DATABASE_NAME = "fakemongodb";
 
-	static final int PORT = freePort();
+	final int PORT = freePort();
 
 	private static int freePort() {
 		for (int i = 0; i < 10; ++i) {
@@ -43,7 +45,7 @@ public class MongoConfiguration {
 			} catch (IOException e) {
 			}
 		}
-		return 32452 - new Random().nextInt(20000);
+		return 32452 - new Random(System.currentTimeMillis()).nextInt(20000);
 	}
 
 	// fake mongo db
