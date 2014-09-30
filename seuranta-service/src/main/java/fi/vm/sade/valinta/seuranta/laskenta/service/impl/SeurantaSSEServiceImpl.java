@@ -22,9 +22,9 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.gson.Gson;
 
-import fi.vm.sade.valinta.laskenta.seuranta.service.SeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
+import fi.vm.sade.valinta.seuranta.laskenta.service.SeurantaSSEService;
 
 /**
  * 

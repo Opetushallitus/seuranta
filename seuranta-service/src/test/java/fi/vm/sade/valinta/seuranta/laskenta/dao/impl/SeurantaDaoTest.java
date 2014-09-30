@@ -99,6 +99,5 @@ public class SeurantaDaoTest {
 		seurantaDao.siivoa(DateTime.now().plusHours(1).toDate());
 		org.junit.Assert.assertEquals(0,
 				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
-
 	}
 }
