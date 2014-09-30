@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.dao;
+package fi.vm.sade.valinta.seuranta.sijoittelu.dao;
 
 import java.util.Collection;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.service.impl;
+package fi.vm.sade.valinta.seuranta.laskenta.service.impl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.valinta.seuranta.dao.SeurantaDao;
+import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.service.impl;
+package fi.vm.sade.valinta.seuranta.laskenta.service.impl;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -22,9 +22,9 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.gson.Gson;
 
+import fi.vm.sade.valinta.laskenta.seuranta.service.SeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
-import fi.vm.sade.valinta.seuranta.service.SeurantaSSEService;
 
 /**
  * 

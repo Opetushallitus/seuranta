@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.dao.impl;
+package fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl;
 
 
 import org.junit.Assert;
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.vm.sade.valinta.seuranta.dao.SijoittelunSeurantaDao;
+import fi.vm.sade.valinta.seuranta.sijoittelu.dao.SijoittelunSeurantaDao;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 

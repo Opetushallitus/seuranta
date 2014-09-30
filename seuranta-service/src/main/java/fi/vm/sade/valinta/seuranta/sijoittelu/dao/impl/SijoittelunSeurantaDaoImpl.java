@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.dao.impl;
+package fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl;
 
 import java.util.Collection;
 import java.util.Date;
@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
+
 import com.google.common.collect.Lists;
 
-import fi.vm.sade.valinta.seuranta.dao.SijoittelunSeurantaDao;
+import fi.vm.sade.valinta.seuranta.sijoittelu.dao.SijoittelunSeurantaDao;
 import fi.vm.sade.valinta.seuranta.sijoittelu.domain.Sijoittelu;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 

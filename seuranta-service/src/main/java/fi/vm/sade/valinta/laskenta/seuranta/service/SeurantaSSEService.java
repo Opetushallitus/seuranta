@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.service;
+package fi.vm.sade.valinta.laskenta.seuranta.service;
 
 import org.glassfish.jersey.media.sse.EventOutput;
 

@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.service.impl;
+package fi.vm.sade.valinta.seuranta.laskenta.service.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
+import fi.vm.sade.valinta.seuranta.laskenta.service.impl.SeurantaSSEServiceImpl;
 
 public class SeurantaSSEServiceTest {
 

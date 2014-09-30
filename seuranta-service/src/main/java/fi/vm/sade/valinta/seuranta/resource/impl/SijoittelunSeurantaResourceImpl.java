@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
-import fi.vm.sade.valinta.seuranta.dao.SijoittelunSeurantaDao;
 import fi.vm.sade.valinta.seuranta.resource.SijoittelunSeurantaResource;
+import fi.vm.sade.valinta.seuranta.sijoittelu.dao.SijoittelunSeurantaDao;
 import fi.vm.sade.valinta.seuranta.sijoittelu.dto.SijoitteluDto;
 
 @Api(value = "/sijoittelunseuranta", description = "Sijoittelun seurantapalvelun rajapinta")

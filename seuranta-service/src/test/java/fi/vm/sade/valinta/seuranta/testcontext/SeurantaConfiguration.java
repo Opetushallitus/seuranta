@@ -3,11 +3,10 @@ package fi.vm.sade.valinta.seuranta.testcontext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
 import org.mongodb.morphia.Datastore;
 
-import fi.vm.sade.valinta.seuranta.dao.impl.SeurantaDaoImpl;
-import fi.vm.sade.valinta.seuranta.dao.impl.SijoittelunSeurantaDaoImpl;
+import fi.vm.sade.valinta.seuranta.laskenta.dao.impl.SeurantaDaoImpl;
+import fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl.SijoittelunSeurantaDaoImpl;
 
 @Configuration
 @Import(MongoConfiguration.class)
