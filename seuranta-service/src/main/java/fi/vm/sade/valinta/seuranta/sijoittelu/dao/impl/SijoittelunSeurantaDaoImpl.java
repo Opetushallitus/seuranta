@@ -1,9 +1,11 @@
 package fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.valinta.seuranta.sijoittelu.domain.Ilmoitus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.mongodb.morphia.Datastore;
@@ -88,6 +90,21 @@ public class SijoittelunSeurantaDaoImpl implements SijoittelunSeurantaDao {
         } else {
             s.setAloitusajankohta(aloitusajankohta);
             s.setAjotiheys(ajotiheys);
+        }
+        datastore.save(s);
+        return sijoitteluAsSijoitteluDto(s);
+    }
+
+    @Override
+    public SijoitteluDto asetaSijoitteluVirhe(String hakuOid, String virhe) {
+        Sijoittelu s = datastore.find(Sijoittelu.class).field("hakuOid").equal(hakuOid)
+                .get();
+        if(s == null) {
+            s = new Sijoittelu(hakuOid, false, null, null, null);
+        } else {
+            List<String> virheet = new ArrayList<>();
+            virheet.add(virhe);
+            s.getIlmoitukset().add(new Ilmoitus("", "Virhe", virheet));
         }
         datastore.save(s);
         return sijoitteluAsSijoitteluDto(s);

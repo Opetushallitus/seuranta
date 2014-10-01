@@ -54,13 +54,10 @@ public class SijoittelunSeurantaResourceImpl implements
 	}
 
 	@PreAuthorize("isAuthenticated()")
-	@ApiOperation(value = "Asettaa jatkuvan sijoittelun haulle", response = Collection.class)
+	@ApiOperation(value = "Asettaa jatkuvan sijoittelulle virheen", response = Collection.class)
 	public SijoitteluDto merkkaaSijoittelunAjossaVirhe(String hakuOid,
 			String virhe) {
-		LOG.error("Sijoittelun ajossa on virhe metodia ei ole implementoitu!");
-		throw new RuntimeException("Yritettiin merkata haulle " + hakuOid
-				+ " virhe " + virhe
-				+ " mutta virheen merkkausta ei ole implementoitu seurantaan!");
+        return sijoittelunSeurantaDao.asetaSijoitteluVirhe(hakuOid, virhe);
 	}
 
 	@PreAuthorize("isAuthenticated()")

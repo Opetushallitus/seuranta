@@ -18,4 +18,6 @@ public interface SijoittelunSeurantaDao {
 	void poistaSijoittelu(String hakuOid);
 
     SijoitteluDto paivitaAloitusajankohta(String hakuOid, Date aloitusajankohta, Integer ajotiheys);
+
+    SijoitteluDto asetaSijoitteluVirhe(String hakuOid, String virhe);
 }
