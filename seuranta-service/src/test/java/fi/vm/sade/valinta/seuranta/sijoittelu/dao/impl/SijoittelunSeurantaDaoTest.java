@@ -1,6 +1,5 @@
 package fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,19 +21,18 @@ import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 public class SijoittelunSeurantaDaoTest {
 	@Autowired
 	private SijoittelunSeurantaDao seurantaDao;
-	
+
 	@Test
 	public void testaaSeuranta() {
 		seurantaDao.asetaJatkuvaSijoittelu("haku1", false);
-		
-		
+
 		SijoitteluDto haku1 = seurantaDao.hae("haku1");
 		Assert.assertEquals(haku1.isAjossa(), false);
-		
+
 		seurantaDao.asetaJatkuvaSijoittelu("haku2", true);
 		SijoitteluDto haku2 = seurantaDao.hae("haku2");
 		Assert.assertEquals(haku2.isAjossa(), true);
-		
+
 		Assert.assertTrue(seurantaDao.hae().size() == 2);
 	}
 }

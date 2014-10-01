@@ -163,7 +163,8 @@ public class Laskenta {
 					HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
 			return new LaskentaDto(getUuid().toString(), getHakuOid(),
 					luotu == null ? new Date().getTime() : luotu.getTime(),
-					getTila(), hakukohteet, valinnanvaihe, valintakoelaskenta);
+					getTila(), getTyyppi(), hakukohteet, valinnanvaihe,
+					valintakoelaskenta);
 		} catch (Exception e) {
 			LOG.error(
 					"LaskentaDto:n muodostus Laskentaentiteetista epaonnistui! {}",

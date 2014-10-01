@@ -13,16 +13,19 @@ public class LaskentaDto {
 	private final String hakuOid;
 	private final long luotu;
 	private final LaskentaTila tila;
+	private final LaskentaTyyppi tyyppi;
 	private final List<HakukohdeDto> hakukohteet;
 	private final Integer valinnanvaihe;
 	private final Boolean valintakoelaskenta;
 
 	public LaskentaDto(String uuid, String hakuOid, long luotu,
-			LaskentaTila tila, List<HakukohdeDto> hakukohteet,
-			Integer valinnanvaihe, Boolean valintakoelaskenta) {
+			LaskentaTila tila, LaskentaTyyppi tyyppi,
+			List<HakukohdeDto> hakukohteet, Integer valinnanvaihe,
+			Boolean valintakoelaskenta) {
 		this.uuid = uuid;
 		this.hakuOid = hakuOid;
 		this.luotu = luotu;
+		this.tyyppi = tyyppi;
 		this.tila = tila;
 		this.hakukohteet = hakukohteet;
 		this.valinnanvaihe = valinnanvaihe;
@@ -73,5 +76,9 @@ public class LaskentaDto {
 
 	public String getUuid() {
 		return uuid;
+	}
+
+	public LaskentaTyyppi getTyyppi() {
+		return tyyppi;
 	}
 }
