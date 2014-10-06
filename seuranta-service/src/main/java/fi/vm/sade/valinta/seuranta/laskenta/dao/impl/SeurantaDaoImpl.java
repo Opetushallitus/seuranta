@@ -278,6 +278,31 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	}
 
 	@Override
+	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila,
+			HakukohdeTila hakukohdeTila) {
+		Laskenta l = datastore.get(Laskenta.class, new ObjectId(uuid));
+		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
+				.field("_id").equal(new ObjectId(uuid)).field("tila")
+				.notEqual(LaskentaTila.VALMIS);
+		UpdateOperations<Laskenta> ops = datastore
+				.createUpdateOperations(Laskenta.class);
+		LOG.error("####### {}", Arrays.toString(l.getTekematta().toArray()));
+		ops.set("tila", tila);
+		if (HakukohdeTila.VALMIS.equals(hakukohdeTila)) {
+			ops.set("valmiit", l.getTekematta());
+			ops.set("tekematta", Collections.emptyList());
+			ops.set("hakukohteitaTekematta", 0);
+			ops.set("hakukohteitaOhitettu", 0);
+		} else {
+			ops.set("ohitettu", l.getTekematta());
+			ops.set("tekematta", Collections.emptyList());
+			ops.set("hakukohteitaTekematta", 0);
+			ops.set("hakukohteitaOhitettu", l.getTekematta().size());
+		}
+		return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+	}
+
+	@Override
 	public YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid,
 			IlmoitusDto ilmoitus) {
 		Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(),

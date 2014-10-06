@@ -9,6 +9,7 @@ import javax.xml.ws.Action;
 import junit.framework.Assert;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -99,5 +100,45 @@ public class SeurantaDaoTest {
 		seurantaDao.siivoa(DateTime.now().plusHours(1).toDate());
 		org.junit.Assert.assertEquals(0,
 				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+	}
+
+	@Test
+	public void testaaHakukohteetKerrallaValmiiksi() {
+		String hakuOid = "hakuOidKerrallaValmiiksi";
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
+				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3"));
+
+		String uuid = seurantaDao.luoLaskenta(hakuOid,
+				LaskentaTyyppi.VALINTARYHMA, null, null, hakukohdeOids);
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
+				HakukohdeTila.VALMIS);
+		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);
+		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create()
+				.toJson(y));
+		Assert.assertEquals(LaskentaTila.VALMIS, y.getTila());
+		Assert.assertEquals(3, y.getHakukohteitaValmiina());
+		Assert.assertEquals(3, y.getHakukohteitaYhteensa());
+		Assert.assertEquals(0, y.getHakukohteitaKeskeytetty());
+	}
+
+	@Test
+	public void testaaHakukohteetKerrallaOhitettu() {
+		String hakuOid = "hakuOidKerrallaOhitettu";
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
+				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3"));
+
+		String uuid = seurantaDao.luoLaskenta(hakuOid,
+				LaskentaTyyppi.VALINTARYHMA, null, null, hakukohdeOids);
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
+				HakukohdeTila.KESKEYTETTY);
+		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);
+		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create()
+				.toJson(y));
+		Assert.assertEquals(LaskentaTila.VALMIS, y.getTila());
+		Assert.assertEquals(0, y.getHakukohteitaValmiina());
+		Assert.assertEquals(3, y.getHakukohteitaYhteensa());
+		Assert.assertEquals(3, y.getHakukohteitaKeskeytetty());
 	}
 }

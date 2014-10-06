@@ -124,6 +124,15 @@ public interface SeurantaDao {
 	 * @param hakukohdeOid
 	 * @param tila
 	 */
+	YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila,
+			HakukohdeTila hakukohdeTila);
+
+	/**
+	 * 
+	 * @param uuid
+	 * @param hakukohdeOid
+	 * @param tila
+	 */
 	LaskentaDto resetoiEiValmiitHakukohteet(String uuid,
 			boolean nollaaIlmoitukset);
 

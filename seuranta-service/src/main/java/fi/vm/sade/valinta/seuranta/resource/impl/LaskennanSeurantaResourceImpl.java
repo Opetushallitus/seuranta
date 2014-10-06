@@ -254,6 +254,21 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	}
 
 	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
+	public Response merkkaaLaskennanTila(String uuid, LaskentaTila tila,
+			HakukohdeTila hakukohteentila) {
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
+		if (y == null) {
+			LOG.error(
+					"Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
+					uuid, tila);
+		} else {
+			seurantaSSEService.paivita(y);
+		}
+		return Response.ok().build();
+	}
+
+	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Poistaa laskennan", response = Response.class)
 	public Response poistaLaskenta(String uuid) {
 		seurantaDao.poistaLaskenta(uuid);

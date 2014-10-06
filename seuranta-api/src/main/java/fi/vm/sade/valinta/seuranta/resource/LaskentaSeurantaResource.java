@@ -181,6 +181,20 @@ public interface LaskentaSeurantaResource {
 			@PathParam("tila") LaskentaTila tila);
 
 	/**
+	 * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
+	 * 
+	 * @param hakuOid
+	 * @param hakukohdeOid
+	 * @return
+	 */
+	@PUT
+	@Path("/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+			@PathParam("tila") LaskentaTila tila,
+			@PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
+
+	/**
 	 * Luo uuden laskennan seurantaan
 	 * 
 	 * @param hakuOid
