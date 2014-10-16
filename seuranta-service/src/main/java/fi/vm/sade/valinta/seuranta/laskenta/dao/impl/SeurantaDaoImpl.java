@@ -269,8 +269,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	@Override
 	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid)).field("tila")
-				.notEqual(LaskentaTila.VALMIS);
+				.field("_id").equal(new ObjectId(uuid));
+		// .field("tila").notEqual(LaskentaTila.VALMIS);
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
@@ -282,8 +282,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 			HakukohdeTila hakukohdeTila) {
 		Laskenta l = datastore.get(Laskenta.class, new ObjectId(uuid));
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid)).field("tila")
-				.notEqual(LaskentaTila.VALMIS);
+				.field("_id").equal(new ObjectId(uuid));
+		// .field("tila").notEqual(LaskentaTila.VALMIS);
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
 		LOG.error("####### {}", Arrays.toString(l.getTekematta().toArray()));
