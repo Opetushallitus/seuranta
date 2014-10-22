@@ -286,7 +286,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		// .field("tila").notEqual(LaskentaTila.VALMIS);
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class);
-		LOG.error("####### {}", Arrays.toString(l.getTekematta().toArray()));
+		// LOG.error("####### {}", Arrays.toString(l.getTekematta().toArray()));
 		ops.set("tila", tila);
 		if (HakukohdeTila.VALMIS.equals(hakukohdeTila)) {
 			ops.set("valmiit", l.getTekematta());
