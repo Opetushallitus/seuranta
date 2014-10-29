@@ -1,6 +1,9 @@
 package fi.vm.sade.valinta.seuranta.sijoittelu.dto;
 
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormat;
 import java.util.Date;
+
 
 /**
  *
@@ -8,7 +11,9 @@ import java.util.Date;
  *
  */
 public class SijoitteluDto {
-
+	private static final DateTimeFormatter PVMFORMATTER = DateTimeFormat
+			.forPattern("dd.MM.yyyy HH:mm");
+	
     private final String hakuOid;
     private final boolean ajossa;
     private final Date viimeksiAjettu;
@@ -34,6 +39,15 @@ public class SijoitteluDto {
         this.aloitusajankohta = aloitusajankohta;
         this.ajotiheys = ajotiheys;
     }
+    
+    public String getViimeksiAjettuFormatoituna() {
+		return PVMFORMATTER.print(viimeksiAjettu.getTime());
+	}
+    
+    public String getAloitusajankohtaFormatoituna() {
+		return PVMFORMATTER.print(aloitusajankohta.getTime());
+	}
+    
     public String getVirhe() {
         return virhe;
     }

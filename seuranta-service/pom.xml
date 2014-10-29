@@ -22,6 +22,12 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!-- Util -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda.version}</version>
+		</dependency>
 		<dependency>
 			<artifactId>commons-io</artifactId>
 			<groupId>commons-io</groupId>
@@ -208,12 +214,6 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
-		</dependency>
-		<!-- Util -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>${joda.version}</version>
 		</dependency>
 		<!-- Testaus -->
 		<dependency>
