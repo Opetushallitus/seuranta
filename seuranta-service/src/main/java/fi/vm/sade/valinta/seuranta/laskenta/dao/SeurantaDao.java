@@ -74,6 +74,7 @@ public interface SeurantaDao {
 	 * @return uuid
 	 */
 	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Boolean erillishaku,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			Collection<HakukohdeDto> hakukohdeOids);
 

@@ -155,6 +155,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
 	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Boolean erillishaku,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			List<HakukohdeDto> hakukohdeOids) {
 		if (hakukohdeOids == null) {
@@ -179,7 +180,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 								"Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
 					}
 				});
-		return seurantaDao.luoLaskenta(hakuOid, tyyppi, valinnanvaihe,
+		return seurantaDao.luoLaskenta(hakuOid, tyyppi,erillishaku, valinnanvaihe,
 				valintakoelaskenta, hakukohdeOids);
 	}
 

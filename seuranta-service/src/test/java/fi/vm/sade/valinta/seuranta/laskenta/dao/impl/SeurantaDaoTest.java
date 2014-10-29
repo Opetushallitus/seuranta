@@ -63,7 +63,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true, null, null, hakukohdeOids);
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		HakukohdeTila hakukohteentila = HakukohdeTila.KESKEYTETTY;
@@ -80,7 +80,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		HakukohdeTila tila = HakukohdeTila.KESKEYTETTY;
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila);
@@ -95,7 +95,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, "h1",
 				new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
@@ -110,7 +110,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		HakukohdeTila hakukohteentila = HakukohdeTila.KESKEYTETTY;
@@ -127,7 +127,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
@@ -142,7 +142,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		seurantaDao.merkkaaTila(uuid, tila);
@@ -158,7 +158,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 
 		HakukohdeTila tila = HakukohdeTila.KESKEYTETTY;
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila,
@@ -176,14 +176,14 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("hk3", "oo3"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				null, null, hakukohdeOids);
+				true,null, null, hakukohdeOids);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS);
-		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, null, null,
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true,null, null,
 				hakukohdeOids);
 		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
 				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
@@ -233,7 +233,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("hk3", "oo3"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid,
-				LaskentaTyyppi.VALINTARYHMA, null, null, hakukohdeOids);
+				LaskentaTyyppi.VALINTARYHMA, true,null, null, hakukohdeOids);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
 				HakukohdeTila.VALMIS);
 		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);
@@ -254,7 +254,7 @@ public class SeurantaDaoTest {
 				new HakukohdeDto("hk3", "oo3"));
 
 		String uuid = seurantaDao.luoLaskenta(hakuOid,
-				LaskentaTyyppi.VALINTARYHMA, null, null, hakukohdeOids);
+				LaskentaTyyppi.VALINTARYHMA, true,null, null, hakukohdeOids);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
 				HakukohdeTila.KESKEYTETTY);
 		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);

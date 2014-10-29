@@ -44,6 +44,7 @@ public class Laskenta {
 	private final Map<String, List<Ilmoitus>> ilmoitukset;
 	private final Integer valinnanvaihe;
 	private final Boolean valintakoelaskenta;
+	private final Boolean erillishaku;
 
 	public Laskenta() {
 		this.hakukohteitaYhteensa = 0;
@@ -61,9 +62,11 @@ public class Laskenta {
 		this.valinnanvaihe = null;
 		this.valintakoelaskenta = null;
 		this.hakukohdeOidJaOrganisaatioOids = null;
+		this.erillishaku = null;
 	}
 
 	public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
+			Boolean erillishaku,
 			Integer valinnanvaihe, Boolean valintakoelaskenta,
 			Collection<HakukohdeDto> hakukohdeOids) {
 		this.hakukohteitaYhteensa = hakukohdeOids.size();
@@ -83,6 +86,7 @@ public class Laskenta {
 		this.tekematta = hakukohdeOids.stream().map(hk -> hk.getHakukohdeOid())
 				.collect(Collectors.toList());
 		this.tyyppi = tyyppi;
+		this.erillishaku = erillishaku;
 		this.valinnanvaihe = valinnanvaihe;
 		this.valintakoelaskenta = valintakoelaskenta;
 	}
@@ -114,6 +118,9 @@ public class Laskenta {
 
 	public LaskentaTyyppi getTyyppi() {
 		return tyyppi;
+	}
+	public Boolean getErillishaku() {
+		return erillishaku;
 	}
 
 	public int getHakukohteitaOhitettu() {
@@ -163,7 +170,7 @@ public class Laskenta {
 					HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
 			return new LaskentaDto(getUuid().toString(), getHakuOid(),
 					luotu == null ? new Date().getTime() : luotu.getTime(),
-					getTila(), getTyyppi(), hakukohteet, valinnanvaihe,
+					getTila(), getTyyppi(), hakukohteet, erillishaku, valinnanvaihe,
 					valintakoelaskenta);
 		} catch (Exception e) {
 			LOG.error(
