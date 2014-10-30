@@ -41,11 +41,17 @@ public class SijoitteluDto {
     }
     
     public String getViimeksiAjettuFormatoituna() {
+    	if(viimeksiAjettu==null){
+    		return null;
+    	}
 		return PVMFORMATTER.print(viimeksiAjettu.getTime());
 	}
     
     public String getAloitusajankohtaFormatoituna() {
-		return PVMFORMATTER.print(aloitusajankohta.getTime());
+    	if(aloitusajankohta==null){
+    		return null;
+    	}
+    	return PVMFORMATTER.print(aloitusajankohta.getTime());
 	}
     
     public String getVirhe() {
