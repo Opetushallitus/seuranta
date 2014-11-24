@@ -120,7 +120,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
+	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
 			@PathParam("hakukohdeOid") String hakukohdeOid,
@@ -134,7 +134,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@POST
-	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
+	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
@@ -149,7 +149,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@POST
-	@Path("/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
+	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
@@ -163,7 +163,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/laskenta/{uuid}/resetoi")
+	@Path("/kuormantasaus/laskenta/{uuid}/resetoi")
 	@Produces(MediaType.APPLICATION_JSON)
 	String resetoiTilat(@PathParam("uuid") String uuid);
 
@@ -175,7 +175,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/laskenta/{uuid}/tila/{tila}")
+	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
 			@PathParam("tila") LaskentaTila tila);
@@ -188,7 +188,7 @@ public interface LaskentaSeurantaResource {
 	 * @return
 	 */
 	@PUT
-	@Path("/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
+	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
 			@PathParam("tila") LaskentaTila tila,
@@ -202,7 +202,7 @@ public interface LaskentaSeurantaResource {
 	 * @return 200 OK jos onnistui
 	 */
 	@POST
-	@Path("/laskenta/{hakuOid}/tyyppi/{tyyppi}")
+	@Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
 	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
@@ -219,7 +219,7 @@ public interface LaskentaSeurantaResource {
 	 * @return 200 OK jos onnistui
 	 */
 	@DELETE
-	@Path("/laskenta/{uuid}")
+	@Path("/kuormantasaus/laskenta/{uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Response poistaLaskenta(@PathParam("uuid") String uuid);
 }
