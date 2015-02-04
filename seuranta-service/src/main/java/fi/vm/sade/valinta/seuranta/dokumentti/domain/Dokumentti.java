@@ -3,7 +3,13 @@ package fi.vm.sade.valinta.seuranta.dokumentti.domain;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
+import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
+import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
@@ -15,62 +21,40 @@ import org.mongodb.morphia.annotations.Id;
 public class Dokumentti {
 
 	@Id
-	private ObjectId uuid;
-	private final Date luotu;
-	private final int oidejaYhteensa;
-	private final int oidejaTekematta;
-	private final int oidejaOhitettu;
-	private final List<String> valmiit;
-	private final List<String> ohitettu;
-	private final List<String> tekematta;
+	private final ObjectId uuid;
+	private final String kuvaus; // teksti kayttoliittymaan siita mita juuri nyt tehdaan, voi paivittya kun tehtava paivittyy
+	private final String dokumenttiId;
+	private final List<VirheilmoitusDto> virheilmoitukset;
 
 	public Dokumentti() {
 		this.uuid = null;
-		this.luotu = null;
-		this.oidejaYhteensa = 0;
-		this.oidejaTekematta = 0;
-		this.oidejaOhitettu = 0;
-		this.valmiit = null;
-		this.ohitettu = null;
-		this.tekematta = null;
+		this.kuvaus = null;
+		this.dokumenttiId = null;
+		this.virheilmoitukset = null;
 	}
 
-	public Dokumentti(List<String> tekematta) {
-		this.valmiit = Collections.emptyList();
-		this.ohitettu = Collections.emptyList();
-		this.tekematta = tekematta;
-		this.luotu = new Date();
-		this.oidejaYhteensa = 0;
-		this.oidejaOhitettu = 0;
-		this.oidejaTekematta = tekematta.size();
+	public DokumenttiDto asDto() {
+		return new DokumenttiDto(uuid.toString(), dokumenttiId, kuvaus,
+				virheilmoitukset);
 	}
 
-	public Date getLuotu() {
-		return luotu;
+	public Dokumentti(String dokumenttiId, String kuvaus, List<VirheilmoitusDto> virheilmoitukset) {
+		this.uuid = null;
+		this.dokumenttiId = dokumenttiId;
+		this.kuvaus = kuvaus;
+		this.virheilmoitukset = virheilmoitukset;
 	}
 
-	public int getOidejaOhitettu() {
-		return oidejaOhitettu;
+	public String getKuvaus() {
+		return kuvaus;
 	}
 
-	public int getOidejaTekematta() {
-		return oidejaTekematta;
+	public List<VirheilmoitusDto> getVirheilmoitukset() {
+		return virheilmoitukset;
 	}
 
-	public int getOidejaYhteensa() {
-		return oidejaYhteensa;
-	}
-
-	public List<String> getOhitettu() {
-		return ohitettu;
-	}
-
-	public List<String> getTekematta() {
-		return tekematta;
-	}
-
-	public List<String> getValmiit() {
-		return valmiit;
+	public String getDokumenttiId() {
+		return dokumenttiId;
 	}
 
 	public ObjectId getUuid() {

@@ -34,6 +34,7 @@ public class ResourceConfiguration extends ResourceConfig {
 		register(JacksonFeature.class);
 		// register(MultiPartFeature.class);
 
+		register(DokumentinSeurantaResourceImpl.class);
 		register(LaskennanSeurantaResourceImpl.class);
 		register(SijoittelunSeurantaResourceImpl.class);
 		/**

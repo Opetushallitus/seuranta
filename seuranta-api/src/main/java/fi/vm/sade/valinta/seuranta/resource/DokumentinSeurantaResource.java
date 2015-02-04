@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
+import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
 
@@ -26,51 +28,75 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 public interface DokumentinSeurantaResource {
 	/**
 	 * Kaikki yksityiskohdat
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return
 	 */
 	@GET
 	@Path("/{uuid}/sse")
 	@Produces(SseFeature.SERVER_SENT_EVENTS)
-	EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
-
+	EventOutput dokumenttiSSE(@PathParam("uuid") String uuid);
 	/**
-	 * Luo uuden dokumentin seurantaan
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return 200 OK jos onnistui
+	 * Kaikki yksityiskohdat
+	 *
+	 * @return
 	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	String luoDokumentti(List<String> oids);
-
-	/**
-	 * Luo uuden dokumentin seurantaan
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return 200 OK jos onnistui
-	 */
-	@DELETE
+	@GET
 	@Path("/{uuid}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	Response keskeyta(@PathParam("uuid") String uuid);
-
+	@Produces(SseFeature.SERVER_SENT_EVENTS)
+	Response dokumentti(@PathParam("uuid") String uuid);
 	/**
 	 * Luo uuden dokumentin seurantaan
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
+	 *
 	 * @return 200 OK jos onnistui
 	 */
 	@POST
-	@Path("/{uuid}/paivita/{oid}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response luoDokumentti(String kuvaus);
+
+	/**
+	 * Paivita kuvaus
+	 *
+	 * @return 200 OK jos onnistui
+	 */
+	@POST
+	@Path("/{uuid}/paivita_kuvaus")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response paivitaKuvaus(@PathParam("uuid") String uuid, String kuvaus);
+
+	/**
+	 * Paivita kuvaus
+	 *
+	 * @return 200 OK jos onnistui
+	 */
+	@POST
+	@Path("/{uuid}/paivita_dokumenttiId")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response dokumentinTunniste(@PathParam("uuid") String uuid, String dokumenttiId);
+
+	/**
+	 * Lisaa virheita
+	 *
+	 * @return 200 OK jos onnistui
+	 */
+	@POST
+	@Path("/{uuid}/lisaa_virheita")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Response lisaaVirheita(@PathParam("uuid") String uuid, List<VirheilmoitusDto> virheita);
+
+
+	/**
+	 * Luo uuden dokumentin seurantaan
+	 *
+	 * @return 200 OK jos onnistui
+	 */
+	@POST
+	@Path("/{uuid}/poista")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_PLAIN)
-	Response paivitaOid(@PathParam("uuid") String uuid,
-			@PathParam("oid") String oid, String json);
+	Response poista(@PathParam("uuid") String uuid);
+
 }
