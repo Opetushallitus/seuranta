@@ -70,7 +70,9 @@ public class DokumentinSeurantaResourceImpl implements
 				LOG.error("Uuid({}) tai dokumenttiId({}) ei saa olla tyhjä!", uuid, dokumenttiId);
 				throw new RuntimeException("Uuid tai kuvaus ei saa olla tyhjä!");
 			}
-			return Response.ok(dokumenttiDao.paivitaDokumenttiId(uuid, dokumenttiId)).build();
+			DokumenttiDto dokkari = dokumenttiDao.paivitaDokumenttiId(uuid, dokumenttiId);
+			sseService.paivita(dokkari);
+			return Response.ok(dokkari).build();
 		} catch (Throwable t) {
 			LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä({}) paivitettaessa uuid:lle {}: {} {}", dokumenttiId, uuid, t.getMessage(), Arrays.toString(t.getStackTrace()));
 			return Response.serverError().entity(t.getMessage()).build();
@@ -126,7 +128,10 @@ public class DokumentinSeurantaResourceImpl implements
 				LOG.error("Uuid({}) tai kuvaus({}) ei saa olla tyhjä!", uuid, kuvaus);
 				throw new RuntimeException("Uuid tai kuvaus ei saa olla tyhjä!");
 			}
-			return Response.ok(dokumenttiDao.paivitaKuvaus(uuid, kuvaus)).build();
+
+			DokumenttiDto dokkari = dokumenttiDao.paivitaKuvaus(uuid, kuvaus);
+			sseService.paivita(dokkari);
+			return Response.ok(dokkari).build();
 		} catch (Throwable t) {
 			LOG.error("Poikkeus dokumentinseurannassa kuvausta({}) paivitettaessa uuid:lle {}: {} {}", kuvaus, uuid, t.getMessage(), Arrays.toString(t.getStackTrace()));
 			return Response.serverError().entity(t.getMessage()).build();
@@ -140,7 +145,9 @@ public class DokumentinSeurantaResourceImpl implements
 				LOG.error("Uuid({}) tai virheet({}) ei saa olla tyhjä!", uuid, virheita);
 				throw new RuntimeException("Uuid tai virheet ei saa olla tyhjä!");
 			}
-			return Response.ok(dokumenttiDao.lisaaVirheita(uuid, virheita)).build();
+			DokumenttiDto dokkari = dokumenttiDao.lisaaVirheita(uuid, virheita);
+			sseService.paivita(dokkari);
+			return Response.ok(dokkari).build();
 		} catch (Throwable t) {
 			LOG.error("Poikkeus dokumentinseurannassa virhetiloja lisattaessa: {} {}", t.getMessage(), Arrays.toString(t.getStackTrace()));
 			return Response.serverError().entity(t.getMessage()).build();

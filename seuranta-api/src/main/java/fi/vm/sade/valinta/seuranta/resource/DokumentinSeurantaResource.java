@@ -42,7 +42,7 @@ public interface DokumentinSeurantaResource {
 	 */
 	@GET
 	@Path("/{uuid}")
-	@Produces(SseFeature.SERVER_SENT_EVENTS)
+	@Produces(MediaType.APPLICATION_JSON)
 	Response dokumentti(@PathParam("uuid") String uuid);
 	/**
 	 * Luo uuden dokumentin seurantaan
