@@ -67,7 +67,7 @@ public class SeurantaDaoTest {
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		HakukohdeTila hakukohteentila = HakukohdeTila.KESKEYTETTY;
-		seurantaDao.merkkaaTila(uuid, tila);
+//		seurantaDao.merkkaaTila(uuid, tila);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
 		Assert.assertNotNull(y);
 		Assert.assertEquals(uuid, y.getUuid());
@@ -145,7 +145,7 @@ public class SeurantaDaoTest {
 				true,null, null, hakukohdeOids);
 
 		LaskentaTila tila = LaskentaTila.VALMIS;
-		seurantaDao.merkkaaTila(uuid, tila);
+	//	seurantaDao.merkkaaTila(uuid, tila);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
 		Assert.assertNotNull(y);
 		Assert.assertEquals(uuid, y.getUuid());

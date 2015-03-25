@@ -35,8 +35,7 @@ import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 public interface LaskentaSeurantaResource {
 	/**
 	 * Kaikki yksityiskohdat
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return
 	 */
 	@GET
@@ -81,19 +80,17 @@ public interface LaskentaSeurantaResource {
 
 	/**
 	 * Kaikki yksityiskohdat
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return
 	 */
 	@GET
 	@Path("/laskenta/{uuid}")
 	@Produces(MediaType.APPLICATION_JSON)
-	String laskenta(@PathParam("uuid") String uuid);
+	LaskentaDto laskenta(@PathParam("uuid") String uuid);
 
 	/**
 	 * Kaikki yksityiskohdat
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return
 	 */
 	@GET
@@ -103,8 +100,7 @@ public interface LaskentaSeurantaResource {
 
 	/**
 	 * Kaikki yksityiskohdat
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return
 	 */
 	@GET
@@ -114,22 +110,20 @@ public interface LaskentaSeurantaResource {
 
 	/**
 	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa
-	 * 
-	 * @param hakuOid
+	 *
 	 * @param hakukohdeOid
 	 * @return
 	 */
 	@PUT
 	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+	YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
 			@PathParam("hakukohdeOid") String hakukohdeOid,
 			@PathParam("tila") HakukohdeTila tila);
 
 	/**
 	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa ja jattaa ilmoituksen
-	 * 
-	 * @param hakuOid
+	 *
 	 * @param hakukohdeOid
 	 * @return
 	 */
@@ -137,14 +131,13 @@ public interface LaskentaSeurantaResource {
 	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	Response merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+	YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
 			@PathParam("hakukohdeOid") String hakukohdeOid,
 			@PathParam("tila") HakukohdeTila tila, IlmoitusDto ilmoitus);
 
 	/**
 	 * Jattaa ilmoituksen
-	 * 
-	 * @param hakuOid
+	 *
 	 * @param hakukohdeOid
 	 * @return
 	 */
@@ -152,45 +145,39 @@ public interface LaskentaSeurantaResource {
 	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	Response lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
+	YhteenvetoDto lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
 			@PathParam("hakukohdeOid") String hakukohdeOid, IlmoitusDto ilmoitus);
 
 	/**
 	 * Resetoi hakukohteiden tilat. Poistaa logit. Sailoo valmiit tilat.
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOid
+	 *
 	 * @return
 	 */
 	@PUT
 	@Path("/kuormantasaus/laskenta/{uuid}/resetoi")
 	@Produces(MediaType.APPLICATION_JSON)
-	String resetoiTilat(@PathParam("uuid") String uuid);
+	LaskentaDto resetoiTilat(@PathParam("uuid") String uuid);
 
 	/**
 	 * Paivittaa laskennan tilan
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOid
+	 *
 	 * @return
 	 */
 	@PUT
 	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+	YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
 			@PathParam("tila") LaskentaTila tila);
 
 	/**
 	 * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOid
+	 *
 	 * @return
 	 */
 	@PUT
 	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Response merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+	YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
 			@PathParam("tila") LaskentaTila tila,
 			@PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
 
@@ -199,7 +186,7 @@ public interface LaskentaSeurantaResource {
 	 * 
 	 * @param hakuOid
 	 * @param hakukohdeOids
-	 * @return 200 OK jos onnistui
+	 * @return UUID
 	 */
 	@POST
 	@Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
@@ -214,8 +201,7 @@ public interface LaskentaSeurantaResource {
 
 	/**
 	 * Poistaa laskennan
-	 * 
-	 * @param hakuOid
+	 *
 	 * @return 200 OK jos onnistui
 	 */
 	@DELETE

@@ -43,10 +43,17 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	private final static Logger LOG = LoggerFactory
 			.getLogger(LaskennanSeurantaResourceImpl.class);
 
-	@Autowired
 	private SeurantaDao seurantaDao;
-	@Autowired
 	private SeurantaSSEService seurantaSSEService;
+
+	@Autowired
+	public LaskennanSeurantaResourceImpl(
+			SeurantaDao seurantaDao,
+			SeurantaSSEService seurantaSSEService
+	) {
+		this.seurantaDao = seurantaDao;
+		this.seurantaSSEService = seurantaSSEService;
+	}
 
 	// @PreAuthorize("isAuthenticated()") ei tarvi, ei tarvisi muissakaan
 	@ApiOperation(value = "SSE Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
@@ -97,7 +104,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
-	public String resetoiTilat(String uuid) {
+	public LaskentaDto resetoiTilat(String uuid) {
 		try {
 			LaskentaDto ldto = seurantaDao.resetoiEiValmiitHakukohteet(uuid,
 					true);
@@ -108,7 +115,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			} else {
 				seurantaSSEService.paivita(ldto.asYhteenveto());
 			}
-			return new GsonBuilder().create().toJson(ldto);
+			return ldto;
 		} catch (Exception e) {
 			LOG.error(
 					"Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",
@@ -125,7 +132,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
-	public String laskenta(String uuid) {
+	public LaskentaDto laskenta(String uuid) {
 		try {
 			LaskentaDto l = seurantaDao.haeLaskenta(uuid);
 			if (l == null) {
@@ -133,7 +140,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 				throw new RuntimeException(
 						"SeurantaDao palautti null olion uuid:lle " + uuid);
 			}
-			return new Gson().toJson(l);
+			return l;
 		} catch (Exception e) {
 			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
 					e.getMessage());
@@ -186,7 +193,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
+	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
 			HakukohdeTila tila) {
 		try {
 			YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
@@ -197,18 +204,19 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			} else {
 				seurantaSSEService.paivita(y);
 			}
-			return Response.ok().build();
+			return y;
 		} catch (Exception e) {
 			LOG.error(
 					"Tilan merkkauksessa tapahtui poikkeus {}. Kayttoliittymaa ei ehka paivitetty",
 					e.getMessage());
+			throw e;
 		}
-		return Response.serverError().build();
+		//return Response.serverError().build();
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public Response lisaaIlmoitusHakukohteelle(String uuid,
+	public YhteenvetoDto lisaaIlmoitusHakukohteelle(String uuid,
 			String hakukohdeOid, IlmoitusDto ilmoitus) {
 		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid,
 				ilmoitus);
@@ -219,12 +227,12 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		} else {
 			seurantaSSEService.paivita(y);
 		}
-		return Response.ok().build();
+		return y;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public Response merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
+	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
 			HakukohdeTila tila, IlmoitusDto ilmoitus) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila,
 				ilmoitus);
@@ -235,12 +243,12 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		} else {
 			seurantaSSEService.paivita(y);
 		}
-		return Response.ok().build();
+		return y;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
-	public Response merkkaaLaskennanTila(String uuid,
+	public YhteenvetoDto merkkaaLaskennanTila(String uuid,
 			fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
 		if (y == null) {
@@ -251,12 +259,12 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			seurantaSSEService.paivita(y);
 		}
 
-		return Response.ok().build();
+		return y;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
-	public Response merkkaaLaskennanTila(String uuid, LaskentaTila tila,
+	public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila,
 			HakukohdeTila hakukohteentila) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
 		if (y == null) {
@@ -266,14 +274,13 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		} else {
 			seurantaSSEService.paivita(y);
 		}
-		return Response.ok().build();
+		return y;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Poistaa laskennan", response = Response.class)
 	public Response poistaLaskenta(String uuid) {
 		seurantaDao.poistaLaskenta(uuid);
-		// TODO: Ehka SSE paivitys, ei tosin oo ikina tapahtumassa
 		return Response.ok().build();
 	}
 
