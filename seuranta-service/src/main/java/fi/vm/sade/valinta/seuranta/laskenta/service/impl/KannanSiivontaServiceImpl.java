@@ -39,7 +39,7 @@ public class KannanSiivontaServiceImpl extends TimerTask {
 
 	@Override
 	public void run() {
-		LOG.error("Aloitetaan seurantakannan siivous");
+		LOG.info("Aloitetaan seurantakannan siivous");
 		try {
 			seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
 		} catch (Exception e) {
