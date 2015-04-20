@@ -83,6 +83,22 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		return eventOutput;
 	}
 
+	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
+	public LaskentaDto kuormantasausLaskenta(String uuid) {
+		try {
+			LaskentaDto l = seurantaDao.haeLaskenta(uuid);
+			if (l == null) {
+				LOG.error("SeurantaDao palautti null olion uuid:lle {}", uuid);
+				throw new RuntimeException(
+						"SeurantaDao palautti null olion uuid:lle " + uuid);
+			}
+			return l;
+		} catch (Exception e) {
+			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
+					e.getMessage());
+			throw e;
+		}
+	}
 	// @PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Yhteenveto laskennasta", response = Collection.class)
 	public YhteenvetoDto yhteenveto(String uuid) {
@@ -147,7 +163,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			throw e;
 		}
 	}
-
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Laskennan tiedot", response = Collection.class)
 	public Response lataa(String uuid) {
