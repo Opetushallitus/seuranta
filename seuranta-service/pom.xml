@@ -327,6 +327,11 @@
 			<groupId>org.jgroups</groupId>
 			<artifactId>jgroups</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 
 	<profiles>

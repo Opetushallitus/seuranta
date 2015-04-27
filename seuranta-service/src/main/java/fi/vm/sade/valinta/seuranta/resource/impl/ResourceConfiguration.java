@@ -37,6 +37,7 @@ public class ResourceConfiguration extends ResourceConfig {
 		register(DokumentinSeurantaResourceImpl.class);
 		register(LaskennanSeurantaResourceImpl.class);
 		register(SijoittelunSeurantaResourceImpl.class);
+        register(SessionResourceImpl.class);
 		/**
 		 * CORS Filter
 		 */
