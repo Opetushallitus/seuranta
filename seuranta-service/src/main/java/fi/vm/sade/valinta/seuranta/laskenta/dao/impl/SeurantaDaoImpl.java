@@ -1,12 +1,6 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -14,14 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.joda.time.DateTime;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.GsonBuilder;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -269,24 +261,20 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	@Override
 	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila) {
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid)).field("tila").equal(LaskentaTila.MENEILLAAN);
-		// .field("tila").notEqual(LaskentaTila.VALMIS);
-		UpdateOperations<Laskenta> ops = datastore
-				.createUpdateOperations(Laskenta.class);
+				.field("_id").equal(new ObjectId(uuid))
+				.field("tila").equal(LaskentaTila.MENEILLAAN);
+		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
 		return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
 	}
 
 	@Override
-	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila,
-			HakukohdeTila hakukohdeTila) {
+	public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila) {
 		Laskenta l = datastore.get(Laskenta.class, new ObjectId(uuid));
 		Query<Laskenta> query = datastore.createQuery(Laskenta.class)
-				.field("_id").equal(new ObjectId(uuid)).field("tila").equal(LaskentaTila.MENEILLAAN);
-		// .field("tila").notEqual(LaskentaTila.VALMIS);
-		UpdateOperations<Laskenta> ops = datastore
-				.createUpdateOperations(Laskenta.class);
-		// LOG.error("####### {}", Arrays.toString(l.getTekematta().toArray()));
+				.field("_id").equal(new ObjectId(uuid))
+				.field("tila").equal(LaskentaTila.MENEILLAAN);
+		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
 		if (HakukohdeTila.VALMIS.equals(hakukohdeTila)) {
 			ops.set("valmiit", l.getTekematta());
@@ -409,6 +397,16 @@ public class SeurantaDaoImpl implements SeurantaDao {
 		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(
 				Laskenta.class).add("ilmoitukset." + hakukohdeOid, ilmoitus);
 		datastore.update(query, ops);
+	}
+
+	@Override
+	public String otaSeuraavaLaskentaTyonAlle() {
+		Laskenta laskenta = datastore.findAndModify(
+				datastore.createQuery(Laskenta.class).field("tila").equal(LaskentaTila.ALOITAMATTA),
+				datastore.createUpdateOperations(Laskenta.class).set("tila", LaskentaTila.MENEILLAAN),
+				false
+		);
+		return laskenta != null ? laskenta.getUuid().toString() : null;
 	}
 
 	private static Map<String, Integer> createYhteenvetoFields() {

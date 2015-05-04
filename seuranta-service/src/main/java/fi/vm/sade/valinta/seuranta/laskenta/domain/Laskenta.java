@@ -75,15 +75,15 @@ public class Laskenta {
 		this.uuid = null;
 		this.hakuOid = hakuOid;
 		this.luotu = new Date();
-		this.tila = LaskentaTila.MENEILLAAN;
+		this.tila = LaskentaTila.ALOITAMATTA;
 		this.ilmoitukset = Collections.emptyMap();
 		this.valmiit = Collections.emptyList();
 		this.ohitettu = Collections.emptyList();
-		this.hakukohdeOidJaOrganisaatioOids = hakukohdeOids
-				.stream()
-				.map(hk -> new HakukohdeJaOrganisaatio(hk.getHakukohdeOid(), hk
-						.getOrganisaatioOid())).collect(Collectors.toList());
-		this.tekematta = hakukohdeOids.stream().map(hk -> hk.getHakukohdeOid())
+		this.hakukohdeOidJaOrganisaatioOids = hakukohdeOids.stream()
+				.map(hk -> new HakukohdeJaOrganisaatio(hk.getHakukohdeOid(), hk.getOrganisaatioOid()))
+				.collect(Collectors.toList());
+		this.tekematta = hakukohdeOids.stream()
+				.map(HakukohdeDto::getHakukohdeOid)
 				.collect(Collectors.toList());
 		this.tyyppi = tyyppi;
 		this.erillishaku = erillishaku;

@@ -6,6 +6,5 @@ package fi.vm.sade.valinta.seuranta.dto;
  * 
  */
 public enum LaskentaTila {
-
-	VALMIS, PERUUTETTU, MENEILLAAN
+	ALOITAMATTA, VALMIS, PERUUTETTU, MENEILLAAN
 }

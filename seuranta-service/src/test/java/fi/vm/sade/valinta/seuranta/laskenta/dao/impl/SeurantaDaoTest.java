@@ -33,6 +33,10 @@ import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 /**
  * 
  * @author Jussi Jartamo
@@ -41,8 +45,7 @@ import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 @ContextConfiguration(classes = SeurantaConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SeurantaDaoTest {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SeurantaDaoTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SeurantaDaoTest.class);
 	@Autowired
 	private SeurantaDao seurantaDao;
 
@@ -59,210 +62,165 @@ public class SeurantaDaoTest {
 	@Test
 	public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerrallaValmistuneelleLaskennalle() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true, null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		HakukohdeTila hakukohteentila = HakukohdeTila.KESKEYTETTY;
-//		seurantaDao.merkkaaTila(uuid, tila);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaMerkkaaTilaHakukohteelle() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		HakukohdeTila tila = HakukohdeTila.KESKEYTETTY;
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila);
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaLisaaIlmoitusHakukohteelle() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
-		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, "h1",
-				new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
+		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, "h1", new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerralla() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		HakukohdeTila hakukohteentila = HakukohdeTila.KESKEYTETTY;
-
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaMerkkaaLaskennanTila() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		LaskentaTila tila = LaskentaTila.VALMIS;
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaMerkkaaLaskennanTilaMerkatulleLaskennalle() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		LaskentaTila tila = LaskentaTila.VALMIS;
-	//	seurantaDao.merkkaaTila(uuid, tila);
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
 	@Test
 	public void testaaMerkkaaHakukohteenTila() {
 		String hakuOid = "hk1";
-		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
-
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		HakukohdeTila tila = HakukohdeTila.KESKEYTETTY;
-		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila,
-				new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
-		Assert.assertNotNull(y);
-		Assert.assertEquals(uuid, y.getUuid());
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila, new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
 	}
 
-	@Ignore
 	@Test
 	public void testaaSeuranta() throws InterruptedException {
 		String hakuOid = "hakuOid";
 		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
-				new HakukohdeDto("hk3", "oo3"));
+				new HakukohdeDto("hk1", "oo1"),
+				new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3")
+		);
 
-		String uuid = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU,
-				true,null, null, hakukohdeOids);
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk1", HakukohdeTila.KESKEYTETTY);
 		seurantaDao.merkkaaTila(uuid, "hk2", HakukohdeTila.VALMIS);
 		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS);
-		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true,null, null,
-				hakukohdeOids);
-		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(
-				IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
 		seurantaDao.haeYhteenvedotHaulle(hakuOid);
-		Collection<YhteenvetoDto> yhteenvedot = seurantaDao
-				.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
+		Collection<YhteenvetoDto> yhteenvedot = seurantaDao.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
 		Assert.assertEquals(2, yhteenvedot.size());
 		LaskentaDto l = seurantaDao.haeLaskenta(uuid);
-		l.getHakukohteet().forEach(
-				hk -> {
-					LOG.info("Hakukohde {} ja organisaatio {}",
-							hk.getHakukohdeOid(), hk.getOrganisaatioOid());
-					Assert.assertTrue("Organisaatio Oid puuttui",
-							hk.getOrganisaatioOid() != null);
-					Assert.assertTrue("HakukohdeOid puuttui",
-							hk.getHakukohdeOid() != null);
-				});
-		Assert.assertEquals(LaskentaTila.MENEILLAAN,
-				seurantaDao.haeLaskenta(uuid).getTila());
+		l.getHakukohteet().forEach(hk -> {
+			LOG.info("Hakukohde {} ja organisaatio {}",hk.getHakukohdeOid(), hk.getOrganisaatioOid());
+			assertTrue("Organisaatio Oid puuttui", hk.getOrganisaatioOid() != null);
+			assertTrue("HakukohdeOid puuttui", hk.getHakukohdeOid() != null);
+		});
+		assertEquals(LaskentaTila.MENEILLAAN, seurantaDao.haeLaskenta(uuid).getTila());
 		seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS);
-		Assert.assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid)
-				.getTila());
+		assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
 		seurantaDao.merkkaaTila(uuid, LaskentaTila.PERUUTETTU);
-		Assert.assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid)
-				.getTila());
-		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS,
-				new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
-		seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(
-				IlmoitusTyyppi.VAROITUS, "Hehei3"));
+		assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
+		seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS, new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
+		seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei3"));
 		seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
-		org.junit.Assert.assertEquals(2,
-				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+		assertEquals(2, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
 		seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
-		org.junit.Assert.assertEquals(2,
-				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+		assertEquals(2, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
 		seurantaDao.siivoa(DateTime.now().plusHours(1).toDate());
-		org.junit.Assert.assertEquals(0,
-				seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
+		assertEquals(0, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
 	}
 
-	@Ignore
 	@Test
 	public void testaaHakukohteetKerrallaValmiiksi() {
 		String hakuOid = "hakuOidKerrallaValmiiksi";
 		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
-				new HakukohdeDto("hk3", "oo3"));
-
-		String uuid = seurantaDao.luoLaskenta(hakuOid,
-				LaskentaTyyppi.VALINTARYHMA, true,null, null, hakukohdeOids);
-		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
-				HakukohdeTila.VALMIS);
-		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);
-		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create()
-				.toJson(y));
-		Assert.assertEquals(LaskentaTila.VALMIS, y.getTila());
-		Assert.assertEquals(3, y.getHakukohteitaValmiina());
-		Assert.assertEquals(3, y.getHakukohteitaYhteensa());
-		Assert.assertEquals(0, y.getHakukohteitaKeskeytetty());
+				new HakukohdeDto("hk1", "oo1"),
+				new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3")
+		);
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.VALINTARYHMA, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.VALMIS);
+		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create().toJson(y));
+		assertEquals(LaskentaTila.VALMIS, y.getTila());
+		assertEquals(3, y.getHakukohteitaValmiina());
+		assertEquals(3, y.getHakukohteitaYhteensa());
+		assertEquals(0, y.getHakukohteitaKeskeytetty());
 	}
 
-	@Ignore
 	@Test
 	public void testaaHakukohteetKerrallaOhitettu() {
 		String hakuOid = "hakuOidKerrallaOhitettu";
 		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(
-				new HakukohdeDto("hk1", "oo1"), new HakukohdeDto("hk2", "oo2"),
-				new HakukohdeDto("hk3", "oo3"));
+				new HakukohdeDto("hk1", "oo1"),
+				new HakukohdeDto("hk2", "oo2"),
+				new HakukohdeDto("hk3", "oo3")
+		);
 
-		String uuid = seurantaDao.luoLaskenta(hakuOid,
-				LaskentaTyyppi.VALINTARYHMA, true,null, null, hakukohdeOids);
-		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS,
-				HakukohdeTila.KESKEYTETTY);
-		// YhteenvetoDto y = seurantaDao.haeYhteenveto(uuid);
-		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create()
-				.toJson(y));
-		Assert.assertEquals(LaskentaTila.VALMIS, y.getTila());
-		Assert.assertEquals(0, y.getHakukohteitaValmiina());
-		Assert.assertEquals(3, y.getHakukohteitaYhteensa());
-		Assert.assertEquals(3, y.getHakukohteitaKeskeytetty());
+		seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.VALINTARYHMA, true, null, null, hakukohdeOids);
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY);
+		LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create().toJson(y));
+		assertEquals(LaskentaTila.VALMIS, y.getTila());
+		assertEquals(0, y.getHakukohteitaValmiina());
+		assertEquals(3, y.getHakukohteitaYhteensa());
+		assertEquals(3, y.getHakukohteitaKeskeytetty());
 	}
 }

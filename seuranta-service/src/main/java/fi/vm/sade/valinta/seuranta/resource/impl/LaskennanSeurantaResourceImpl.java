@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -144,6 +143,12 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
 	public Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(String hakuOid) {
 		return seurantaDao.haeKaynnissaOlevienYhteenvedotHaulle(hakuOid);
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
+	public String otaSeuraavaLaskentaTyonAlle() {
+		return seurantaDao.otaSeuraavaLaskentaTyonAlle();
 	}
 
 	@PreAuthorize("isAuthenticated()")

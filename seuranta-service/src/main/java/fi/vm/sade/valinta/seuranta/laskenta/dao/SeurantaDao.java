@@ -2,6 +2,7 @@ package fi.vm.sade.valinta.seuranta.laskenta.dao;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
@@ -145,4 +146,11 @@ public interface SeurantaDao {
 	 * @param ilmoitus
 	 */
 	void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus);
+
+	/**
+	 *
+	 *
+	 * @return uuid
+	 */
+	String otaSeuraavaLaskentaTyonAlle();
 }

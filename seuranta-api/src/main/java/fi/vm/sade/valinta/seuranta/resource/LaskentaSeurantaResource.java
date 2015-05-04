@@ -68,7 +68,7 @@ public interface LaskentaSeurantaResource {
 
 	/**
 	 * Yhteenvedot olemassa olevista laskennoista haulle
-	 * 
+	 *
 	 * @param hakuOid
 	 * @return
 	 */
@@ -77,6 +77,16 @@ public interface LaskentaSeurantaResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(
 			@PathParam("hakuOid") String hakuOid);
+
+	/**
+	 * Työn alle otetun laskennan uuid
+	 *
+	 * @return
+	 */
+	@GET
+	@Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
+	@Produces(MediaType.APPLICATION_JSON)
+	String otaSeuraavaLaskentaTyonAlle();
 
 	/**
 	 * Kaikki yksityiskohdat
