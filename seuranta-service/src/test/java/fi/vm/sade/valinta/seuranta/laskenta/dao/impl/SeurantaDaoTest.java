@@ -3,8 +3,6 @@ package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 import java.util.Arrays;
 import java.util.Collection;
 
-import junit.framework.Assert;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,7 +128,7 @@ public class SeurantaDaoTest {
 		seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
 		seurantaDao.haeYhteenvedotHaulle(hakuOid);
 		Collection<YhteenvetoDto> yhteenvedot = seurantaDao.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
-		Assert.assertEquals(2, yhteenvedot.size());
+		assertEquals(2, yhteenvedot.size());
 		LaskentaDto l = seurantaDao.haeLaskenta(uuid);
 		l.getHakukohteet().forEach(hk -> {
 			LOG.info("Hakukohde {} ja organisaatio {}",hk.getHakukohdeOid(), hk.getOrganisaatioOid());
