@@ -18,8 +18,7 @@ public class SeurantaConfiguration {
     }
 	
 	@Bean
-	public SijoittelunSeurantaDaoImpl getSijoittelunSeurantaDaoImpl(
-			Datastore datastore) {
+	public SijoittelunSeurantaDaoImpl getSijoittelunSeurantaDaoImpl(Datastore datastore) {
 		return new SijoittelunSeurantaDaoImpl(datastore);
 	}
 
