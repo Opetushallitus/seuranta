@@ -255,8 +255,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
 		if (y == null) {
-			LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
-					  uuid, tila);
+			LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!", uuid, tila);
 		} else {
 			seurantaSSEService.paivita(y);
 		}
