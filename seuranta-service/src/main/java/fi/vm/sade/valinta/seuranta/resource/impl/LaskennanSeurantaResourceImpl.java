@@ -39,17 +39,13 @@ import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
 @Component
 public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
-	private final static Logger LOG = LoggerFactory
-			.getLogger(LaskennanSeurantaResourceImpl.class);
+	private final static Logger LOG = LoggerFactory.getLogger(LaskennanSeurantaResourceImpl.class);
 
 	private SeurantaDao seurantaDao;
 	private SeurantaSSEService seurantaSSEService;
 
 	@Autowired
-	public LaskennanSeurantaResourceImpl(
-			SeurantaDao seurantaDao,
-			SeurantaSSEService seurantaSSEService
-	) {
+	public LaskennanSeurantaResourceImpl(SeurantaDao seurantaDao, SeurantaSSEService seurantaSSEService) {
 		this.seurantaDao = seurantaDao;
 		this.seurantaSSEService = seurantaSSEService;
 	}
@@ -69,8 +65,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			try {
 				y = seurantaDao.haeYhteenveto(uuid);
 			} catch (Exception e) {
-				y = new YhteenvetoDto(uuid, StringUtils.EMPTY,
-						new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
+				y = new YhteenvetoDto(uuid, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
 			}
 			seurantaSSEService.paivita(y);
 		} catch (Exception e) {
@@ -88,13 +83,11 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			LaskentaDto l = seurantaDao.haeLaskenta(uuid);
 			if (l == null) {
 				LOG.error("SeurantaDao palautti null olion uuid:lle {}", uuid);
-				throw new RuntimeException(
-						"SeurantaDao palautti null olion uuid:lle " + uuid);
+				throw new RuntimeException("SeurantaDao palautti null olion uuid:lle " + uuid);
 			}
 			return l;
 		} catch (Exception e) {
-			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
-					e.getMessage());
+			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid, e.getMessage());
 			throw e;
 		}
 	}
@@ -121,20 +114,16 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
 	public LaskentaDto resetoiTilat(String uuid) {
 		try {
-			LaskentaDto ldto = seurantaDao.resetoiEiValmiitHakukohteet(uuid,
-					true);
+			LaskentaDto ldto = seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
 			if (ldto == null) {
-				LOG.error(
-						"Laskennan {} tila resetoitiin mutta ei saatu yhteenvetoa resetoinnista!",
-						uuid);
+				LOG.error( "Laskennan {} tila resetoitiin mutta ei saatu yhteenvetoa resetoinnista!", uuid);
 			} else {
 				seurantaSSEService.paivita(ldto.asYhteenveto());
 			}
 			return ldto;
 		} catch (Exception e) {
-			LOG.error(
-					"Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",
-					uuid, e.getMessage(), Arrays.toString(e.getStackTrace()));
+			LOG.error("Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",
+					  uuid, e.getMessage(), Arrays.toString(e.getStackTrace()));
 			throw e;
 		}
 	}
@@ -158,13 +147,11 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 			LaskentaDto l = seurantaDao.haeLaskenta(uuid);
 			if (l == null) {
 				LOG.error("SeurantaDao palautti null olion uuid:lle {}", uuid);
-				throw new RuntimeException(
-						"SeurantaDao palautti null olion uuid:lle " + uuid);
+				throw new RuntimeException("SeurantaDao palautti null olion uuid:lle " + uuid);
 			}
 			return l;
 		} catch (Exception e) {
-			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid,
-					e.getMessage());
+			LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid, e.getMessage());
 			throw e;
 		}
 	}
@@ -174,76 +161,63 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		LaskentaDto laskenta = seurantaDao.haeLaskenta(uuid);
 		return Response
 				.ok(laskenta)
-				.header("Content-Disposition",
-						"attachment; filename=laskenta_" + laskenta.getUuid()
-								+ ".json").build();
+				.header("Content-Disposition", "attachment; filename=laskenta_" + laskenta.getUuid()+ ".json")
+				.build();
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-	public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
+	public String luoLaskenta(
+			String hakuOid,
+			LaskentaTyyppi tyyppi,
 			Boolean erillishaku,
-			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			List<HakukohdeDto> hakukohdeOids) {
+			Integer valinnanvaihe,
+			Boolean valintakoelaskenta,
+			List<HakukohdeDto> hakukohdeOids
+	) {
 		if (hakukohdeOids == null) {
 			LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
-			throw new NullPointerException(
-					"Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
+			throw new NullPointerException("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
 		}
 		if (hakukohdeOids.isEmpty()) {
 			LOG.error("Laskentaa ei luoda tyhjalle (koko on nolla) hakukohdedto joukolle!");
-			throw new NullPointerException(
-					"Laskentaa ei luoda tyhjalle (koko on nolla) hakukohdedto joukolle!");
+			throw new NullPointerException("Laskentaa ei luoda tyhjalle (koko on nolla) hakukohdedto joukolle!");
 		}
-		hakukohdeOids
-				.forEach(hk -> {
-					if (hk.getHakukohdeOid() == null
-							|| hk.getOrganisaatioOid() == null) {
-						LOG.error(
-								"Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli hakukohde \r\n{}",
-								new GsonBuilder().setPrettyPrinting().create()
-										.toJson(hk));
-						throw new NullPointerException(
-								"Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
-					}
-				});
-		return seurantaDao.luoLaskenta(hakuOid, tyyppi,erillishaku, valinnanvaihe,
-				valintakoelaskenta, hakukohdeOids);
+		hakukohdeOids.forEach(hk -> {
+			if (hk.getHakukohdeOid() == null || hk.getOrganisaatioOid() == null) {
+				LOG.error("Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli hakukohde \r\n{}",
+						  new GsonBuilder().setPrettyPrinting().create().toJson(hk));
+				throw new NullPointerException("Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
+			}
+		});
+		return seurantaDao.luoLaskenta(hakuOid, tyyppi,erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
-			HakukohdeTila tila) {
+	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid, HakukohdeTila tila) {
 		try {
 			YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
 			if (y == null) {
-				LOG.error(
-						"Seurantaan markattiin hakukohteen {} tila {} laskentaan {} mutta ei saatu yhteenvetoa lisayksesta!",
-						hakukohdeOid, tila, uuid);
+				LOG.error("Seurantaan markattiin hakukohteen {} tila {} laskentaan {} mutta ei saatu yhteenvetoa lisayksesta!",
+						  hakukohdeOid, tila, uuid);
 			} else {
 				seurantaSSEService.paivita(y);
 			}
 			return y;
 		} catch (Exception e) {
-			LOG.error(
-					"Tilan merkkauksessa tapahtui poikkeus {}. Kayttoliittymaa ei ehka paivitetty",
-					e.getMessage());
+			LOG.error("Tilan merkkauksessa tapahtui poikkeus {}. Kayttoliittymaa ei ehka paivitetty", e.getMessage());
 			throw e;
 		}
-		//return Response.serverError().build();
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public YhteenvetoDto lisaaIlmoitusHakukohteelle(String uuid,
-			String hakukohdeOid, IlmoitusDto ilmoitus) {
-		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid,
-				ilmoitus);
+	public YhteenvetoDto lisaaIlmoitusHakukohteelle(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus) {
+		YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid, ilmoitus);
 		if (y == null) {
-			LOG.error(
-					"Seurantaan lisattiin ilmoitus laskentaan {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
-					uuid, hakukohdeOid);
+			LOG.error("Seurantaan lisattiin ilmoitus laskentaan {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
+					  uuid, hakukohdeOid);
 		} else {
 			seurantaSSEService.paivita(y);
 		}
@@ -252,14 +226,11 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
-	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid,
-			HakukohdeTila tila, IlmoitusDto ilmoitus) {
-		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila,
-				ilmoitus);
+	public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid, HakukohdeTila tila, IlmoitusDto ilmoitus) {
+		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila, ilmoitus);
 		if (y == null) {
-			LOG.error(
-					"Seurantaan paivitettiin laskennan {} tila {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
-					uuid, tila, hakukohdeOid);
+			LOG.error("Seurantaan paivitettiin laskennan {} tila {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
+					  uuid, tila, hakukohdeOid);
 		} else {
 			seurantaSSEService.paivita(y);
 		}
@@ -268,29 +239,24 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
-	public YhteenvetoDto merkkaaLaskennanTila(String uuid,
-			fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
+	public YhteenvetoDto merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
 		if (y == null) {
-			LOG.error(
-					"Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
-					uuid, tila);
+			LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
+					  uuid, tila);
 		} else {
 			seurantaSSEService.paivita(y);
 		}
-
 		return y;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
-	public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila,
-			HakukohdeTila hakukohteentila) {
+	public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila) {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
 		if (y == null) {
-			LOG.error(
-					"Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
-					uuid, tila);
+			LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
+					  uuid, tila);
 		} else {
 			seurantaSSEService.paivita(y);
 		}
@@ -303,5 +269,4 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 		seurantaDao.poistaLaskenta(uuid);
 		return Response.ok().build();
 	}
-
 }
