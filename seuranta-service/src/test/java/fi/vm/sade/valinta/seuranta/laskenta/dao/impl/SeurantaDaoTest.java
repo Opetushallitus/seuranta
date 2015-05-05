@@ -2,14 +2,10 @@ package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-import javax.xml.ws.Action;
 
 import junit.framework.Assert;
 
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
@@ -34,6 +29,7 @@ import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -132,6 +128,21 @@ public class SeurantaDaoTest {
 		YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", tila, new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
 		assertNotNull(y);
 		assertEquals(uuid, y.getUuid());
+	}
+
+	@Test
+	public void testaaLaskennanAloittaminenIlmanLaskentaaPalauttaaNull() {
+		assertNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
+	}
+
+	@Test
+	public void testaaKolmasLaskennanAloitusPalauttaaNullKunVainKaksiLaskentaaOlemassa() {
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta("hakuOid1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		seurantaDao.luoLaskenta("hakuOid2", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		assertNotNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
+		assertNotNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
+		assertNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
 	}
 
 	@Test
