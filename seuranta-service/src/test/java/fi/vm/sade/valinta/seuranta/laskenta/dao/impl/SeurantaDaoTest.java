@@ -49,16 +49,6 @@ public class SeurantaDaoTest {
 	@Autowired
 	private SeurantaDao seurantaDao;
 
-	// YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
-	// <br>
-	// YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
-	// <br>
-	// YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid,
-	// tila,ilmoitus);
-	// <br>
-	// YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid,ilmoitus);
-	// <br>
-	// YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila);
 	@Test
 	public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerrallaValmistuneelleLaskennalle() {
 		String hakuOid = "hk1";
