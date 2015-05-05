@@ -188,4 +188,15 @@ public class SeurantaDaoTest {
 		assertEquals(3, y.getHakukohteitaYhteensa());
 		assertEquals(3, y.getHakukohteitaKeskeytetty());
 	}
+
+	private String aloitaUusiLaskenta() {
+		Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+		seurantaDao.luoLaskenta("hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+		return seurantaDao.otaSeuraavaLaskentaTyonAlle();
+	}
+
+	private void assertOikeaLaskentaEiOleNull(String uuid, YhteenvetoDto y) {
+		assertNotNull(y);
+		assertEquals(uuid, y.getUuid());
+	}
 }
