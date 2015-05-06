@@ -32,8 +32,7 @@ import de.flapdoodle.embed.process.runtime.Network;
  */
 @Configuration
 public class MongoConfiguration {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(MongoConfiguration.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MongoConfiguration.class);
 	public static final String DATABASE_NAME = "fakemongodb";
 
 	final int PORT = freePort();
@@ -42,8 +41,7 @@ public class MongoConfiguration {
 		for (int i = 0; i < 10; ++i) {
 			try {
 				return Network.getFreeServerPort();
-			} catch (IOException e) {
-			}
+			} catch (IOException ignored) { }
 		}
 		return 32452 - new Random(System.currentTimeMillis()).nextInt(20000);
 	}
@@ -56,18 +54,12 @@ public class MongoConfiguration {
 				.version(Version.Main.PRODUCTION)
 				.net(new Net("127.0.0.1", PORT, Network.localhostIsIPv6()))
 				.build();
-
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
-
-		MongodExecutable mongodExecutable = null;
-		mongodExecutable = runtime.prepare(mongodConfig);
-
-		return mongodExecutable;// .newMongo();
+		return runtime.prepare(mongodConfig);
 	}
 
 	@Bean(destroyMethod = "stop")
-	public MongodProcess getMongoProcess(MongodExecutable mongodExecutable)
-			throws IOException {
+	public MongodProcess getMongoProcess(MongodExecutable mongodExecutable) throws IOException {
 		return mongodExecutable.start();
 	}
 
