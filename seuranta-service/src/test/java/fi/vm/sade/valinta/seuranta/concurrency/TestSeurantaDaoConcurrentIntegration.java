@@ -1,4 +1,4 @@
-package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
+package fi.vm.sade.valinta.seuranta.concurrency;
 
 import com.google.code.tempusfugit.concurrency.ConcurrentRule;
 import com.google.code.tempusfugit.concurrency.annotations.Concurrent;
@@ -17,22 +17,24 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
+@Ignore
 @ContextConfiguration(classes = SeurantaConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class SeurantaDaoLoadTest {
+public class TestSeurantaDaoConcurrentIntegration {
     @Rule public ConcurrentRule rule = new ConcurrentRule();
 
     @Autowired
     private SeurantaDao seurantaDao;
 
-    private static final int NUMBER_OF_CONCURRENT_LASKENTAS = 100;
+    private static final int NUMBER_OF_CONCURRENT_LASKENTAS = 500;
     private static Set<String> laskentaUuids = new HashSet<>();
+    private static final AtomicInteger counter = new AtomicInteger();
 
     @PostConstruct
     public void createData() {
@@ -48,12 +50,14 @@ public class SeurantaDaoLoadTest {
     @Concurrent(count = NUMBER_OF_CONCURRENT_LASKENTAS)
     public void testaaMonenSamanAikaisenLaskennanAloittaminenOnnistuu() {
         String laskentaUuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
-        laskentaUuids.add(laskentaUuid);
         assertNotNull(laskentaUuid);
+        laskentaUuids.add(laskentaUuid);
+        counter.getAndIncrement();
     }
 
     @AfterClass
     public static void assertUniqueLaskentaIds() {
+        assertEquals(counter.get(), NUMBER_OF_CONCURRENT_LASKENTAS);
         assertEquals(NUMBER_OF_CONCURRENT_LASKENTAS, laskentaUuids.size());
     }
 }
