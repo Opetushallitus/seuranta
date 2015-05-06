@@ -23,7 +23,11 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Ignore
+/**
+ * Test ignored by naming. Can not be run with flapdoodle. Test is intended to be run against a real local Mongo.
+ * This requires changing the MongoConfiguration to point at a real thing.
+ * @see fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration#getMongo
+ */
 @ContextConfiguration(classes = SeurantaConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TestSeurantaDaoConcurrentIntegration {
