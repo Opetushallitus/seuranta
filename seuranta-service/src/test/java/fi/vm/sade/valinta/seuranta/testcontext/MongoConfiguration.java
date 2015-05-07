@@ -1,8 +1,6 @@
 package fi.vm.sade.valinta.seuranta.testcontext;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
