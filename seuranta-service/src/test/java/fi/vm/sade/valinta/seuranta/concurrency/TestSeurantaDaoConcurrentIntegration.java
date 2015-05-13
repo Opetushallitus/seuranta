@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Test ignored by naming. Can not be run with flapdoodle. Test is intended to be run against a real local Mongo.
+ * Works only with a real mongo and can not be run with flapdoodle.
  * This requires changing the MongoConfiguration to point at a real thing.
  * @see fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration#getMongo
  */
@@ -62,8 +62,12 @@ public class TestSeurantaDaoConcurrentIntegration {
 
     @AfterClass
     public static void assertUniqueLaskentaIds() {
-        if (counter.get() == 0) return;
+        if (testIgnored()) return;
         assertEquals(counter.get(), NUMBER_OF_CONCURRENT_LASKENTAS);
         assertEquals(NUMBER_OF_CONCURRENT_LASKENTAS, laskentaUuids.size());
+    }
+
+    private static boolean testIgnored() {
+        return counter.get() == 0;
     }
 }
