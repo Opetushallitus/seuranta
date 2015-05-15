@@ -85,7 +85,7 @@ public interface LaskentaSeurantaResource {
 	 */
 	@GET
 	@Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	String otaSeuraavaLaskentaTyonAlle();
 
 	/**
