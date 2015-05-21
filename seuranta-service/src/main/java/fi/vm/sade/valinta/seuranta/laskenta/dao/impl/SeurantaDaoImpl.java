@@ -384,7 +384,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 	public String otaSeuraavaLaskentaTyonAlle() {
 		Query<Laskenta> query = datastore
 				.createQuery(Laskenta.class)
-				.field("tila").equal(LaskentaTila.ALOITAMATTA);
+				.field("tila").equal(LaskentaTila.ALOITTAMATTA);
 		UpdateOperations<Laskenta> ops = datastore
 				.createUpdateOperations(Laskenta.class)
 				.set("tila", LaskentaTila.MENEILLAAN);

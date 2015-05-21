@@ -75,7 +75,7 @@ public class Laskenta {
 		this.uuid = null;
 		this.hakuOid = hakuOid;
 		this.luotu = new Date();
-		this.tila = LaskentaTila.ALOITAMATTA;
+		this.tila = LaskentaTila.ALOITTAMATTA;
 		this.ilmoitukset = Collections.emptyMap();
 		this.valmiit = Collections.emptyList();
 		this.ohitettu = Collections.emptyList();
