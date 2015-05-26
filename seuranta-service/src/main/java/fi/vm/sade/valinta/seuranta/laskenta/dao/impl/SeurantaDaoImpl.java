@@ -274,17 +274,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
 				.field("tila").equal(LaskentaTila.MENEILLAAN);
 		UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
 		ops.set("tila", tila);
-		if (HakukohdeTila.VALMIS.equals(hakukohdeTila)) {
-			ops.set("valmiit", l.getTekematta());
-			ops.set("tekematta", Collections.emptyList());
-			ops.set("hakukohteitaTekematta", 0);
-			ops.set("hakukohteitaOhitettu", 0);
-		} else {
-			ops.set("ohitettu", l.getTekematta());
-			ops.set("tekematta", Collections.emptyList());
-			ops.set("hakukohteitaTekematta", 0);
-			ops.set("hakukohteitaOhitettu", l.getTekematta().size());
-		}
+		ops.set("valmiit", l.getTekematta());
+		ops.set("tekematta", Collections.emptyList());
+		ops.set("hakukohteitaTekematta", 0);
+		int ohitettuCount = HakukohdeTila.VALMIS.equals(hakukohdeTila) ? 0 : l.getTekematta().size();
+		ops.set("hakukohteitaOhitettu", ohitettuCount);
 		return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
 	}
 
