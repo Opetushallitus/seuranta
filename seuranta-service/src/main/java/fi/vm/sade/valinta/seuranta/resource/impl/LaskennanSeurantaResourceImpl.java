@@ -136,8 +136,10 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
 	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
-	public String otaSeuraavaLaskentaTyonAlle() {
-		return seurantaDao.otaSeuraavaLaskentaTyonAlle();
+	public Response otaSeuraavaLaskentaTyonAlle() {
+		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
+		Response.ResponseBuilder response = uuid != null ? Response.ok(uuid) : Response.noContent();
+		return response.build();
 	}
 
 	@PreAuthorize("isAuthenticated()")

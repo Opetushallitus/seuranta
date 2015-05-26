@@ -86,7 +86,7 @@ public interface LaskentaSeurantaResource {
 	@GET
 	@Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
 	@Produces(MediaType.TEXT_PLAIN)
-	String otaSeuraavaLaskentaTyonAlle();
+	Response otaSeuraavaLaskentaTyonAlle();
 
 	/**
 	 * Kaikki yksityiskohdat
