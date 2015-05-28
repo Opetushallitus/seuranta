@@ -138,6 +138,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 	@ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
 	public Response otaSeuraavaLaskentaTyonAlle() {
 		String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
+		LOG.info("Ota seuraava tyon alle: " + uuid != null ? uuid : "Ei tyota");
 		Response.ResponseBuilder response = uuid != null ? Response.ok(uuid) : Response.noContent();
 		return response.build();
 	}
