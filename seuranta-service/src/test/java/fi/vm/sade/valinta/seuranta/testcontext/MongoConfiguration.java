@@ -49,7 +49,7 @@ public class MongoConfiguration {
 		LOG.error("\r\n###\r\n### Mongo kaynnistyy porttiin {}\r\n###", PORT);
 		IMongodConfig mongodConfig = new MongodConfigBuilder()
 				.version(Version.Main.PRODUCTION)
-				.net(new Net("127.0.0.1", PORT, Network.localhostIsIPv6()))
+				.net(new Net(Network.getLocalHost().getHostAddress(), PORT, Network.localhostIsIPv6()))
 				.build();
 		MongodStarter runtime = MongodStarter.getDefaultInstance();
 		return runtime.prepare(mongodConfig);
