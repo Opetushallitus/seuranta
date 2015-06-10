@@ -9,23 +9,19 @@ import fi.vm.sade.valinta.seuranta.kela.dao.KelaDao;
 import fi.vm.sade.valinta.seuranta.resource.KelaSeurantaResource;
 
 public class KelaSeurantaResourceImpl implements KelaSeurantaResource {
+    @Autowired
+    private KelaDao kelaDao;
 
-	@Autowired
-	private KelaDao kelaDao;
+    @PreAuthorize("isAuthenticated()")
+    @Override
+    public Collection<String> tarkistaOnkoHakijatJoVietyKelanFtpPalvelimelle(String hakuOid, Collection<String> hakijaOids) {
+        return null;
+    }
 
-	@PreAuthorize("isAuthenticated()")
-	@Override
-	public Collection<String> tarkistaOnkoHakijatJoVietyKelanFtpPalvelimelle(
-			String hakuOid, Collection<String> hakijaOids) {
-
-		return null;
-	}
-
-	@PreAuthorize("isAuthenticated()")
-	@Override
-	public Collection<String> merkkaaHakijatViedyksiKelanFtpPalvelimelle(
-			String hakuOid, Collection<String> hakijaOids) {
-		return null;
-	}
+    @PreAuthorize("isAuthenticated()")
+    @Override
+    public Collection<String> merkkaaHakijatViedyksiKelanFtpPalvelimelle(String hakuOid, Collection<String> hakijaOids) {
+        return null;
+    }
 
 }
