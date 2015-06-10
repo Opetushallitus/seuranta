@@ -2,18 +2,12 @@ package fi.vm.sade.valinta.seuranta.sijoittelu.dto;
 
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormat;
+
 import java.util.Date;
 
-
-/**
- *
- * @author Jussi Jartamo
- *
- */
 public class SijoitteluDto {
-	private static final DateTimeFormatter PVMFORMATTER = DateTimeFormat
-			.forPattern("dd.MM.yyyy HH:mm");
-	
+    private static final DateTimeFormatter PVMFORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm");
+
     private final String hakuOid;
     private final boolean ajossa;
     private final Date viimeksiAjettu;
@@ -30,8 +24,7 @@ public class SijoitteluDto {
         this.ajotiheys = null;
     }
 
-    public SijoitteluDto(String hakuOid, boolean ajossa, Date viimeksiAjettu, String virhe, Date aloitusajankohta,
-                         Integer ajotiheys) {
+    public SijoitteluDto(String hakuOid, boolean ajossa, Date viimeksiAjettu, String virhe, Date aloitusajankohta, Integer ajotiheys) {
         this.hakuOid = hakuOid;
         this.ajossa = ajossa;
         this.viimeksiAjettu = viimeksiAjettu;
@@ -39,30 +32,33 @@ public class SijoitteluDto {
         this.aloitusajankohta = aloitusajankohta;
         this.ajotiheys = ajotiheys;
     }
-    
+
     public String getViimeksiAjettuFormatoituna() {
-    	if(viimeksiAjettu==null){
-    		return null;
-    	}
-		return PVMFORMATTER.print(viimeksiAjettu.getTime());
-	}
-    
+        if (viimeksiAjettu == null) {
+            return null;
+        }
+        return PVMFORMATTER.print(viimeksiAjettu.getTime());
+    }
+
     public String getAloitusajankohtaFormatoituna() {
-    	if(aloitusajankohta==null){
-    		return null;
-    	}
-    	return PVMFORMATTER.print(aloitusajankohta.getTime());
-	}
-    
+        if (aloitusajankohta == null) {
+            return null;
+        }
+        return PVMFORMATTER.print(aloitusajankohta.getTime());
+    }
+
     public String getVirhe() {
         return virhe;
     }
+
     public String getHakuOid() {
         return hakuOid;
     }
+
     public Date getViimeksiAjettu() {
         return viimeksiAjettu;
     }
+
     public boolean isAjossa() {
         return ajossa;
     }

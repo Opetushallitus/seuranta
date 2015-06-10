@@ -26,205 +26,159 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
-/**
- * 
- * @author Jussi Jartamo
- * 
- */
 @Path("seuranta")
 public interface LaskentaSeurantaResource {
-	/**
-	 * Kaikki yksityiskohdat
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/yhteenveto/{uuid}/sse")
-	@Produces(SseFeature.SERVER_SENT_EVENTS)
-	EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
 
-	/**
-	 * Yhteenvedot olemassa olevista laskennoista haulle
-	 * 
-	 * @param hakuOid
-	 * @return
-	 */
-	@GET
-	@Path("/hae/{hakuOid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid);
+    /**
+     * Kaikki yksityiskohdat
+     */
+    @GET
+    @Path("/yhteenveto/{uuid}/sse")
+    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
 
-	/**
-	 * Yhteenvedot olemassa olevista tietyn tyyppisista laskennoista haulle
-	 * 
-	 * @param hakuOid
-	 * @return
-	 */
-	@GET
-	@Path("/hae/{hakuOid}/tyyppi/{tyyppi}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid,
-			@PathParam("tyyppi") LaskentaTyyppi tyyppi);
+    /**
+     * Yhteenvedot olemassa olevista laskennoista haulle
+     */
+    @GET
+    @Path("/hae/{hakuOid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid);
 
-	/**
-	 * Yhteenvedot olemassa olevista laskennoista haulle
-	 *
-	 * @param hakuOid
-	 * @return
-	 */
-	@GET
-	@Path("/hae/{hakuOid}/kaynnissa")
-	@Produces(MediaType.APPLICATION_JSON)
-	Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(
-			@PathParam("hakuOid") String hakuOid);
+    /**
+     * Yhteenvedot olemassa olevista tietyn tyyppisista laskennoista haulle
+     */
+    @GET
+    @Path("/hae/{hakuOid}/tyyppi/{tyyppi}")
+    @Produces(MediaType.APPLICATION_JSON)
+    Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid, @PathParam("tyyppi") LaskentaTyyppi tyyppi);
 
-	/**
-	 * Työn alle otetun laskennan uuid
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
-	@Produces(MediaType.TEXT_PLAIN)
-	Response otaSeuraavaLaskentaTyonAlle();
+    /**
+     * Yhteenvedot olemassa olevista laskennoista haulle
+     */
+    @GET
+    @Path("/hae/{hakuOid}/kaynnissa")
+    @Produces(MediaType.APPLICATION_JSON)
+    Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(@PathParam("hakuOid") String hakuOid);
 
-	/**
-	 * Kaikki yksityiskohdat
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/laskenta/{uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	LaskentaDto laskenta(@PathParam("uuid") String uuid);
-	/**
-	 * Kaikki yksityiskohdat
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/kuormantasaus/laskenta/{uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	LaskentaDto kuormantasausLaskenta(@PathParam("uuid") String uuid);
+    @GET
+    @Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
+    @Produces(MediaType.TEXT_PLAIN)
+    Response otaSeuraavaLaskentaTyonAlle();
 
-	/**
-	 * Kaikki yksityiskohdat
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/lataa/{uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Response lataa(@PathParam("uuid") String uuid);
+    /**
+     * Kaikki yksityiskohdat
+     */
+    @GET
+    @Path("/laskenta/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    LaskentaDto laskenta(@PathParam("uuid") String uuid);
 
-	/**
-	 * Kaikki yksityiskohdat
-	 *
-	 * @return
-	 */
-	@GET
-	@Path("/yhteenveto/{uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	YhteenvetoDto yhteenveto(@PathParam("uuid") String uuid);
+    /**
+     * Kaikki yksityiskohdat
+     */
+    @GET
+    @Path("/kuormantasaus/laskenta/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    LaskentaDto kuormantasausLaskenta(@PathParam("uuid") String uuid);
 
-	/**
-	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa
-	 *
-	 * @param hakukohdeOid
-	 * @return
-	 */
-	@PUT
-	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
-	@Produces(MediaType.APPLICATION_JSON)
-	YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
-			@PathParam("hakukohdeOid") String hakukohdeOid,
-			@PathParam("tila") HakukohdeTila tila);
+    /**
+     * Kaikki yksityiskohdat
+     */
+    @GET
+    @Path("/lataa/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    Response lataa(@PathParam("uuid") String uuid);
 
-	/**
-	 * Paivittaa yksittaisen hakukohteen tilaa laskennassa ja jattaa ilmoituksen
-	 *
-	 * @param hakukohdeOid
-	 * @return
-	 */
-	@POST
-	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
-			@PathParam("hakukohdeOid") String hakukohdeOid,
-			@PathParam("tila") HakukohdeTila tila, IlmoitusDto ilmoitus);
+    /**
+     * Kaikki yksityiskohdat
+     */
+    @GET
+    @Path("/yhteenveto/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto yhteenveto(@PathParam("uuid") String uuid);
 
-	/**
-	 * Jattaa ilmoituksen
-	 *
-	 * @param hakukohdeOid
-	 * @return
-	 */
-	@POST
-	@Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	YhteenvetoDto lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
-			@PathParam("hakukohdeOid") String hakukohdeOid, IlmoitusDto ilmoitus);
+    /**
+     * Paivittaa yksittaisen hakukohteen tilaa laskennassa
+     */
+    @PUT
+    @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+                                         @PathParam("hakukohdeOid") String hakukohdeOid,
+                                         @PathParam("tila") HakukohdeTila tila);
 
-	/**
-	 * Resetoi hakukohteiden tilat. Poistaa logit. Sailoo valmiit tilat.
-	 *
-	 * @return
-	 */
-	@PUT
-	@Path("/kuormantasaus/laskenta/{uuid}/resetoi")
-	@Produces(MediaType.APPLICATION_JSON)
-	LaskentaDto resetoiTilat(@PathParam("uuid") String uuid);
+    /**
+     * Paivittaa yksittaisen hakukohteen tilaa laskennassa ja jattaa ilmoituksen
+     */
+    @POST
+    @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+                                         @PathParam("hakukohdeOid") String hakukohdeOid,
+                                         @PathParam("tila") HakukohdeTila tila, IlmoitusDto ilmoitus);
 
-	/**
-	 * Paivittaa laskennan tilan
-	 *
-	 * @return
-	 */
-	@PUT
-	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
-	@Produces(MediaType.APPLICATION_JSON)
-	YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
-			@PathParam("tila") LaskentaTila tila);
+    /**
+     * Jattaa ilmoituksen
+     */
+    @POST
+    @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    YhteenvetoDto lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
+                                             @PathParam("hakukohdeOid") String hakukohdeOid, IlmoitusDto ilmoitus);
 
-	/**
-	 * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
-	 *
-	 * @return
-	 */
-	@PUT
-	@Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
-	@Produces(MediaType.APPLICATION_JSON)
-	YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
-			@PathParam("tila") LaskentaTila tila,
-			@PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
+    /**
+     * Resetoi hakukohteiden tilat. Poistaa logit. Sailoo valmiit tilat.
+     */
+    @PUT
+    @Path("/kuormantasaus/laskenta/{uuid}/resetoi")
+    @Produces(MediaType.APPLICATION_JSON)
+    LaskentaDto resetoiTilat(@PathParam("uuid") String uuid);
 
-	/**
-	 * Luo uuden laskennan seurantaan
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return UUID
-	 */
-	@POST
-	@Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.TEXT_PLAIN)
-	String luoLaskenta(@PathParam("hakuOid") String hakuOid,
-			@PathParam("tyyppi") LaskentaTyyppi tyyppi,
-			@QueryParam("erillishaku") Boolean erillishaku,
-			@QueryParam("valinnanvaihe") Integer valinnanvaihe,
-			@QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
-			List<HakukohdeDto> hakukohdeOids);
+    /**
+     * Paivittaa laskennan tilan
+     */
+    @PUT
+    @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+                                       @PathParam("tila") LaskentaTila tila);
 
-	/**
-	 * Poistaa laskennan
-	 *
-	 * @return 200 OK jos onnistui
-	 */
-	@DELETE
-	@Path("/kuormantasaus/laskenta/{uuid}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Response poistaLaskenta(@PathParam("uuid") String uuid);
+    /**
+     * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
+     */
+    @PUT
+    @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+                                       @PathParam("tila") LaskentaTila tila,
+                                       @PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
+
+    /**
+     * Luo uuden laskennan seurantaan
+     *
+     * @return UUID
+     */
+    @POST
+    @Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    String luoLaskenta(@PathParam("hakuOid") String hakuOid,
+                       @PathParam("tyyppi") LaskentaTyyppi tyyppi,
+                       @QueryParam("erillishaku") Boolean erillishaku,
+                       @QueryParam("valinnanvaihe") Integer valinnanvaihe,
+                       @QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
+                       List<HakukohdeDto> hakukohdeOids);
+
+    /**
+     * Poistaa laskennan
+     *
+     * @return 200 OK jos onnistui
+     */
+    @DELETE
+    @Path("/kuormantasaus/laskenta/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    Response poistaLaskenta(@PathParam("uuid") String uuid);
 }
