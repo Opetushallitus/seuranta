@@ -13,38 +13,34 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 
 /**
- * 
- * @author Jussi Jartamo
- * 
  *         Siivoa paivaa vanhemmat laskennat pois kannasta. Tarkistus tehdaan
  *         kolmesti paivassa.
  */
 @Component
 public class KannanSiivontaServiceImpl extends TimerTask {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(KannanSiivontaServiceImpl.class);
-	private static final String NIMI = "Seurantakannan siivontadaemoni";
-	private final long PERIOD = TimeUnit.HOURS.toMillis(8L);
-	private final Timer timer;
-	private final SeurantaDao seurantaDao;
+    private static final Logger LOG = LoggerFactory.getLogger(KannanSiivontaServiceImpl.class);
+    private static final String NIMI = "Seurantakannan siivontadaemoni";
+    private final long PERIOD = TimeUnit.HOURS.toMillis(8L);
+    private final Timer timer;
+    private final SeurantaDao seurantaDao;
 
-	@Autowired
-	public KannanSiivontaServiceImpl(SeurantaDao seurantaDao) {
-		super();
-		this.seurantaDao = seurantaDao;
-		this.timer = new Timer(NIMI, true);
-		this.timer.scheduleAtFixedRate(this, PERIOD, PERIOD);
-	}
+    @Autowired
+    public KannanSiivontaServiceImpl(SeurantaDao seurantaDao) {
+        super();
+        this.seurantaDao = seurantaDao;
+        this.timer = new Timer(NIMI, true);
+        this.timer.scheduleAtFixedRate(this, PERIOD, PERIOD);
+    }
 
-	@Override
-	public void run() {
-		LOG.info("Aloitetaan seurantakannan siivous");
-		try {
-			seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
-		} catch (Exception e) {
-			LOG.error("Seurantakannan siivous epaonnistui virheeseen {}",
-					e.getMessage());
-		}
-	}
+    @Override
+    public void run() {
+        LOG.info("Aloitetaan seurantakannan siivous");
+        try {
+            seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
+        } catch (Exception e) {
+            LOG.error("Seurantakannan siivous epaonnistui virheeseen {}",
+                    e.getMessage());
+        }
+    }
 }
