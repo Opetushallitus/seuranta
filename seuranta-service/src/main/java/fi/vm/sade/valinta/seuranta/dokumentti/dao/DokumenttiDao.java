@@ -5,11 +5,7 @@ import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
 
 import java.util.List;
 
-/**
- * @author Jussi Jartamo
- */
 public interface DokumenttiDao {
-
     String luoDokumentti(String kuvaus);
 
     DokumenttiDto haeDokumentti(String uuid);
