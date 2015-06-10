@@ -9,9 +9,8 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
 
 public class Sijoittelu {
-	
-	@Id
-	private final ObjectId uuid;
+    @Id
+    private final ObjectId uuid;
     private final String hakuOid;
     private boolean jatkuvaSijoitteluPaalla;
     private Date viimeksiAjettu;
@@ -20,47 +19,52 @@ public class Sijoittelu {
     private Integer ajotiheys;
 
     public Sijoittelu() {
-		this.uuid = null;
-		this.hakuOid = null;
-		this.jatkuvaSijoitteluPaalla = false;
-		this.viimeksiAjettu = null;
-		this.ilmoitukset = null;
+        this.uuid = null;
+        this.hakuOid = null;
+        this.jatkuvaSijoitteluPaalla = false;
+        this.viimeksiAjettu = null;
+        this.ilmoitukset = null;
         this.aloitusajankohta = null;
         this.ajotiheys = null;
-	}
-    
-    public Sijoittelu(String hakuOid, boolean jatkuvaSijoitteluPaalla, Date viimeksiAjettu, Date aloitusajankohta,
-                      Integer ajotiheys) {
-		this.uuid = null;
-		this.hakuOid = hakuOid;
-		this.jatkuvaSijoitteluPaalla = jatkuvaSijoitteluPaalla;
-		this.viimeksiAjettu = viimeksiAjettu;
-		this.ilmoitukset = Collections.emptyList();
+    }
+
+    public Sijoittelu(String hakuOid, boolean jatkuvaSijoitteluPaalla, Date viimeksiAjettu, Date aloitusajankohta, Integer ajotiheys) {
+        this.uuid = null;
+        this.hakuOid = hakuOid;
+        this.jatkuvaSijoitteluPaalla = jatkuvaSijoitteluPaalla;
+        this.viimeksiAjettu = viimeksiAjettu;
+        this.ilmoitukset = Collections.emptyList();
         this.aloitusajankohta = aloitusajankohta;
         this.ajotiheys = ajotiheys;
-	}
-    
+    }
+
     public String getHakuOid() {
-		return hakuOid;
-	}
+        return hakuOid;
+    }
+
     public List<Ilmoitus> getIlmoitukset() {
-		return ilmoitukset;
-	}
+        return ilmoitukset;
+    }
+
     public ObjectId getUuid() {
-		return uuid;
-	}
+        return uuid;
+    }
+
     public Date getViimeksiAjettu() {
-		return viimeksiAjettu;
-	}
+        return viimeksiAjettu;
+    }
+
     public boolean isJatkuvaSijoitteluPaalla() {
-		return jatkuvaSijoitteluPaalla;
-	}
+        return jatkuvaSijoitteluPaalla;
+    }
+
     public void setJatkuvaSijoitteluPaalla(boolean jatkuvaSijoitteluPaalla) {
-		this.jatkuvaSijoitteluPaalla = jatkuvaSijoitteluPaalla;
-	}
+        this.jatkuvaSijoitteluPaalla = jatkuvaSijoitteluPaalla;
+    }
+
     public void setViimeksiAjettu(Date viimeksiAjettu) {
-		this.viimeksiAjettu = viimeksiAjettu;
-	}
+        this.viimeksiAjettu = viimeksiAjettu;
+    }
 
     public Date getAloitusajankohta() {
         return aloitusajankohta;
