@@ -20,20 +20,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Jussi Jartamo
- */
 @Component
 public class DokumentinSeurantaSSEServiceImpl implements DokumentinSeurantaSSEService {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DokumentinSeurantaSSEServiceImpl.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(DokumentinSeurantaSSEServiceImpl.class);
 
     private final Cache<String, SseBroadcaster> EVENT_CACHE = CacheBuilder
             .newBuilder().expireAfterAccess(45, TimeUnit.MINUTES)
             .removalListener(new RemovalListener<String, SseBroadcaster>() {
-                public void onRemoval(
-                        RemovalNotification<String, SseBroadcaster> notification) {
+                public void onRemoval(RemovalNotification<String, SseBroadcaster> notification) {
                     try {
                         notification.getValue().closeAll();
                     } catch (Exception e) {
