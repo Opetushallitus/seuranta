@@ -14,143 +14,60 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 
-/**
- * 
- * @author Jussi Jartamo
- * 
- */
 public interface SeurantaDao {
 
-	/**
-	 * Siivoaa ylimaaraiset laskennat pois
-	 */
-	void siivoa(Date viimeinenSailottavaPaivamaara);
+    /**
+     * Siivoaa ylimaaraiset laskennat pois
+     */
+    void siivoa(Date viimeinenSailottavaPaivamaara);
 
-	/**
-	 * Kaikki laskentaan liittyva tieto
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	LaskentaDto haeLaskenta(String uuid);
+    /**
+     * Kaikki laskentaan liittyva tieto
+     */
+    LaskentaDto haeLaskenta(String uuid);
 
-	/**
-	 * Yhteenveto laskennan kulusta
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	YhteenvetoDto haeYhteenveto(String uuid);
+    /**
+     * Yhteenveto laskennan kulusta
+     */
+    YhteenvetoDto haeYhteenveto(String uuid);
 
-	/**
-	 * Yhteenvedot laskennan kulusta
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid);
+    /**
+     * Yhteenvedot laskennan kulusta
+     */
+    Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid);
 
-	/**
-	 * Yhteenvedot laskennan kulusta
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid,
-			LaskentaTyyppi tyyppi);
+    /**
+     * Yhteenvedot laskennan kulusta
+     */
+    Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid, LaskentaTyyppi tyyppi);
 
-	/**
-	 * Yhteenvedot kaynnissa olevien laskentojen kulusta
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Collection<YhteenvetoDto> haeKaynnissaOlevienYhteenvedotHaulle(
-			String hakuOid);
+    /**
+     * Yhteenvedot kaynnissa olevien laskentojen kulusta
+     */
+    Collection<YhteenvetoDto> haeKaynnissaOlevienYhteenvedotHaulle(String hakuOid);
 
-	/**
-	 * 
-	 * @param hakuOid
-	 * @param hakukohdeOids
-	 * @return uuid
-	 */
-	String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi,
-			Boolean erillishaku,
-			Integer valinnanvaihe, Boolean valintakoelaskenta,
-			Collection<HakukohdeDto> hakukohdeOids);
+    String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
+                       Integer valinnanvaihe, Boolean valintakoelaskenta,
+                       Collection<HakukohdeDto> hakukohdeOids);
 
-	/**
-	 * 
-	 * @param uuid
-	 */
-	void poistaLaskenta(String uuid);
+    void poistaLaskenta(String uuid);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid,
-			HakukohdeTila tila);
+    YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid,
-			HakukohdeTila tila, IlmoitusDto ilmoitus);
+    YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila, IlmoitusDto ilmoitus);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid,
-			IlmoitusDto ilmoitus);
+    YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila);
+    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila,
-			HakukohdeTila hakukohdeTila);
+    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila);
 
-	/**
-	 * 
-	 * @param uuid
-	 * @param hakukohdeOid
-	 * @param tila
-	 */
-	LaskentaDto resetoiEiValmiitHakukohteet(String uuid,
-			boolean nollaaIlmoitukset);
+    LaskentaDto resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset);
 
-	/**
-	 * 
-	 * 
-	 * @param uuid
-	 * @param tyyppi
-	 * @param ilmoitus
-	 */
-	void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus);
+    void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus);
 
-	/**
-	 *
-	 *
-	 * @return uuid
-	 */
-	String otaSeuraavaLaskentaTyonAlle();
+    /**
+     * @return uuid
+     */
+    String otaSeuraavaLaskentaTyonAlle();
 }
