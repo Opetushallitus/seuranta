@@ -2,9 +2,6 @@ package fi.vm.sade.valinta.seuranta.dto;
 
 import java.util.List;
 
-/**
- * @author Jussi Jartamo
- */
 public class DokumenttiDto {
     private final String uuid;
     private final String dokumenttiId;

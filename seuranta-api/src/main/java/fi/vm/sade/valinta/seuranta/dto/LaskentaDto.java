@@ -2,89 +2,83 @@ package fi.vm.sade.valinta.seuranta.dto;
 
 import java.util.List;
 
-/**
- * 
- * @author Jussi Jartamo
- * 
- */
 public class LaskentaDto {
+    private final String uuid;
+    private final String hakuOid;
+    private final long luotu;
+    private final Boolean erillishaku;
+    private final LaskentaTila tila;
+    private final LaskentaTyyppi tyyppi;
+    private final List<HakukohdeDto> hakukohteet;
+    private final Integer valinnanvaihe;
+    private final Boolean valintakoelaskenta;
 
-	private final String uuid;
-	private final String hakuOid;
-	private final long luotu;
-	private final Boolean erillishaku;
-	private final LaskentaTila tila;
-	private final LaskentaTyyppi tyyppi;
-	private final List<HakukohdeDto> hakukohteet;
-	private final Integer valinnanvaihe;
-	private final Boolean valintakoelaskenta;
+    public LaskentaDto(String uuid, String hakuOid, long luotu,
+                       LaskentaTila tila, LaskentaTyyppi tyyppi,
+                       List<HakukohdeDto> hakukohteet,
+                       Boolean erillishaku,
+                       Integer valinnanvaihe,
+                       Boolean valintakoelaskenta) {
+        this.uuid = uuid;
+        this.hakuOid = hakuOid;
+        this.luotu = luotu;
+        this.tyyppi = tyyppi;
+        this.tila = tila;
+        this.hakukohteet = hakukohteet;
+        this.erillishaku = erillishaku;
+        this.valinnanvaihe = valinnanvaihe;
+        this.valintakoelaskenta = valintakoelaskenta;
+    }
 
-	public LaskentaDto(String uuid, String hakuOid, long luotu,
-			LaskentaTila tila, LaskentaTyyppi tyyppi,
-			List<HakukohdeDto> hakukohteet,
-			Boolean erillishaku,
-			Integer valinnanvaihe,
-			Boolean valintakoelaskenta) {
-		this.uuid = uuid;
-		this.hakuOid = hakuOid;
-		this.luotu = luotu;
-		this.tyyppi = tyyppi;
-		this.tila = tila;
-		this.hakukohteet = hakukohteet;
-		this.erillishaku = erillishaku;
-		this.valinnanvaihe = valinnanvaihe;
-		this.valintakoelaskenta = valintakoelaskenta;
-	}
+    public YhteenvetoDto asYhteenveto() {
+        int valmiit = 0;
+        int keskeytetty = 0;
+        if (hakukohteet == null) {
+            return new YhteenvetoDto(uuid, hakuOid, luotu, tila, 0, valmiit, keskeytetty);
+        }
+        for (HakukohdeDto h : hakukohteet) {
+            if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
+                ++keskeytetty;
+            } else if (HakukohdeTila.VALMIS.equals(h.getTila())) {
+                ++valmiit;
+            }
+        }
+        return new YhteenvetoDto(uuid, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty);
+    }
 
-	public YhteenvetoDto asYhteenveto() {
-		int valmiit = 0;
-		int keskeytetty = 0;
-		if (hakukohteet == null) {
-			return new YhteenvetoDto(uuid, hakuOid, luotu, tila, 0, valmiit, keskeytetty);
-		}
-		for (HakukohdeDto h : hakukohteet) {
-			if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
-				++keskeytetty;
-			} else if (HakukohdeTila.VALMIS.equals(h.getTila())) {
-				++valmiit;
-			}
-		}
-		return new YhteenvetoDto(uuid, hakuOid, luotu, tila,
-				hakukohteet.size(), valmiit, keskeytetty);
-	}
+    public Integer getValinnanvaihe() {
+        return valinnanvaihe;
+    }
 
-	public Integer getValinnanvaihe() {
-		return valinnanvaihe;
-	}
+    public Boolean getValintakoelaskenta() {
+        return valintakoelaskenta;
+    }
 
-	public Boolean getValintakoelaskenta() {
-		return valintakoelaskenta;
-	}
+    public LaskentaTila getTila() {
+        return tila;
+    }
 
-	public LaskentaTila getTila() {
-		return tila;
-	}
+    public List<HakukohdeDto> getHakukohteet() {
+        return hakukohteet;
+    }
 
-	public List<HakukohdeDto> getHakukohteet() {
-		return hakukohteet;
-	}
+    public String getHakuOid() {
+        return hakuOid;
+    }
 
-	public String getHakuOid() {
-		return hakuOid;
-	}
+    public Long getLuotu() {
+        return luotu;
+    }
 
-	public Long getLuotu() {
-		return luotu;
-	}
+    public String getUuid() {
+        return uuid;
+    }
 
-	public String getUuid() {
-		return uuid;
-	}
+    public LaskentaTyyppi getTyyppi() {
+        return tyyppi;
+    }
 
-	public LaskentaTyyppi getTyyppi() {
-		return tyyppi;
-	}
-	public Boolean isErillishaku() {
-		return erillishaku;
-	}
+    public Boolean isErillishaku() {
+        return erillishaku;
+    }
 }

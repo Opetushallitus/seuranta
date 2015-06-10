@@ -1,12 +1,6 @@
 package fi.vm.sade.valinta.seuranta.dto;
 
-/**
- * @author Jussi Jartamo
- *
- * Yksinkertaisempi versio ilmoituksesta
- */
 public class VirheilmoitusDto {
-
     private final String tyyppi;
     private final String ilmoitus;
 
