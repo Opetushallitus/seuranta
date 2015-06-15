@@ -37,6 +37,7 @@ public class DokumenttiDto {
     public boolean isValmis() {
         return dokumenttiId != null;
     }
+
     public boolean isVirheita() {
         return virheilmoitukset != null && !virheilmoitukset.isEmpty();
     }

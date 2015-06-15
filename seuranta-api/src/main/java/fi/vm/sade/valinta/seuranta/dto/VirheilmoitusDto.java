@@ -8,6 +8,7 @@ public class VirheilmoitusDto {
         this.tyyppi = null;
         this.ilmoitus = null;
     }
+
     public VirheilmoitusDto(String tyyppi, String ilmoitus) {
         this.tyyppi = tyyppi;
         this.ilmoitus = ilmoitus;
