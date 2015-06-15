@@ -31,9 +31,6 @@ import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
 
-/**
- * @author Jussi Jartamo
- */
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
@@ -47,8 +44,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
     @Override
     public void siivoa(Date asti) {
-        Query<Laskenta> query = datastore
-                .createQuery(Laskenta.class)
+        Query<Laskenta> query = datastore.createQuery(Laskenta.class)
                 .field("luotu").lessThanOrEq(asti);
         WriteResult wr = datastore.delete(query);
         LOG.info("Seurantakannasta poistettiin {} laskentaa!", wr.getN());
@@ -91,7 +87,6 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 dbobj("$match", dbobj("hakuOid", hakuOid)),
                 dbobjmap("$project", YHTEENVETO_FIELDS)
         ));
-
         Iterator<DBObject> i = aggregation.results().iterator();
         if (!i.hasNext()) {
             return Collections.emptyList();
@@ -168,15 +163,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(
-                uuid,
-                hakuOid,
-                luotuTimestamp,
-                tila,
-                hakukohteitaYhteensa,
-                hakukohteitaValmiina,
-                hakukohteitaKeskeytetty
-        );
+        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
     }
 
     private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta) {
@@ -197,22 +184,12 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(
-                uuid,
-                hakuOid,
-                luotuTimestamp,
-                tila,
-                hakukohteitaYhteensa,
-                hakukohteitaValmiina,
-                hakukohteitaKeskeytetty
-        );
+        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
     }
 
     @Override
     public void poistaLaskenta(String uuid) {
-        Query<Laskenta> query = datastore
-                .createQuery(Laskenta.class)
-                .field("_id").equal(new ObjectId(uuid));
+        Query<Laskenta> query = datastore.createQuery(Laskenta.class).field("_id").equal(new ObjectId(uuid));
         datastore.delete(query);
     }
 
