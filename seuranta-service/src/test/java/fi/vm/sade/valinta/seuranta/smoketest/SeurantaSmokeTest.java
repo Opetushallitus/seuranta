@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
  * @author Jussi Jartamo
  */
 public class SeurantaSmokeTest {
-    public static final Gson GSON= new GsonBuilder()
+    public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Date.class, (JsonDeserializer) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
             .create();
     private static final Logger LOG = LoggerFactory.getLogger(SeurantaSmokeTest.class);
