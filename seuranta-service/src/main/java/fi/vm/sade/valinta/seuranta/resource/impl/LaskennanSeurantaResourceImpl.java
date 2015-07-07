@@ -114,8 +114,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             }
             return ldto;
         } catch (Exception e) {
-            LOG.error("Seurantapalvelu epaonnistui resetoimaan laskennan {}. Virhe {}\r\n{}",
-                    uuid, e.getMessage(), Arrays.toString(e.getStackTrace()));
+            LOG.error("Seurantapalvelu epaonnistui resetoimaan laskennan uuid="+ uuid, e);
             throw e;
         }
     }

@@ -50,7 +50,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             }
             return Response.ok(dokumenttiDao.haeDokumentti(uuid)).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa dokumenttia luettauessa {}: {} {}", uuid, t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poikkeus dokumentinseurannassa dokumenttia luettauessa uuid=" + uuid, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -66,7 +66,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä({}) paivitettaessa uuid:lle {}: {} {}", dokumenttiId, uuid, t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä(" + dokumenttiId + ") paivitettaessa uuid:lle " +  uuid, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -78,20 +78,18 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
         try {
             sseService.rekisteroi(uuid, eventOutput);
         } catch (Exception e) {
-            LOG.error("Rekisterointi epaonnistui! {}: {}", uuid, e.getMessage());
+            LOG.error("Rekisterointi epaonnistui! uuid=" + uuid, e);
         }
         try {
             DokumenttiDto y = null;
             try {
                 y = dokumenttiDao.haeDokumentti(uuid);
             } catch (Exception e) {
-                LOG.error(
-                        "Dokumenttia ei ole viela saatavilla {}. Ehka seurantaoliota ei ole ehditty viela muodostaa. {}",
-                        uuid, e.getMessage());
+                LOG.error("Dokumenttia ei ole viela saatavilla. Ehka seurantaoliota ei ole ehditty viela muodostaa uuid=" + uuid, e);
             }
             sseService.paivita(y);
         } catch (Exception e) {
-            LOG.error("Dokumenttia ei ole viela saatavilla {}. Ehka seurantaoliota ei ole ehditty viela muodostaa. {}", uuid, e.getMessage());
+            LOG.error("Dokumenttia ei ole viela saatavilla. Ehka seurantaoliota ei ole ehditty viela muodostaa uuid=" + uuid, e);
         }
         LOG.debug("REKISTEROITY {}", uuid);
         return eventOutput;
@@ -106,7 +104,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             }
             return Response.ok(dokumenttiDao.luoDokumentti(kuvaus)).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa uutta dokumenttia luotaessa kuvauksella {}: {} {}", kuvaus, t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poikkeus dokumentinseurannassa uutta dokumenttia luotaessa kuvauksella " + kuvaus, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -123,7 +121,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa kuvausta({}) paivitettaessa uuid:lle {}: {} {}", kuvaus, uuid, t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa uuid:lle " + uuid, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -139,7 +137,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa virhetiloja lisattaessa: {} {}", t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poikkeus dokumentinseurannassa virhetiloja lisattaessa!", t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -154,7 +152,7 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             dokumenttiDao.poistaDokumentti(uuid);
             return Response.ok(uuid).build();
         } catch (Throwable t) {
-            LOG.error("Poistaminen epäonnistui virheeseen: {} {}", t.getMessage(), Arrays.toString(t.getStackTrace()));
+            LOG.error("Poistaminen epäonnistui virheeseen!", t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
