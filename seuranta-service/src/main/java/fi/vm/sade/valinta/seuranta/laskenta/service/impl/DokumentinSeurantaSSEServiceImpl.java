@@ -67,8 +67,7 @@ public class DokumentinSeurantaSSEServiceImpl implements DokumentinSeurantaSSESe
             });
             outputs.add(event);
         } catch (ExecutionException e) {
-            LOG.error("Eventoutputin lisays cacheen epaonnistui! {}",
-                    e.getMessage());
+            LOG.error("Eventoutputin lisays cacheen epaonnistui!", e);
         }
     }
 

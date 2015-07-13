@@ -165,7 +165,7 @@ public class Laskenta {
                     getTila(), getTyyppi(), hakukohteet, erillishaku, valinnanvaihe,
                     valintakoelaskenta);
         } catch (Exception e) {
-            LOG.error("LaskentaDto:n muodostus Laskentaentiteetista epaonnistui! {}", e.getMessage());
+            LOG.error("LaskentaDto:n muodostus Laskentaentiteetista epaonnistui!", e);
             throw e;
         }
     }

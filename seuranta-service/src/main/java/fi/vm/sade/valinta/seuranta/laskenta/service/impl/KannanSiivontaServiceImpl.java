@@ -39,8 +39,7 @@ public class KannanSiivontaServiceImpl extends TimerTask {
         try {
             seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
         } catch (Exception e) {
-            LOG.error("Seurantakannan siivous epaonnistui virheeseen {}",
-                    e.getMessage());
+            LOG.error("Seurantakannan siivous epaonnistui virheeseen!", e);
         }
     }
 }

@@ -65,15 +65,10 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
     public void rekisteroi(String uuid, final EventOutput event) {
         SseBroadcaster outputs;
         try {
-            outputs = EVENT_CACHE.get(uuid, new Callable<SseBroadcaster>() {
-                @Override
-                public SseBroadcaster call() throws Exception {
-                    return new SseBroadcaster();
-                }
-            });
+            outputs = EVENT_CACHE.get(uuid, () -> new SseBroadcaster());
             outputs.add(event);
         } catch (ExecutionException e) {
-            LOG.error("Eventoutputin lisays cacheen epaonnistui! {}", e.getMessage());
+            LOG.error("Eventoutputin lisays cacheen epaonnistui!", e);
         }
     }
 

@@ -52,7 +52,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         try {
             seurantaSSEService.rekisteroi(uuid, eventOutput);
         } catch (Exception e) {
-            LOG.error("Rekisterointi epaonnistui! {}: {}", uuid, e.getMessage());
+            LOG.error("Rekisterointi epaonnistui!" + uuid, e);
         }
         try {
             YhteenvetoDto y = null;
@@ -63,7 +63,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             }
             seurantaSSEService.paivita(y);
         } catch (Exception e) {
-            LOG.error("Yhteenvetoa ei ole viela saatavilla {}. Ehka laskentaa ei ole ehditty viela muodostaa. {}", uuid, e.getMessage());
+            LOG.error("Yhteenvetoa ei ole viela saatavilla. Ehka laskentaa ei ole ehditty viela muodostaa." + uuid, e);
         }
         LOG.debug("REKISTEROITY {}", uuid);
         return eventOutput;
@@ -79,7 +79,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             }
             return l;
         } catch (Exception e) {
-            LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid, e.getMessage());
+            LOG.error("Ei saatu laskentaa uuid:lle " + uuid, e);
             throw e;
         }
     }
@@ -145,7 +145,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             }
             return l;
         } catch (Exception e) {
-            LOG.error("Ei saatu laskentaa uuid:lle {}: {}", uuid, e.getMessage());
+            LOG.error("Ei saatu laskentaa uuid:lle " + uuid, e);
             throw e;
         }
     }
@@ -195,7 +195,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             }
             return y;
         } catch (Exception e) {
-            LOG.error("Tilan merkkauksessa tapahtui poikkeus {}. Kayttoliittymaa ei ehka paivitetty", e.getMessage());
+            LOG.error("Tilan merkkauksessa tapahtui poikkeus. Kayttoliittymaa ei ehka paivitetty", e);
             throw e;
         }
     }
