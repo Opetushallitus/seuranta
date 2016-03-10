@@ -2,6 +2,7 @@ package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -92,6 +93,7 @@ public class SeurantaDaoTest {
 
     @Test
     public void testaaLaskennanAloittaminenIlmanLaskentaaPalauttaaNull() {
+        seurantaDao.siivoa(new Date());
         assertNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
 
