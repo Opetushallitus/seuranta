@@ -191,8 +191,9 @@ public class SeurantaDaoTest {
     public void testaaTyonAlleOttaminenPalauttaaVanhimmanAloittamattaOlleenLaskennan() {
         Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
         String oldestUuid = seurantaDao.luoLaskenta("hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
-        seurantaDao.luoLaskenta("hk2", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        String newestUuid = seurantaDao.luoLaskenta("hk2", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
         assertEquals(oldestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
+        assertEquals(newestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
 
     private String aloitaUusiLaskenta() {
