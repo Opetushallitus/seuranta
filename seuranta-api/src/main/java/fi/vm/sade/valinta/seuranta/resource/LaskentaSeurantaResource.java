@@ -148,6 +148,7 @@ public interface LaskentaSeurantaResource {
     @POST
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila, IlmoitusDto ilmoitus);
     /**
@@ -162,6 +163,7 @@ public interface LaskentaSeurantaResource {
     @POST
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila,
                                        @PathParam("hakukohteentila") HakukohdeTila hakukohteentila,
