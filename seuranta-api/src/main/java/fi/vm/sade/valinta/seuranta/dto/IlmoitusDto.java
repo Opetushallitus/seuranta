@@ -10,6 +10,10 @@ public class IlmoitusDto {
     private long paivamaara;
     private List<String> data;
 
+    public IlmoitusDto() {
+        // Dummy constructor for JSON parser
+    }
+
     public IlmoitusDto(IlmoitusTyyppi tyyppi, String otsikko) {
         this.tyyppi = tyyppi;
         this.otsikko = otsikko;
