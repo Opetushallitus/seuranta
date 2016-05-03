@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class SeurantaDaoTest {
     @Test
     public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerrallaValmistuneelleLaskennalle() {
         String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
@@ -66,21 +67,21 @@ public class SeurantaDaoTest {
     @Test
     public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerralla() {
         String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaLaskennanTila() {
         String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaLaskennanTilaMerkatulleLaskennalle() {
         String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
@@ -136,9 +137,9 @@ public class SeurantaDaoTest {
             assertTrue("HakukohdeOid puuttui", hk.getHakukohdeOid() != null);
         });
         assertEquals(LaskentaTila.MENEILLAAN, seurantaDao.haeLaskenta(uuid).getTila());
-        seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS);
+        seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
-        seurantaDao.merkkaaTila(uuid, LaskentaTila.PERUUTETTU);
+        seurantaDao.merkkaaTila(uuid, LaskentaTila.PERUUTETTU, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
         seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS, new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
         seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei3"));
@@ -160,7 +161,7 @@ public class SeurantaDaoTest {
         );
         seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.VALINTARYHMA, true, null, null, hakukohdeOids);
         String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.VALMIS);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create().toJson(y));
         assertEquals(LaskentaTila.VALMIS, y.getTila());
         assertEquals(3, y.getHakukohteitaValmiina());
@@ -179,7 +180,7 @@ public class SeurantaDaoTest {
 
         seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.VALINTARYHMA, true, null, null, hakukohdeOids);
         String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         LOG.error("### {}", new GsonBuilder().setPrettyPrinting().create().toJson(y));
         assertEquals(LaskentaTila.VALMIS, y.getTila());
         assertEquals(0, y.getHakukohteitaValmiina());

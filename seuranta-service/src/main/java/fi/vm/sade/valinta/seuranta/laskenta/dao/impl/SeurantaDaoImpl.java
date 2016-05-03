@@ -231,35 +231,38 @@ public class SeurantaDaoImpl implements SeurantaDao {
     }
 
     @Override
-    public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila) {
-        Query<Laskenta> query = datastore
+    public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, Optional<IlmoitusDto> ilmoitusDtoOptional) {
+        final Query<Laskenta> query = datastore
                 .createQuery(Laskenta.class)
                 .field("_id").equal(new ObjectId(uuid))
                 .field("tila").equal(LaskentaTila.MENEILLAAN);
-        UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
+
+        final UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
         ops.set("tila", tila);
+        ilmoitusDtoOptional.ifPresent(ilmoitus -> ops.set("ilmoitus", asIlmoitus(ilmoitus)));
         return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
     }
 
     @Override
-    public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila) {
+    public YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila, Optional<IlmoitusDto> ilmoitusDtoOptional) {
         Laskenta l = datastore.get(Laskenta.class, new ObjectId(uuid));
         Query<Laskenta> query = datastore.createQuery(Laskenta.class)
                 .field("_id").equal(new ObjectId(uuid))
                 .field("tila").equal(LaskentaTila.MENEILLAAN);
-        UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
+        final UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
         ops.set("tila", tila);
         ops.set("valmiit", l.getTekematta());
         ops.set("tekematta", Collections.emptyList());
         ops.set("hakukohteitaTekematta", 0);
         int ohitettuCount = HakukohdeTila.VALMIS.equals(hakukohdeTila) ? 0 : l.getTekematta().size();
         ops.set("hakukohteitaOhitettu", ohitettuCount);
+        ilmoitusDtoOptional.ifPresent(ilmoitus -> ops.set("ilmoitus", asIlmoitus(ilmoitus)));
         return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
     }
 
     @Override
     public YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus) {
-        Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(), ilmoitus.getData());
+        Ilmoitus i = asIlmoitus(ilmoitus);
         Query<Laskenta> query = datastore
                 .createQuery(Laskenta.class)
                 .field("_id").equal(new ObjectId(uuid));
@@ -271,7 +274,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
     @Override
     public YhteenvetoDto merkkaaTila(String uuid, String hakukohdeOid, HakukohdeTila tila, IlmoitusDto ilmoitus) {
-        Ilmoitus i = new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(), ilmoitus.getData());
+        Ilmoitus i = asIlmoitus(ilmoitus);
         if (HakukohdeTila.VALMIS.equals(tila)) {
             Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
             muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
@@ -293,6 +296,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             throw new RuntimeException("Tekematta tilaa ei saa asettaa manuaalisesti");
         }
+    }
+
+    private Ilmoitus asIlmoitus(IlmoitusDto ilmoitus) {
+        return new Ilmoitus(ilmoitus.getTyyppi(), ilmoitus.getOtsikko(), ilmoitus.getData());
     }
 
     private Query<Laskenta> muodostaLaskennanPaivitysQueryHakukohteelle(String uuid, String hakukohdeOid) {

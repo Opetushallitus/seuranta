@@ -37,6 +37,7 @@ public class Laskenta {
     private final List<String> tekematta;
     private final List<HakukohdeJaOrganisaatio> hakukohdeOidJaOrganisaatioOids;
     private final Map<String, List<Ilmoitus>> ilmoitukset;
+    private final Ilmoitus ilmoitus;
     private final Integer valinnanvaihe;
     private final Boolean valintakoelaskenta;
     private final Boolean erillishaku;
@@ -55,6 +56,7 @@ public class Laskenta {
         this.tekematta = null;
         this.tyyppi = null;
         this.valinnanvaihe = null;
+        this.ilmoitus = null;
         this.valintakoelaskenta = null;
         this.hakukohdeOidJaOrganisaatioOids = null;
         this.erillishaku = null;
@@ -72,6 +74,7 @@ public class Laskenta {
         this.luotu = new Date();
         this.tila = LaskentaTila.ALOITTAMATTA;
         this.ilmoitukset = Collections.emptyMap();
+        this.ilmoitus = null;
         this.valmiit = Collections.emptyList();
         this.ohitettu = Collections.emptyList();
         this.hakukohdeOidJaOrganisaatioOids = hakukohdeOids.stream()
@@ -136,6 +139,10 @@ public class Laskenta {
             return Collections.emptyMap();
         }
         return ilmoitukset;
+    }
+
+    public Ilmoitus getIlmoitus() {
+        return ilmoitus;
     }
 
     public String getHakuOid() {

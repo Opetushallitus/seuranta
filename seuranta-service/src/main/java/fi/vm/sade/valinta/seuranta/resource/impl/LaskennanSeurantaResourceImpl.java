@@ -1,9 +1,6 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.core.Response;
 
@@ -229,7 +226,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, Optional.empty());
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, tila);
@@ -242,7 +239,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     @ApiOperation(value = "Paivittaa laskennan tilaa ja merkkaa ilmoituksen", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila,
                                               IlmoitusDto ilmoitusDto) {
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, Optional.ofNullable(ilmoitusDto));
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, tila);
@@ -254,7 +251,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila) {
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.empty());
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!", uuid, tila);
         } else {
@@ -265,7 +262,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa laskennan tilaa ja merkkaa ilmoituksen", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila, IlmoitusDto ilmoitusDto) {
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila);
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.ofNullable(ilmoitusDto));
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!", uuid, tila);
         } else {

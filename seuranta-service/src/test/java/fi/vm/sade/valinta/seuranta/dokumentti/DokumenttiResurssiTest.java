@@ -11,11 +11,7 @@ import fi.vm.sade.valinta.seuranta.resource.impl.DokumentinSeurantaResourceImpl;
 import fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration;
 import junit.framework.Assert;
 import org.bson.types.ObjectId;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.OutboundEvent;
-import org.glassfish.jersey.server.ChunkedOutput;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mongodb.morphia.Datastore;
@@ -23,18 +19,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static java.util.Arrays.*;
 import javax.ws.rs.core.Response;
-import java.util.UUID;
 
 /**
  * @author Jussi Jartamo
  */
-public class DokumenttiResurssiTesti {
-    private final static Logger LOG = LoggerFactory.getLogger(DokumenttiResurssiTesti.class);
+public class DokumenttiResurssiTest {
+    private final static Logger LOG = LoggerFactory.getLogger(DokumenttiResurssiTest.class);
     private final DokumentinSeurantaResource resurssi;
     private final MongodExecutable exe;
     private final Datastore datastore;
     private final DokumentinSeurantaSSEService sseService;
-    public DokumenttiResurssiTesti() throws Exception {
+    public DokumenttiResurssiTest() throws Exception {
         MongoConfiguration mongocfg = new MongoConfiguration();
         this.exe = mongocfg.getMongodExecutable();
         this.datastore = mongocfg.getDatastore(mongocfg.getMorphia(), mongocfg.getMongo(mongocfg.getMongoProcess(exe)));

@@ -58,9 +58,9 @@ public interface SeurantaDao {
 
     YhteenvetoDto lisaaIlmoitus(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus);
 
-    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila);
+    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, Optional<IlmoitusDto> ilmoitus);
 
-    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila);
+    YhteenvetoDto merkkaaTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohdeTila, Optional<IlmoitusDto> ilmoitus);
 
     LaskentaDto resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset);
 
