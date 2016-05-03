@@ -10,6 +10,7 @@ import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import fi.vm.sade.valinta.seuranta.resource.impl.DokumentinSeurantaResourceImpl;
 import fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration;
 import junit.framework.Assert;
+import junit.framework.TestCase;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Test;
@@ -23,7 +24,7 @@ import javax.ws.rs.core.Response;
 /**
  * @author Jussi Jartamo
  */
-public class DokumenttiResurssiTest {
+public class DokumenttiResurssiTest extends TestCase {
     private final static Logger LOG = LoggerFactory.getLogger(DokumenttiResurssiTest.class);
     private final DokumentinSeurantaResource resurssi;
     private final MongodExecutable exe;
@@ -43,7 +44,7 @@ public class DokumenttiResurssiTest {
     }
 
     @Test
-    public void testaaLisäysPäivitysLukuJaPoisto() {
+    public void testLisausPaivitysLukuJaPoisto() {
         final String uuid;
         // CREATE
         {
