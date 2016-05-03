@@ -51,4 +51,7 @@ public class IlmoitusDto {
     public static IlmoitusDto virheilmoitus(String virhe, String... dataa) {
         return new IlmoitusDto(IlmoitusTyyppi.VIRHE, virhe, Arrays.asList(dataa));
     }
+    public static IlmoitusDto ilmoitus(String ilmoitus, String... dataa) {
+        return new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, ilmoitus, Arrays.asList(dataa));
+    }
 }

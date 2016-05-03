@@ -145,7 +145,11 @@ public interface LaskentaSeurantaResource {
     @Produces(MediaType.APPLICATION_JSON)
     YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila);
-
+    @POST
+    @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+                                       @PathParam("tila") LaskentaTila tila, IlmoitusDto ilmoitus);
     /**
      * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
      */
@@ -155,7 +159,13 @@ public interface LaskentaSeurantaResource {
     YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila,
                                        @PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
-
+    @POST
+    @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
+    @Produces(MediaType.APPLICATION_JSON)
+    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+                                       @PathParam("tila") LaskentaTila tila,
+                                       @PathParam("hakukohteentila") HakukohdeTila hakukohteentila,
+                                       IlmoitusDto ilmoitus);
     /**
      * Luo uuden laskennan seurantaan
      *
