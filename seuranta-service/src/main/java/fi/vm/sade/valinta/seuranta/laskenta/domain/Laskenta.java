@@ -1,10 +1,6 @@
 package fi.vm.sade.valinta.seuranta.laskenta.domain;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -169,7 +165,7 @@ public class Laskenta {
             hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(), HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
             return new LaskentaDto(getUuid().toString(), getHakuOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
-                    getTila(), getTyyppi(), hakukohteet, erillishaku, valinnanvaihe,
+                    getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
                     valintakoelaskenta);
         } catch (Exception e) {
             LOG.error("LaskentaDto:n muodostus Laskentaentiteetista epaonnistui!", e);
