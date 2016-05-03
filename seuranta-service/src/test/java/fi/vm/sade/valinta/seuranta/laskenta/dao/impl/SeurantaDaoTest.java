@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
+import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,8 +88,9 @@ public class SeurantaDaoTest {
 
     @Test
     public void testaaMerkkaaHakukohteenTila() {
-        String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", HakukohdeTila.KESKEYTETTY, new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
+        final String hakukohdeOid = "1.2.246.562.20.14854904639";
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohdeOid));
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, HakukohdeTila.KESKEYTETTY, new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
@@ -196,9 +198,11 @@ public class SeurantaDaoTest {
         assertEquals(oldestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
         assertEquals(newestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
-
     private String aloitaUusiLaskenta() {
-        Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
+        return aloitaUusiLaskenta(Optional.empty());
+    }
+    private String aloitaUusiLaskenta(Optional<String> hakukohdeOid) {
+        Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto(hakukohdeOid.orElse("h1"), "o1"), new HakukohdeDto("h2", "o2"));
         seurantaDao.luoLaskenta("hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
         return seurantaDao.otaSeuraavaLaskentaTyonAlle();
     }

@@ -31,6 +31,8 @@ import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
 
+import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.*;
+
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
@@ -268,7 +270,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 .field("_id").equal(new ObjectId(uuid));
         UpdateOperations<Laskenta> ops = datastore
                 .createUpdateOperations(Laskenta.class)
-                .add("ilmoitukset." + hakukohdeOid, i, true);
+                .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
         return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
     }
 
@@ -278,11 +280,12 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (HakukohdeTila.VALMIS.equals(tila)) {
             Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
             muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
+
             UpdateOperations<Laskenta> ops = datastore
                     .createUpdateOperations(Laskenta.class)
                     .dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid)
-                    .add("ilmoitukset." + hakukohdeOid, i, true);
+                    .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
             return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
         } else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
             Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
@@ -291,7 +294,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                     .inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
                     .add("ohitettu", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid)
-                    .add("ilmoitukset." + hakukohdeOid, i, true);
+                    .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
             return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
         } else {
             throw new RuntimeException("Tekematta tilaa ei saa asettaa manuaalisesti");
@@ -352,7 +355,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 .field("_id").equal(new ObjectId(uuid));
         UpdateOperations<Laskenta> ops = datastore
                 .createUpdateOperations(Laskenta.class)
-                .add("ilmoitukset." + hakukohdeOid, ilmoitus);
+                .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), ilmoitus);
         datastore.update(query, ops);
     }
 

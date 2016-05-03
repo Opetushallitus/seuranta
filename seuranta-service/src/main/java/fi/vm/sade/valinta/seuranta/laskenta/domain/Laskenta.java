@@ -191,9 +191,14 @@ public class Laskenta {
     }
 
     private List<IlmoitusDto> ilmoituksetHakukohteelle(String hakukohdeOid, Map<String, List<Ilmoitus>> ilmoitukset) {
-        if (ilmoitukset == null || !ilmoitukset.containsKey(hakukohdeOid)) {
+        final String escapedHakukohdeOid = escapeHakukohdeOid(hakukohdeOid);
+        if (ilmoitukset == null || !ilmoitukset.containsKey(escapedHakukohdeOid)) {
             return null; // Collections.emptyList();
         }
-        return ilmoitukset.get(hakukohdeOid).stream().map(i -> i.asDto()).collect(Collectors.toList());
+        return ilmoitukset.get(escapedHakukohdeOid).stream().map(i -> i.asDto()).collect(Collectors.toList());
+    }
+
+    public static String escapeHakukohdeOid(String hakukohdeOid) {
+        return hakukohdeOid.replace(".", "\uff0E");
     }
 }
