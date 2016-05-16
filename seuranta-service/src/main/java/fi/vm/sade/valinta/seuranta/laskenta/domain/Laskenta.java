@@ -3,8 +3,12 @@ package fi.vm.sade.valinta.seuranta.laskenta.domain;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ComparisonChain;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +41,8 @@ public class Laskenta {
     private final Integer valinnanvaihe;
     private final Boolean valintakoelaskenta;
     private final Boolean erillishaku;
+    @Indexed
+    private final String identityHash;
 
     public Laskenta() {
         this.hakukohteitaYhteensa = 0;
@@ -56,6 +62,7 @@ public class Laskenta {
         this.valintakoelaskenta = null;
         this.hakukohdeOidJaOrganisaatioOids = null;
         this.erillishaku = null;
+        this.identityHash = null;
     }
 
     public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
@@ -83,6 +90,49 @@ public class Laskenta {
         this.erillishaku = erillishaku;
         this.valinnanvaihe = valinnanvaihe;
         this.valintakoelaskenta = valintakoelaskenta;
+        this.identityHash = createIdentityHash().toString();
+    }
+
+    public String getIdentityHash() {
+        return identityHash;
+    }
+
+    private HashCode createIdentityHash() {
+        /*
+        private final String hakuOid;
+        private final LaskentaTyyppi tyyppi;
+        private final int hakukohteitaYhteensa;
+        private final List<HakukohdeJaOrganisaatio> hakukohdeOidJaOrganisaatioOids;
+        private final Integer valinnanvaihe;
+        private final Boolean valintakoelaskenta;
+        private final Boolean erillishaku;
+        */
+        final long DELIMETER = 1000000000L;
+        return Hashing.md5().newHasher()
+                .putString(hakuOid)
+                .putLong(DELIMETER + 1L)
+                .putInt(tyyppi != null ? tyyppi.ordinal() : -1 )
+                .putLong(DELIMETER + 2L)
+                .putInt(hakukohteitaYhteensa)
+                .putLong(DELIMETER + 3L)
+                .putInt(valinnanvaihe != null ? valinnanvaihe : -1)
+                .putLong(DELIMETER + 4L)
+                .putBoolean(Boolean.TRUE.equals(valintakoelaskenta))
+                .putLong(DELIMETER + 5L)
+                .putBoolean(Boolean.TRUE.equals(erillishaku))
+                .putLong(DELIMETER + 6L)
+                .putObject(hakukohdeOidJaOrganisaatioOids, (oids, sink) -> {
+                    Optional.ofNullable(hakukohdeOidJaOrganisaatioOids).orElse(Collections.emptyList()).stream().sorted((h1,h2) ->
+                        ComparisonChain.start().compare(h1.getHakukohdeOid(),h2.getHakukohdeOid())
+                                .compare(h1.getOrganisaatioOid(),h2.getOrganisaatioOid()).result()
+                    ).forEach(h -> {
+                        sink.putString(h.getHakukohdeOid())
+                                .putLong(DELIMETER + 7L)
+                                .putString(h.getOrganisaatioOid())
+                                .putLong(DELIMETER + 8L);
+                    });
+                })
+                .hash();
     }
 
     public List<HakukohdeJaOrganisaatio> getHakukohdeOidJaOrganisaatioOids() {
