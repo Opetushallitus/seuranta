@@ -1,7 +1,10 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.AdvancedDatastore;
@@ -39,7 +42,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
     private AdvancedDatastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
-
+    private static final Map<String, Integer> LUOTU_ONLY_FIELDS = createLuotuOnlyFields();
     @Autowired
     public SeurantaDaoImpl(AdvancedDatastore datastore) {
         this.datastore = datastore;
@@ -130,7 +133,9 @@ public class SeurantaDaoImpl implements SeurantaDao {
     public BasicDBObject dbobj(String key, Object value) {
         return new BasicDBObject(key, value);
     }
-
+    public BasicDBObject dbobj(String key, Object... value) {
+        return new BasicDBObject(key, value);
+    }
     public List<DBObject> dbobjs(BasicDBObject... objs) {
         return Lists.newArrayList(objs);
     }
@@ -147,8 +152,53 @@ public class SeurantaDaoImpl implements SeurantaDao {
         }
         return dbObjectAsYhteenvetoDto(i.next());
     }
+    public Collection<YhteenvetoDto> haeYhteenvedotAlkamattomille(Collection<String> uuids) {
+        DBCollection collection = datastore.getCollection(Laskenta.class);
+        AggregationOutput aggregation = collection.aggregate(
+                dbobjs(dbobj("$match",
+                        dbobj("$and",
+                                dbobj("_id", dbobj("$in", uuids.stream().map(u -> new ObjectId(u)).collect(Collectors.toList())))
+                                ,
+                                dbobj("tila", LaskentaTila.ALOITTAMATTA.toString())
+                                )
+                        ),
+                        dbobjmap("$project", YHTEENVETO_FIELDS))
+        );
+
+        final List<Date> luontidates = luontiDatesForAloittamattomat();
+
+        List<YhteenvetoDto> yhteenvetoDtos = StreamSupport.stream(aggregation.results().spliterator(), false).map(db ->
+                dbObjectAsYhteenvetoDto(db, luotu -> luontidates.lastIndexOf(luotu))).filter(Objects::nonNull).collect(Collectors.toList());
+
+        return yhteenvetoDtos;
+    }
+
+    private List<Date> luontiDatesForAloittamattomat() {
+        DBCollection collection = datastore.getCollection(Laskenta.class);
+        AggregationOutput aggregation = collection.aggregate(
+                dbobjs(dbobj("$match",
+                        dbobj("tila", LaskentaTila.ALOITTAMATTA.toString())
+                        ),
+                        dbobjmap("$project", LUOTU_ONLY_FIELDS))
+        );
+        List<Date> objectIdToLuotu =
+                StreamSupport.stream(aggregation.results().spliterator(), false).map(db -> (Date)db.get("luotu")).filter(Objects::nonNull).sorted().collect(Collectors.toList());
+
+        return objectIdToLuotu;
+    }
+
+    private static Map<String, Integer> createLuotuOnlyFields() {
+        Map<String, Integer> fields = Maps.newHashMap();
+        fields.put("_id", 1);
+        fields.put("luotu", 1);
+        return fields;
+    }
 
     private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result) {
+        return this.dbObjectAsYhteenvetoDto(result, luotu -> null);
+    }
+
+    private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result, Function<Date,Integer> jonosijaSupplier) {
         if (result == null) {
             return null;
         }
@@ -166,7 +216,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
+        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu));
     }
 
     private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta) {
