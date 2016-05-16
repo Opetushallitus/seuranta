@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.laskenta.service.impl;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +45,11 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
                     }
                 }
             }).build();
+
+    @Override
+    public Collection<String> aktiivisetUUIDt() {
+        return EVENT_CACHE.asMap().keySet();
+    }
 
     public void paivita(YhteenvetoDto yhteenveto) {
         if (yhteenveto == null) {

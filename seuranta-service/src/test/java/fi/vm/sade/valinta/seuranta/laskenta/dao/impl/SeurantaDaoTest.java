@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
 import junit.framework.Assert;
@@ -206,12 +207,24 @@ public class SeurantaDaoTest {
         assertEquals(oldestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
         assertEquals(newestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
-    private String aloitaUusiLaskenta() {
-        return aloitaUusiLaskenta(Optional.empty());
+    @Test
+    public void testaaHaeYhteenvedotAlkamattomilleUUIDeille() {
+        String uuid1 = luoUusiLaskenta(Optional.of(randomHakukohde()));
+        String uuid2 = luoUusiLaskenta(Optional.of(randomHakukohde()));
+        Collection<YhteenvetoDto> yhteenvetoDtos = seurantaDao.haeYhteenvedotAlkamattomille(Arrays.asList(uuid1, uuid2));
+        Assert.assertEquals(2, yhteenvetoDtos.size());
+        Map<String, YhteenvetoDto> uuidToYhteenveto = yhteenvetoDtos.stream().collect(Collectors.toMap(y -> y.getUuid(), y -> y));
+        Integer jonosija1 = uuidToYhteenveto.get(uuid1).getJonosija();
+        Integer jonosija2 = uuidToYhteenveto.get(uuid2).getJonosija();
+        Assert.assertTrue(jonosija1 < jonosija2);
+    }
+    private String luoUusiLaskenta(Optional<String> hakukohdeOid) {
+        Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto(hakukohdeOid.orElse("h1"), "o1"), new HakukohdeDto("h2", "o2"));
+        String uuid = seurantaDao.luoLaskenta("hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        return uuid;
     }
     private String aloitaUusiLaskenta(Optional<String> hakukohdeOid) {
-        Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto(hakukohdeOid.orElse("h1"), "o1"), new HakukohdeDto("h2", "o2"));
-        seurantaDao.luoLaskenta("hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        luoUusiLaskenta(hakukohdeOid);
         return seurantaDao.otaSeuraavaLaskentaTyonAlle();
     }
 

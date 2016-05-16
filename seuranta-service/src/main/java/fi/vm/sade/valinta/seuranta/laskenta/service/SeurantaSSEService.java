@@ -4,10 +4,14 @@ import org.glassfish.jersey.media.sse.EventOutput;
 
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
+import java.util.Collection;
+
 /**
  *         Server Sent Events support
  */
 public interface SeurantaSSEService {
+
+    Collection<String> aktiivisetUUIDt();
 
     void paivita(YhteenvetoDto yhteenveto);
 
