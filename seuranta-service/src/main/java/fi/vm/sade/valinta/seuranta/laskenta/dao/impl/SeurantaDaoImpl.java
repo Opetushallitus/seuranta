@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.AdvancedDatastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,11 @@ import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.*;
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
-    private Datastore datastore;
+    private AdvancedDatastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
 
     @Autowired
-    public SeurantaDaoImpl(Datastore datastore) {
+    public SeurantaDaoImpl(AdvancedDatastore datastore) {
         this.datastore = datastore;
     }
 
@@ -202,27 +203,32 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (m == null) {
             throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla " + uuid);
         }
-        List<String> o = orEmpty(m.getOhitettu());
-        List<String> t = orEmpty(m.getTekematta());
-        List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size() + t.size());
-        uusiTekematta.addAll(o);
-        uusiTekematta.addAll(t);
-        Query<Laskenta> query = datastore
-                .createQuery(Laskenta.class)
-                .field("_id").equal(new ObjectId(uuid));
-        UpdateOperations<Laskenta> ops = datastore
-                .createUpdateOperations(Laskenta.class)
-                .set("tila", LaskentaTila.ALOITTAMATTA)
-                .set("hakukohteitaTekematta", uusiTekematta.size())
-                .set("hakukohteitaOhitettu", 0)
-                .set("valmiit", orEmpty(m.getValmiit()))
-                .set("tekematta", uusiTekematta)
-                .set("ohitettu", Collections.emptyList());
-        if (nollaaIlmoitukset) {
-            ops.set("ilmoitukset", Collections.emptyMap());
+        Optional<Laskenta> onGoing = orGetOnGoing(m);
+        if(onGoing.isPresent()) {
+            return onGoing.get().asDto();
+        } else {
+            List<String> o = orEmpty(m.getOhitettu());
+            List<String> t = orEmpty(m.getTekematta());
+            List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size() + t.size());
+            uusiTekematta.addAll(o);
+            uusiTekematta.addAll(t);
+            Query<Laskenta> query = datastore
+                    .createQuery(Laskenta.class)
+                    .field("_id").equal(new ObjectId(uuid));
+            UpdateOperations<Laskenta> ops = datastore
+                    .createUpdateOperations(Laskenta.class)
+                    .set("tila", LaskentaTila.ALOITTAMATTA)
+                    .set("hakukohteitaTekematta", uusiTekematta.size())
+                    .set("hakukohteitaOhitettu", 0)
+                    .set("valmiit", orEmpty(m.getValmiit()))
+                    .set("tekematta", uusiTekematta)
+                    .set("ohitettu", Collections.emptyList());
+            if (nollaaIlmoitukset) {
+                ops.set("ilmoitukset", Collections.emptyMap());
+            }
+            Laskenta uusi = datastore.findAndModify(query, ops);
+            return uusi.asDto();
         }
-        Laskenta uusi = datastore.findAndModify(query, ops);
-        return uusi.asDto();
     }
 
     private static <T> List<T> orEmpty(List<T> t) {
@@ -345,8 +351,23 @@ public class SeurantaDaoImpl implements SeurantaDao {
             throw new RuntimeException("Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = " + hakuOid);
         }
         Laskenta l = new Laskenta(hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        Optional<Laskenta> onGoing = orGetOnGoing(l);
+        if(onGoing.isPresent()) {
+            return onGoing.get().getUuid().toString();
+        }
         datastore.save(l);
         return l.getUuid().toString();
+    }
+    private Optional<Laskenta> orGetOnGoing(Laskenta l) {
+        final String identityHash = l.getIdentityHash();
+        Query<Laskenta> query = datastore
+                .createQuery(Laskenta.class)
+                .field("identityHash").equal(identityHash)
+                .field("tila").in(Arrays.asList(LaskentaTila.ALOITTAMATTA.toString(), LaskentaTila.MENEILLAAN.toString()));
+        UpdateOperations<Laskenta> updateNothing = datastore
+                .createUpdateOperations(Laskenta.class)
+                .set("identityHash", identityHash);
+        return Optional.ofNullable(datastore.findAndModify(query, updateNothing, true, false));
     }
 
     public void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus) {
