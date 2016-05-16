@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -125,10 +126,18 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
     public Response otaSeuraavaLaskentaTyonAlle() {
-        String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
-        LOG.info("Ota seuraava tyon alle: " + (uuid != null ? uuid : "Ei tyota"));
-        Response.ResponseBuilder response = uuid != null ? Response.ok(uuid) : Response.noContent();
-        return response.build();
+        Optional<String> uuid = Optional.ofNullable(seurantaDao.otaSeuraavaLaskentaTyonAlle());
+        LOG.info("Ota seuraava tyon alle: " + (uuid.isPresent() ? uuid.get() : "Ei tyota"));
+        if(uuid.isPresent()) {
+            final String u = uuid.get();
+
+            final List<String> uuids = seurantaSSEService.aktiivisetUUIDt().stream().filter(id -> u.equals(id)).collect(Collectors.toList());
+            seurantaDao.haeYhteenvedotAlkamattomille(uuids).forEach(seurantaSSEService::paivita);
+            return Response.ok(u).build();
+        } else {
+            return Response.noContent().build();
+        }
+
     }
 
     @PreAuthorize("isAuthenticated()")

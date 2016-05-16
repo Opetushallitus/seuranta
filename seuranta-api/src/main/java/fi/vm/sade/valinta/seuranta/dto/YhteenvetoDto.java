@@ -8,10 +8,16 @@ public class YhteenvetoDto {
     private final int hakukohteitaYhteensa;
     private final int hakukohteitaValmiina;
     private final int hakukohteitaKeskeytetty;
+    private final Integer jonosija; // sija laskennan jonossa tai null jos ei jonossa
 
     public YhteenvetoDto(String uuid, String hakuOid, Long luotu,
                          LaskentaTila tila, int hakukohteitaYhteensa,
                          int hakukohteitaValmiina, int hakukohteitaKeskeytetty) {
+        this(uuid,hakuOid,luotu,tila,hakukohteitaYhteensa,hakukohteitaValmiina,hakukohteitaKeskeytetty,null);
+    }
+    public YhteenvetoDto(String uuid, String hakuOid, Long luotu,
+                         LaskentaTila tila, int hakukohteitaYhteensa,
+                         int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija) {
         this.uuid = uuid;
         this.hakuOid = hakuOid;
         this.luotu = luotu;
@@ -19,6 +25,10 @@ public class YhteenvetoDto {
         this.hakukohteitaYhteensa = hakukohteitaYhteensa;
         this.hakukohteitaValmiina = hakukohteitaValmiina;
         this.hakukohteitaKeskeytetty = hakukohteitaKeskeytetty;
+        this.jonosija = jonosija;
+    }
+    public Integer getJonosija() {
+        return jonosija;
     }
 
     public String getHakuOid() {
