@@ -1,11 +1,9 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
+import junit.framework.Assert;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +30,7 @@ import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
@@ -43,45 +42,53 @@ public class SeurantaDaoTest {
     private static final Logger LOG = LoggerFactory.getLogger(SeurantaDaoTest.class);
     @Autowired
     private SeurantaDao seurantaDao;
-
+    private static final Random rnd = new Random(System.currentTimeMillis());
+    private static String randomHakukohde() {
+        return "HAKUKOHDE_" + Math.abs(rnd.nextInt(100000000));
+    }
     @Test
     public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerrallaValmistuneelleLaskennalle() {
-        String uuid = aloitaUusiLaskenta();
+        String uuid = aloitaUusiLaskenta(Optional.of(randomHakukohde()));
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaTilaHakukohteelle() {
-        String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, "h1", HakukohdeTila.KESKEYTETTY);
+        final String hakukohde = randomHakukohde();
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
+        YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohde, HakukohdeTila.KESKEYTETTY);
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaLisaaIlmoitusHakukohteelle() {
-        String uuid = aloitaUusiLaskenta();
-        YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, "h1", new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
+        final String hakukohde = randomHakukohde();
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
+        YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohde, new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, "Jee"));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerralla() {
-        String uuid = aloitaUusiLaskenta();
+        final String hakukohde = randomHakukohde();
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, HakukohdeTila.KESKEYTETTY, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaLaskennanTila() {
-        String uuid = aloitaUusiLaskenta();
+        final String hakukohde = randomHakukohde();
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
 
     @Test
     public void testaaMerkkaaLaskennanTilaMerkatulleLaskennalle() {
-        String uuid = aloitaUusiLaskenta();
+        final String hakukohde = randomHakukohde();
+        String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, LaskentaTila.VALMIS, Optional.of(IlmoitusDto.ilmoitus("Toimiiko!")));
         assertOikeaLaskentaEiOleNull(uuid, y);
     }
@@ -118,7 +125,6 @@ public class SeurantaDaoTest {
                 new HakukohdeDto("hk2", "oo2"),
                 new HakukohdeDto("hk3", "oo3")
         );
-
         seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
         String uuid = seurantaDao.otaSeuraavaLaskentaTyonAlle();
         seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.KESKEYTETTY);
@@ -131,7 +137,7 @@ public class SeurantaDaoTest {
         seurantaDao.lisaaIlmoitus(uuid, "hk1", new Ilmoitus(IlmoitusTyyppi.ILMOITUS, "Ei toimi", null));
         seurantaDao.haeYhteenvedotHaulle(hakuOid);
         Collection<YhteenvetoDto> yhteenvedot = seurantaDao.haeYhteenvedotHaulle(hakuOid, LaskentaTyyppi.HAKU);
-        assertEquals(2, yhteenvedot.size());
+        assertEquals(1, yhteenvedot.size());
         LaskentaDto l = seurantaDao.haeLaskenta(uuid);
         l.getHakukohteet().forEach(hk -> {
             LOG.info("Hakukohde {} ja organisaatio {}", hk.getHakukohdeOid(), hk.getOrganisaatioOid());
@@ -145,7 +151,9 @@ public class SeurantaDaoTest {
         assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
         seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS, new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
         seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei3"));
-        seurantaDao.resetoiEiValmiitHakukohteet(uuid, false);
+        String uuid2 = seurantaDao.luoLaskenta(hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        assertNotSame(uuid, uuid2);
+        assertEquals(seurantaDao.resetoiEiValmiitHakukohteet(uuid, false).getUuid(), uuid2);
         assertEquals(2, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
         seurantaDao.siivoa(DateTime.now().minusDays(1).toDate());
         assertEquals(2, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
