@@ -87,6 +87,24 @@ public class SeurantaDaoImpl implements SeurantaDao {
     }
 
     @Override
+    public Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot() {
+        Map<String, Object> eqs = Maps.newHashMap();
+        eqs.put("tila", dbobj("$in", Arrays.asList(LaskentaTila.ALOITTAMATTA.toString(),LaskentaTila.MENEILLAAN.toString())));
+        DBCollection collection = datastore.getCollection(Laskenta.class);
+        AggregationOutput aggregation = collection.aggregate(dbobjs(
+                dbobjmap("$match", eqs),
+                dbobjmap("$project", YHTEENVETO_FIELDS)
+        ));
+        Iterator<DBObject> i = aggregation.results().iterator();
+        if (!i.hasNext()) {
+            return Collections.emptyList();
+        }
+        return Lists.newArrayList(i).stream()
+                .map(this::dbObjectAsYhteenvetoDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
         DBCollection collection = datastore.getCollection(Laskenta.class);
         AggregationOutput aggregation = collection.aggregate(dbobjs(
