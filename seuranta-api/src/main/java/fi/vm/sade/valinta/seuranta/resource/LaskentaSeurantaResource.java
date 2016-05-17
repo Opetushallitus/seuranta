@@ -61,6 +61,15 @@ public interface LaskentaSeurantaResource {
     @Produces(MediaType.APPLICATION_JSON)
     Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(@PathParam("hakuOid") String hakuOid);
 
+    /**
+     * Yhteenvedot olemassa olevista laskennoista
+     */
+    @GET
+    @Path("/jonossajakaynnissaolevatlaskennat")
+    @Produces(MediaType.APPLICATION_JSON)
+    Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot();
+
+
     @GET
     @Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
     @Produces(MediaType.TEXT_PLAIN)

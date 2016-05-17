@@ -124,6 +124,12 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
+    public Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot() {
+        return seurantaDao.haeJonossaJaKaynnissaOlevienYhteenvedot();
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
     public Response otaSeuraavaLaskentaTyonAlle() {
         Optional<String> uuid = Optional.ofNullable(seurantaDao.otaSeuraavaLaskentaTyonAlle());
