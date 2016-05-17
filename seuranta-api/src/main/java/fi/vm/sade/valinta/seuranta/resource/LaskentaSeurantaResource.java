@@ -186,7 +186,8 @@ public interface LaskentaSeurantaResource {
     @Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    String luoLaskenta(@PathParam("hakuOid") String hakuOid,
+    String luoLaskenta(@PathParam("userOID") String userOID,
+                       @PathParam("hakuOid") String hakuOid,
                        @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                        @QueryParam("erillishaku") Boolean erillishaku,
                        @QueryParam("valinnanvaihe") Integer valinnanvaihe,

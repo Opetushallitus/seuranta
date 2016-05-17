@@ -57,7 +57,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             try {
                 y = seurantaDao.haeYhteenveto(uuid);
             } catch (Exception e) {
-                y = new YhteenvetoDto(uuid, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
+                y = new YhteenvetoDto(uuid, StringUtils.EMPTY, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
             }
             seurantaSSEService.paivita(y);
         } catch (Exception e) {
@@ -174,7 +174,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-    public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku, Integer valinnanvaihe,
+    public String luoLaskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku, Integer valinnanvaihe,
             Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
         if (hakukohdeOids == null) {
             LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
@@ -191,7 +191,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
                 throw new NullPointerException("Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
             }
         });
-        return seurantaDao.luoLaskenta(hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        return seurantaDao.luoLaskenta(userOID, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
     }
 
     @PreAuthorize("isAuthenticated()")
