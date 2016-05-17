@@ -40,11 +40,11 @@ import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.*;
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
-    private AdvancedDatastore datastore;
+    private Datastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
     private static final Map<String, Integer> LUOTU_ONLY_FIELDS = createLuotuOnlyFields();
     @Autowired
-    public SeurantaDaoImpl(AdvancedDatastore datastore) {
+    public SeurantaDaoImpl(Datastore datastore) {
         this.datastore = datastore;
     }
 
@@ -221,6 +221,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             return null;
         }
         String uuid = result.get("_id").toString();
+        String userOID = Optional.ofNullable(result.get("userOID")).orElse("").toString();
         String hakuOid = result.get("hakuOid").toString();
         Date luotu = (Date) result.get("luotu");
         LaskentaTila tila = LaskentaTila.valueOf(result.get("tila").toString());
@@ -234,28 +235,29 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu));
+        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu));
     }
 
     private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta) {
         if (laskenta == null) {
             return null;
         }
-        String uuid = laskenta.getUuid().toString();
-        String hakuOid = laskenta.getHakuOid();
-        Date luotu = laskenta.getLuotu();
-        LaskentaTila tila = laskenta.getTila();
-        int hakukohteitaYhteensa = laskenta.getHakukohteitaYhteensa();
-        int hakukohteitaKeskeytetty = laskenta.getHakukohteitaOhitettu();
-        int hakukohteitaTekematta = laskenta.getHakukohteitaTekematta();
-        int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty) - hakukohteitaTekematta;
+        final String uuid = laskenta.getUuid().toString();
+        final String userOID = laskenta.getUserOID();
+        final String hakuOid = laskenta.getHakuOid();
+        final Date luotu = laskenta.getLuotu();
+        final LaskentaTila tila = laskenta.getTila();
+        final int hakukohteitaYhteensa = laskenta.getHakukohteitaYhteensa();
+        final int hakukohteitaKeskeytetty = laskenta.getHakukohteitaOhitettu();
+        final int hakukohteitaTekematta = laskenta.getHakukohteitaTekematta();
+        final int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty) - hakukohteitaTekematta;
         long luotuTimestamp;
         if (luotu == null) {
             luotuTimestamp = new Date().getTime();
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
+        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
     }
 
     @Override
@@ -408,6 +410,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
     }
 
     public String luoLaskenta(
+            String userOID,
             String hakuOid,
             LaskentaTyyppi tyyppi,
             Boolean erillishaku,
@@ -418,7 +421,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
             throw new RuntimeException("Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = " + hakuOid);
         }
-        Laskenta l = new Laskenta(hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        Laskenta l = new Laskenta(userOID, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
         Optional<Laskenta> onGoing = orGetOnGoing(l);
         if(onGoing.isPresent()) {
             return onGoing.get().getUuid().toString();

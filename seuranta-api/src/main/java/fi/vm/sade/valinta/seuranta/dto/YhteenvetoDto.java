@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.dto;
 public class YhteenvetoDto {
     private final String uuid;
     private final String hakuOid;
+    private final String userOID;
     private final long luotu;
     private final LaskentaTila tila;
     private final int hakukohteitaYhteensa;
@@ -10,14 +11,15 @@ public class YhteenvetoDto {
     private final int hakukohteitaKeskeytetty;
     private final Integer jonosija; // sija laskennan jonossa tai null jos ei jonossa
 
-    public YhteenvetoDto(String uuid, String hakuOid, Long luotu,
+    public YhteenvetoDto(String uuid, String userOID, String hakuOid, Long luotu,
                          LaskentaTila tila, int hakukohteitaYhteensa,
                          int hakukohteitaValmiina, int hakukohteitaKeskeytetty) {
-        this(uuid,hakuOid,luotu,tila,hakukohteitaYhteensa,hakukohteitaValmiina,hakukohteitaKeskeytetty,null);
+        this(uuid,userOID,hakuOid,luotu,tila,hakukohteitaYhteensa,hakukohteitaValmiina,hakukohteitaKeskeytetty,null);
     }
-    public YhteenvetoDto(String uuid, String hakuOid, Long luotu,
+    public YhteenvetoDto(String uuid, String userOID, String hakuOid, Long luotu,
                          LaskentaTila tila, int hakukohteitaYhteensa,
                          int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija) {
+        this.userOID = userOID;
         this.uuid = uuid;
         this.hakuOid = hakuOid;
         this.luotu = luotu;
@@ -27,6 +29,11 @@ public class YhteenvetoDto {
         this.hakukohteitaKeskeytetty = hakukohteitaKeskeytetty;
         this.jonosija = jonosija;
     }
+
+    public String getUserOID() {
+        return userOID;
+    }
+
     public Integer getJonosija() {
         return jonosija;
     }
