@@ -40,11 +40,11 @@ import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.*;
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
-    private AdvancedDatastore datastore;
+    private Datastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
     private static final Map<String, Integer> LUOTU_ONLY_FIELDS = createLuotuOnlyFields();
     @Autowired
-    public SeurantaDaoImpl(AdvancedDatastore datastore) {
+    public SeurantaDaoImpl(Datastore datastore) {
         this.datastore = datastore;
     }
 
