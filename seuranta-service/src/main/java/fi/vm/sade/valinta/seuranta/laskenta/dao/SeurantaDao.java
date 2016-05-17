@@ -56,7 +56,7 @@ public interface SeurantaDao {
      */
     Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot();
 
-    String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
+    String luoLaskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
                        Integer valinnanvaihe, Boolean valintakoelaskenta,
                        Collection<HakukohdeDto> hakukohdeOids);
 

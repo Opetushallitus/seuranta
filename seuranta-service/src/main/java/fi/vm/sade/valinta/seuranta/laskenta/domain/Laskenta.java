@@ -41,10 +41,12 @@ public class Laskenta {
     private final Integer valinnanvaihe;
     private final Boolean valintakoelaskenta;
     private final Boolean erillishaku;
+    private final String userOID;
     @Indexed
     private final String identityHash;
 
     public Laskenta() {
+        this.userOID = null;
         this.hakukohteitaYhteensa = 0;
         this.hakukohteitaTekematta = 0;
         this.hakukohteitaOhitettu = 0;
@@ -65,7 +67,7 @@ public class Laskenta {
         this.identityHash = null;
     }
 
-    public Laskenta(String hakuOid, LaskentaTyyppi tyyppi,
+    public Laskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi,
                     Boolean erillishaku,
                     Integer valinnanvaihe, Boolean valintakoelaskenta,
                     Collection<HakukohdeDto> hakukohdeOids) {
@@ -73,6 +75,7 @@ public class Laskenta {
         this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
         this.hakukohteitaOhitettu = 0;
         this.uuid = null;
+        this.userOID = userOID;
         this.hakuOid = hakuOid;
         this.luotu = new Date();
         this.tila = LaskentaTila.ALOITTAMATTA;
@@ -213,7 +216,7 @@ public class Laskenta {
             hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(), HakukohdeTila.VALMIS, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(), HakukohdeTila.TEKEMATTA, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(), HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
-            return new LaskentaDto(getUuid().toString(), getHakuOid(),
+            return new LaskentaDto(getUuid().toString(), userOID, getHakuOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
                     getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
                     valintakoelaskenta);
@@ -223,8 +226,12 @@ public class Laskenta {
         }
     }
 
+    public String getUserOID() {
+        return userOID;
+    }
+
     private List<HakukohdeDto> ilmoituksetHakukohteelle(Collection<String> hakukohdeOids, HakukohdeTila tila,
-            Map<String, List<Ilmoitus>> ilmoitukset) {
+                                                        Map<String, List<Ilmoitus>> ilmoitukset) {
         if (hakukohdeOids == null) {
             return null;
         }
