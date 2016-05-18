@@ -174,7 +174,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-    public String luoLaskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku, Integer valinnanvaihe,
+    public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, Boolean erillishaku, Integer valinnanvaihe,
             Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
         if (hakukohdeOids == null) {
             LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
