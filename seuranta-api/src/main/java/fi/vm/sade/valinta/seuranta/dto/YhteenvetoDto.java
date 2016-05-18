@@ -13,11 +13,6 @@ public class YhteenvetoDto {
 
     public YhteenvetoDto(String uuid, String userOID, String hakuOid, Long luotu,
                          LaskentaTila tila, int hakukohteitaYhteensa,
-                         int hakukohteitaValmiina, int hakukohteitaKeskeytetty) {
-        this(uuid,userOID,hakuOid,luotu,tila,hakukohteitaYhteensa,hakukohteitaValmiina,hakukohteitaKeskeytetty,null);
-    }
-    public YhteenvetoDto(String uuid, String userOID, String hakuOid, Long luotu,
-                         LaskentaTila tila, int hakukohteitaYhteensa,
                          int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija) {
         this.userOID = userOID;
         this.uuid = uuid;

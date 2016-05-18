@@ -1,14 +1,14 @@
 package fi.vm.sade.valinta.seuranta.laskenta.domain;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +21,7 @@ import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 
+@Indexes(@Index(name = "tilaAndLuonti", value = "tila, luotu"))
 public class Laskenta {
     private static final Logger LOG = LoggerFactory.getLogger(Laskenta.class);
     @Id
@@ -210,7 +211,7 @@ public class Laskenta {
         return uuid;
     }
 
-    public LaskentaDto asDto() {
+    public LaskentaDto asDto(BiFunction<Date,LaskentaTila,Integer> jonosijaProvider) {
         try {
             List<HakukohdeDto> hakukohteet = Lists.newArrayListWithCapacity(getHakukohteitaYhteensa());
             hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(), HakukohdeTila.VALMIS, getIlmoitukset()));
@@ -219,7 +220,7 @@ public class Laskenta {
             return new LaskentaDto(getUuid().toString(), userOID, getHakuOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
                     getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
-                    valintakoelaskenta);
+                    valintakoelaskenta, jonosijaProvider.apply(luotu,getTila()));
         } catch (Exception e) {
             LOG.error("LaskentaDto:n muodostus Laskentaentiteetista epaonnistui!", e);
             throw e;

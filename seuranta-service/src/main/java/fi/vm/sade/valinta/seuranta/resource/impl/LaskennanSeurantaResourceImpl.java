@@ -57,7 +57,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             try {
                 y = seurantaDao.haeYhteenveto(uuid);
             } catch (Exception e) {
-                y = new YhteenvetoDto(uuid, StringUtils.EMPTY, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.MENEILLAAN, 0, 0, 0);
+                y = new YhteenvetoDto(uuid, StringUtils.EMPTY, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.ALOITTAMATTA, 0, 0, 0, null);
             }
             seurantaSSEService.paivita(y);
         } catch (Exception e) {
