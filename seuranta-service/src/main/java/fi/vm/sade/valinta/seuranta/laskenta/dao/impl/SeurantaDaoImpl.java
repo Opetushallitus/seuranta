@@ -1,6 +1,7 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -64,7 +65,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             LOG.error("Laskentaa ei ole olemassa uuid:lla {}", uuid);
             throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla " + uuid);
         }
-        return m.asDto();
+        return m.asDto(jonosijaProvider());
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             return Collections.emptyList();
         }
         return Lists.newArrayList(i).stream()
-                .map(this::dbObjectAsYhteenvetoDto)
+                .map(db -> dbObjectAsYhteenvetoDto(db, jonosijaProvider()))
                 .collect(Collectors.toList());
     }
 
@@ -100,7 +101,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             return Collections.emptyList();
         }
         return Lists.newArrayList(i).stream()
-                .map(this::dbObjectAsYhteenvetoDto)
+                .map(db -> dbObjectAsYhteenvetoDto(db,jonosijaProvider()))
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +117,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             return Collections.emptyList();
         }
         return Lists.newArrayList(i).stream()
-                .map(this::dbObjectAsYhteenvetoDto)
+                .map(db -> dbObjectAsYhteenvetoDto(db,jonosijaProvider()))
                 .collect(Collectors.toList());
     }
 
@@ -140,7 +141,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             return Collections.emptyList();
         }
         return Lists.newArrayList(i).stream()
-                .map(this::dbObjectAsYhteenvetoDto)
+                .map(db -> dbObjectAsYhteenvetoDto(db, jonosijaProvider()))
                 .collect(Collectors.toList());
     }
 
@@ -168,7 +169,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (!i.hasNext()) {
             return null;
         }
-        return dbObjectAsYhteenvetoDto(i.next());
+        return dbObjectAsYhteenvetoDto(i.next(),jonosijaProvider());
     }
     public Collection<YhteenvetoDto> haeYhteenvedotAlkamattomille(Collection<String> uuids) {
         DBCollection collection = datastore.getCollection(Laskenta.class);
@@ -183,26 +184,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
                         dbobjmap("$project", YHTEENVETO_FIELDS))
         );
 
-        final List<Date> luontidates = luontiDatesForAloittamattomat();
-
         List<YhteenvetoDto> yhteenvetoDtos = StreamSupport.stream(aggregation.results().spliterator(), false).map(db ->
-                dbObjectAsYhteenvetoDto(db, luotu -> luontidates.lastIndexOf(luotu))).filter(Objects::nonNull).collect(Collectors.toList());
+                dbObjectAsYhteenvetoDto(db, jonosijaProvider())).filter(Objects::nonNull).collect(Collectors.toList());
 
         return yhteenvetoDtos;
-    }
-
-    private List<Date> luontiDatesForAloittamattomat() {
-        DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(
-                dbobjs(dbobj("$match",
-                        dbobj("tila", LaskentaTila.ALOITTAMATTA.toString())
-                        ),
-                        dbobjmap("$project", LUOTU_ONLY_FIELDS))
-        );
-        List<Date> objectIdToLuotu =
-                StreamSupport.stream(aggregation.results().spliterator(), false).map(db -> (Date)db.get("luotu")).filter(Objects::nonNull).sorted().collect(Collectors.toList());
-
-        return objectIdToLuotu;
     }
 
     private static Map<String, Integer> createLuotuOnlyFields() {
@@ -212,11 +197,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         return fields;
     }
 
-    private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result) {
-        return this.dbObjectAsYhteenvetoDto(result, luotu -> null);
-    }
-
-    private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result, Function<Date,Integer> jonosijaSupplier) {
+    private YhteenvetoDto dbObjectAsYhteenvetoDto(DBObject result, BiFunction<Date,LaskentaTila,Integer> jonosijaSupplier) {
         if (result == null) {
             return null;
         }
@@ -235,10 +216,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu));
+        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
     }
 
-    private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta) {
+    private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta, BiFunction<Date,LaskentaTila,Integer> jonosijaSupplier) {
         if (laskenta == null) {
             return null;
         }
@@ -257,7 +238,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty);
+        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
     }
 
     @Override
@@ -275,7 +256,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         }
         Optional<Laskenta> onGoing = orGetOnGoing(m);
         if(onGoing.isPresent()) {
-            return onGoing.get().asDto();
+            return onGoing.get().asDto(jonosijaProvider());
         } else {
             List<String> o = orEmpty(m.getOhitettu());
             List<String> t = orEmpty(m.getTekematta());
@@ -297,7 +278,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 ops.set("ilmoitukset", Collections.emptyMap());
             }
             Laskenta uusi = datastore.findAndModify(query, ops);
-            return uusi.asDto();
+            return uusi.asDto(jonosijaProvider());
         }
     }
 
@@ -318,7 +299,19 @@ public class SeurantaDaoImpl implements SeurantaDao {
         final UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
         ops.set("tila", tila);
         ilmoitusDtoOptional.ifPresent(ilmoitus -> ops.set("ilmoitus", asIlmoitus(ilmoitus)));
-        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
+    }
+
+    private BiFunction<Date,LaskentaTila,Integer> jonosijaProvider() {
+        return (luotu,tila) -> {
+            if(LaskentaTila.ALOITTAMATTA.equals(tila)) {
+                long count = datastore.getCollection(Laskenta.class).getCount(
+                        dbobj("$and", dbobjs(dbobj("tila", "ALOITTAMATTA"), dbobj("luotu", dbobj("$lte", luotu)))));
+                return new Long(count).intValue();
+            } else {
+                return null;
+            }
+        };
     }
 
     @Override
@@ -335,7 +328,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         int ohitettuCount = HakukohdeTila.VALMIS.equals(hakukohdeTila) ? 0 : l.getTekematta().size();
         ops.set("hakukohteitaOhitettu", ohitettuCount);
         ilmoitusDtoOptional.ifPresent(ilmoitus -> ops.set("ilmoitus", asIlmoitus(ilmoitus)));
-        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
     }
 
     @Override
@@ -347,7 +340,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         UpdateOperations<Laskenta> ops = datastore
                 .createUpdateOperations(Laskenta.class)
                 .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
-        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+        return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
     }
 
     @Override
@@ -362,7 +355,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                     .dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid)
                     .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
-            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
         } else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
             Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
             UpdateOperations<Laskenta> ops = datastore
@@ -371,7 +364,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                     .add("ohitettu", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid)
                     .add("ilmoitukset." + escapeHakukohdeOid(hakukohdeOid), i, true);
-            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
         } else {
             throw new RuntimeException("Tekematta tilaa ei saa asettaa manuaalisesti");
         }
@@ -395,7 +388,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                     .createUpdateOperations(Laskenta.class)
                     .dec("hakukohteitaTekematta").add("valmiit", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid);
-            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
         } else if (HakukohdeTila.KESKEYTETTY.equals(tila)) {
             Query<Laskenta> query = muodostaLaskennanPaivitysQueryHakukohteelle(uuid, hakukohdeOid);
             UpdateOperations<Laskenta> ops = datastore
@@ -403,7 +396,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                     .inc("hakukohteitaOhitettu").dec("hakukohteitaTekematta")
                     .add("ohitettu", hakukohdeOid)
                     .removeAll("tekematta", hakukohdeOid);
-            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops));
+            return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
         } else {
             throw new RuntimeException("Tekematta tilaa ei saa asettaa manuaalisesti");
         }

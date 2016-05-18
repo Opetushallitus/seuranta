@@ -14,6 +14,7 @@ public class LaskentaDto {
     private final IlmoitusDto ilmoitus;
     private final Integer valinnanvaihe;
     private final Boolean valintakoelaskenta;
+    private final Integer jonosija;
 
     public LaskentaDto(String uuid, String userOID, String hakuOid, long luotu,
                        LaskentaTila tila, LaskentaTyyppi tyyppi,
@@ -21,7 +22,9 @@ public class LaskentaDto {
                        List<HakukohdeDto> hakukohteet,
                        Boolean erillishaku,
                        Integer valinnanvaihe,
-                       Boolean valintakoelaskenta) {
+                       Boolean valintakoelaskenta,
+                       Integer jonosija) {
+        this.jonosija = jonosija;
         this.userOID = userOID;
         this.uuid = uuid;
         this.hakuOid = hakuOid;
@@ -43,7 +46,7 @@ public class LaskentaDto {
         int valmiit = 0;
         int keskeytetty = 0;
         if (hakukohteet == null) {
-            return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, 0, valmiit, keskeytetty);
+            return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, 0, valmiit, keskeytetty, null);
         }
         for (HakukohdeDto h : hakukohteet) {
             if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
@@ -52,7 +55,7 @@ public class LaskentaDto {
                 ++valmiit;
             }
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty);
+        return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty, jonosija);
     }
 
     public String getUserOID() {
