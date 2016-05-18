@@ -468,6 +468,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         Map<String, Integer> fields = Maps.newHashMap();
         fields.put("_id", 1);
         fields.put("hakuOid", 1);
+        fields.put("userOID", 1);
         fields.put("luotu", 1);
         fields.put("tila", 1);
         fields.put("hakukohteitaYhteensa", 1);
