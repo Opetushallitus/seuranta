@@ -6,6 +6,8 @@ public class LaskentaDto {
     private final String uuid;
     private final String hakuOid;
     private final String userOID;
+    private final String haunnimi;
+    private final String nimi;
     private final long luotu;
     private final Boolean erillishaku;
     private final LaskentaTila tila;
@@ -16,7 +18,7 @@ public class LaskentaDto {
     private final Boolean valintakoelaskenta;
     private final Integer jonosija;
 
-    public LaskentaDto(String uuid, String userOID, String hakuOid, long luotu,
+    public LaskentaDto(String uuid, String userOID, String haunnimi, String nimi, String hakuOid, long luotu,
                        LaskentaTila tila, LaskentaTyyppi tyyppi,
                        IlmoitusDto ilmoitus,
                        List<HakukohdeDto> hakukohteet,
@@ -24,6 +26,8 @@ public class LaskentaDto {
                        Integer valinnanvaihe,
                        Boolean valintakoelaskenta,
                        Integer jonosija) {
+        this.haunnimi = haunnimi;
+        this.nimi = nimi;
         this.jonosija = jonosija;
         this.userOID = userOID;
         this.uuid = uuid;
@@ -38,6 +42,14 @@ public class LaskentaDto {
         this.valintakoelaskenta = valintakoelaskenta;
     }
 
+    public String getHaunnimi() {
+        return haunnimi;
+    }
+
+    public String getNimi() {
+        return nimi;
+    }
+
     public IlmoitusDto getIlmoitus() {
         return ilmoitus;
     }
@@ -46,7 +58,7 @@ public class LaskentaDto {
         int valmiit = 0;
         int keskeytetty = 0;
         if (hakukohteet == null) {
-            return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, 0, valmiit, keskeytetty, null);
+            return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, 0, valmiit, keskeytetty, null);
         }
         for (HakukohdeDto h : hakukohteet) {
             if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
@@ -55,7 +67,7 @@ public class LaskentaDto {
                 ++valmiit;
             }
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty, jonosija);
+        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty, jonosija);
     }
 
     public String getUserOID() {

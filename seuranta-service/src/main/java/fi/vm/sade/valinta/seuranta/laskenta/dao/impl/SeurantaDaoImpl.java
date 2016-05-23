@@ -209,6 +209,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         String uuid = result.get("_id").toString();
         String userOID = Optional.ofNullable(result.get("userOID")).orElse("").toString();
         String hakuOid = result.get("hakuOid").toString();
+        String haunnimi = Optional.ofNullable(result.get("haunnimi")).orElse("").toString();
+        String nimi = Optional.ofNullable(result.get("nimi")).orElse("").toString();
         Date luotu = (Date) result.get("luotu");
         LaskentaTila tila = LaskentaTila.valueOf(result.get("tila").toString());
         int hakukohteitaYhteensa = (Integer) result.get("hakukohteitaYhteensa");
@@ -221,7 +223,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
+        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
     }
 
     private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta, BiFunction<Date,LaskentaTila,Integer> jonosijaSupplier) {
@@ -243,7 +245,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
+        return new YhteenvetoDto(uuid, userOID, laskenta.getHaunnimi(), laskenta.getNimi(), hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
     }
 
     @Override
@@ -409,6 +411,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
     public String luoLaskenta(
             String userOID,
+            String haunnimi,
+            String nimi,
             String hakuOid,
             LaskentaTyyppi tyyppi,
             Boolean erillishaku,
@@ -419,7 +423,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
             throw new RuntimeException("Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = " + hakuOid);
         }
-        Laskenta l = new Laskenta(userOID, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        Laskenta l = new Laskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
         Optional<Laskenta> onGoing = orGetOnGoing(l);
         if(onGoing.isPresent()) {
             return onGoing.get().getUuid().toString();
@@ -469,6 +473,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         fields.put("userOID", 1);
         fields.put("luotu", 1);
         fields.put("tila", 1);
+        fields.put("haunnimi", 1);
+        fields.put("nimi", 1);
         fields.put("hakukohteitaYhteensa", 1);
         fields.put("hakukohteitaTekematta", 1);
         fields.put("hakukohteitaOhitettu", 1);

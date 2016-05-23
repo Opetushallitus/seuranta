@@ -189,6 +189,8 @@ public interface LaskentaSeurantaResource {
     String luoLaskenta(@PathParam("hakuOid") String hakuOid,
                        @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                        @QueryParam("userOID") String userOID,
+                       @QueryParam("haunnimi") String haunnimi,
+                       @QueryParam("nimi") String nimi,
                        @QueryParam("erillishaku") Boolean erillishaku,
                        @QueryParam("valinnanvaihe") Integer valinnanvaihe,
                        @QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,

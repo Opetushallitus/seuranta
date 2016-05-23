@@ -26,6 +26,8 @@ public class Laskenta {
     private static final Logger LOG = LoggerFactory.getLogger(Laskenta.class);
     @Id
     private ObjectId uuid;
+    private final String haunnimi;
+    private final String nimi;
     private final String hakuOid;
     private final Date luotu;
     private final LaskentaTila tila;
@@ -48,6 +50,8 @@ public class Laskenta {
 
     public Laskenta() {
         this.userOID = null;
+        this.haunnimi = null;
+        this.nimi = null;
         this.hakukohteitaYhteensa = 0;
         this.hakukohteitaTekematta = 0;
         this.hakukohteitaOhitettu = 0;
@@ -68,10 +72,12 @@ public class Laskenta {
         this.identityHash = null;
     }
 
-    public Laskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi,
+    public Laskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi,
                     Boolean erillishaku,
                     Integer valinnanvaihe, Boolean valintakoelaskenta,
                     Collection<HakukohdeDto> hakukohdeOids) {
+        this.haunnimi = haunnimi;
+        this.nimi = nimi;
         this.hakukohteitaYhteensa = hakukohdeOids.size();
         this.hakukohteitaTekematta = this.hakukohteitaYhteensa;
         this.hakukohteitaOhitettu = 0;
@@ -99,6 +105,14 @@ public class Laskenta {
 
     public String getIdentityHash() {
         return identityHash;
+    }
+
+    public String getHaunnimi() {
+        return haunnimi;
+    }
+
+    public String getNimi() {
+        return nimi;
     }
 
     private HashCode createIdentityHash() {
@@ -217,7 +231,7 @@ public class Laskenta {
             hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(), HakukohdeTila.VALMIS, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(), HakukohdeTila.TEKEMATTA, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(), HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
-            return new LaskentaDto(getUuid().toString(), userOID, getHakuOid(),
+            return new LaskentaDto(getUuid().toString(), userOID, haunnimi, nimi, getHakuOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
                     getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
                     valintakoelaskenta, jonosijaProvider.apply(luotu,getTila()));

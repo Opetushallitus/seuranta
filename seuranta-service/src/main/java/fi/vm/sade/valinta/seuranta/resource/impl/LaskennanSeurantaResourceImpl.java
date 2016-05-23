@@ -28,6 +28,8 @@ import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.service.SeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 @Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
 public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
@@ -57,7 +59,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             try {
                 y = seurantaDao.haeYhteenveto(uuid);
             } catch (Exception e) {
-                y = new YhteenvetoDto(uuid, StringUtils.EMPTY, StringUtils.EMPTY, new Date().getTime(), LaskentaTila.ALOITTAMATTA, 0, 0, 0, null);
+                y = new YhteenvetoDto(uuid, EMPTY, EMPTY, EMPTY, EMPTY, new Date().getTime(), LaskentaTila.ALOITTAMATTA, 0, 0, 0, null);
             }
             seurantaSSEService.paivita(y);
         } catch (Exception e) {
@@ -174,7 +176,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-    public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, Boolean erillishaku, Integer valinnanvaihe,
+    public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String nimi, Boolean erillishaku, Integer valinnanvaihe,
             Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
         if (hakukohdeOids == null) {
             LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
@@ -191,7 +193,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
                 throw new NullPointerException("Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
             }
         });
-        return seurantaDao.luoLaskenta(userOID, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        return seurantaDao.luoLaskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
     }
 
     @PreAuthorize("isAuthenticated()")
