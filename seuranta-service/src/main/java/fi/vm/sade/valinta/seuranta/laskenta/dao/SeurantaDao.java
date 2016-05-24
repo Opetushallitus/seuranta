@@ -54,9 +54,9 @@ public interface SeurantaDao {
     /**
      * Yhteenvedot kaynnissa olevien laskentojen kulusta
      */
-    Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot();
+    Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
 
-    String luoLaskenta(String userOID, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
+    String luoLaskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
                        Integer valinnanvaihe, Boolean valintakoelaskenta,
                        Collection<HakukohdeDto> hakukohdeOids);
 

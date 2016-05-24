@@ -65,9 +65,9 @@ public interface LaskentaSeurantaResource {
      * Yhteenvedot olemassa olevista laskennoista
      */
     @GET
-    @Path("/jonossajakaynnissaolevatlaskennat")
+    @Path("/yhteenvetokaikillelaskennoille")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot();
+    Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
 
 
     @GET
@@ -189,6 +189,8 @@ public interface LaskentaSeurantaResource {
     String luoLaskenta(@PathParam("hakuOid") String hakuOid,
                        @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                        @QueryParam("userOID") String userOID,
+                       @QueryParam("haunnimi") String haunnimi,
+                       @QueryParam("nimi") String nimi,
                        @QueryParam("erillishaku") Boolean erillishaku,
                        @QueryParam("valinnanvaihe") Integer valinnanvaihe,
                        @QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
