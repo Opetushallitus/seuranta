@@ -65,9 +65,9 @@ public interface LaskentaSeurantaResource {
      * Yhteenvedot olemassa olevista laskennoista
      */
     @GET
-    @Path("/jonossajakaynnissaolevatlaskennat")
+    @Path("/yhteenvetokaikillelaskennoille")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot();
+    Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
 
 
     @GET

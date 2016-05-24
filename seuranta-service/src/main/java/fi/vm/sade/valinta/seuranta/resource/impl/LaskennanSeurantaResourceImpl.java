@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,8 +126,8 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
-    public Collection<YhteenvetoDto> haeJonossaJaKaynnissaOlevienYhteenvedot() {
-        return seurantaDao.haeJonossaJaKaynnissaOlevienYhteenvedot();
+    public Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille() {
+        return seurantaDao.haeYhteenvetoKaikilleLaskennoille();
     }
 
     @PreAuthorize("isAuthenticated()")
