@@ -29,6 +29,14 @@ public class YhteenvetoDto {
         this.jonosija = jonosija;
     }
 
+    public String getHaunnimi() {
+        return haunnimi;
+    }
+
+    public String getNimi() {
+        return nimi;
+    }
+
     public String getUserOID() {
         return userOID;
     }
