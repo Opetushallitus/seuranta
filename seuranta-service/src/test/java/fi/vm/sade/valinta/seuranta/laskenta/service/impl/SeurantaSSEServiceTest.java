@@ -17,7 +17,7 @@ public class SeurantaSSEServiceTest {
 		SeurantaSSEServiceImpl sseService = new SeurantaSSEServiceImpl();
 		String uuid = "uuid";
 		sseService.paivita(new YhteenvetoDto(uuid, EMPTY, EMPTY,EMPTY, EMPTY, 0L, null,
-				0, 0, 0, null));
+				0, 0, 0, null, null, null, null));
 		EventOutput eo1 = Mockito.mock(EventOutput.class);
 		Mockito.when(eo1.isClosed()).thenReturn(true);
 		EventOutput eo2 = Mockito.mock(EventOutput.class);
@@ -25,7 +25,7 @@ public class SeurantaSSEServiceTest {
 		sseService.rekisteroi(uuid, eo1);
 		sseService.rekisteroi(uuid, eo2);
 		sseService.paivita(new YhteenvetoDto(uuid, EMPTY, EMPTY,EMPTY, EMPTY, 0L, null,
-				0, 0, 0, null));
+				0, 0, 0, null, null, null, null));
 		sseService.sammuta(uuid);
 	}
 }

@@ -225,6 +225,14 @@ public class Laskenta {
         return uuid;
     }
 
+    public Integer getValinnanvaihe() {
+        return valinnanvaihe;
+    }
+
+    public Boolean getValintakoelaskenta() {
+        return valintakoelaskenta;
+    }
+
     public LaskentaDto asDto(BiFunction<Date,LaskentaTila,Integer> jonosijaProvider) {
         try {
             List<HakukohdeDto> hakukohteet = Lists.newArrayListWithCapacity(getHakukohteitaYhteensa());

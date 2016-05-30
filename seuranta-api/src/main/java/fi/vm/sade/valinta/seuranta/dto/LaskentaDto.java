@@ -58,7 +58,7 @@ public class LaskentaDto {
         int valmiit = 0;
         int keskeytetty = 0;
         if (hakukohteet == null) {
-            return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, 0, valmiit, keskeytetty, null);
+            return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, 0, valmiit, keskeytetty, null, tyyppi, valinnanvaihe, valintakoelaskenta);
         }
         for (HakukohdeDto h : hakukohteet) {
             if (HakukohdeTila.KESKEYTETTY.equals(h.getTila())) {
@@ -67,7 +67,7 @@ public class LaskentaDto {
                 ++valmiit;
             }
         }
-        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty, jonosija);
+        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, hakukohteet.size(), valmiit, keskeytetty, jonosija, tyyppi, valinnanvaihe, valintakoelaskenta);
     }
 
     public String getUserOID() {

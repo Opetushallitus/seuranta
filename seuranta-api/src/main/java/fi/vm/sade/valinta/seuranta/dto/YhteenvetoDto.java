@@ -12,10 +12,25 @@ public class YhteenvetoDto {
     private final int hakukohteitaValmiina;
     private final int hakukohteitaKeskeytetty;
     private final Integer jonosija; // sija laskennan jonossa tai null jos ei jonossa
+    private final LaskentaTyyppi tyyppi;
+    private final Integer valinnanvaihe;
+    private final Boolean valintakoelaskenta;
+
+    /*
+    "valinnanvaihe" : NumberInt(1),
+    "valintakoelaskenta" : false,
+     */
+
+    /*public YhteenvetoDto(String uuid, String userOID, String haunnimi, String nimi, String hakuOid, Long luotu,
+                         LaskentaTila tila, int hakukohteitaYhteensa,
+                         int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija) {
+        this(uuid, userOID, haunnimi, nimi, hakuOid, luotu, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosija, null, null, null);
+    }*/
 
     public YhteenvetoDto(String uuid, String userOID, String haunnimi, String nimi, String hakuOid, Long luotu,
                          LaskentaTila tila, int hakukohteitaYhteensa,
-                         int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija) {
+                         int hakukohteitaValmiina, int hakukohteitaKeskeytetty, Integer jonosija,
+                         LaskentaTyyppi tyyppi, Integer valinnanvaihe, Boolean valintakoelaskenta) {
         this.userOID = userOID;
         this.haunnimi = haunnimi;
         this.nimi = nimi;
@@ -27,6 +42,9 @@ public class YhteenvetoDto {
         this.hakukohteitaValmiina = hakukohteitaValmiina;
         this.hakukohteitaKeskeytetty = hakukohteitaKeskeytetty;
         this.jonosija = jonosija;
+        this.tyyppi = tyyppi;
+        this.valinnanvaihe = valinnanvaihe;
+        this.valintakoelaskenta = valintakoelaskenta;
     }
 
     public String getHaunnimi() {
@@ -71,5 +89,17 @@ public class YhteenvetoDto {
 
     public LaskentaTila getTila() {
         return tila;
+    }
+
+    public LaskentaTyyppi getTyyppi() {
+        return tyyppi;
+    }
+
+    public Integer getValinnanvaihe() {
+        return valinnanvaihe;
+    }
+
+    public Boolean getValintakoelaskenta() {
+        return valintakoelaskenta;
     }
 }

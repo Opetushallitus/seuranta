@@ -214,13 +214,18 @@ public class SeurantaDaoImpl implements SeurantaDao {
         int hakukohteitaKeskeytetty = (Integer) result.get("hakukohteitaOhitettu");
         int hakukohteitaTekematta = (Integer) result.get("hakukohteitaTekematta");
         int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty) - hakukohteitaTekematta;
+        LaskentaTyyppi tyyppi = LaskentaTyyppi.valueOf(result.get("tyyppi").toString());
+        Integer valinnanvaihe = (Integer) result.get("valinnanvaihe");
+        Boolean valintakoelaskenta = (Boolean) result.get("valintakoelaskenta");
         long luotuTimestamp;
         if (luotu == null) {
             luotuTimestamp = new Date().getTime();
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
+        return new YhteenvetoDto(uuid, userOID, haunnimi, nimi, hakuOid, luotuTimestamp, tila,
+                hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty,
+                jonosijaSupplier.apply(luotu,tila), tyyppi, valinnanvaihe, valintakoelaskenta);
     }
 
     private YhteenvetoDto laskentaAsYhteenvetoDto(Laskenta laskenta, BiFunction<Date,LaskentaTila,Integer> jonosijaSupplier) {
@@ -236,13 +241,18 @@ public class SeurantaDaoImpl implements SeurantaDao {
         final int hakukohteitaKeskeytetty = laskenta.getHakukohteitaOhitettu();
         final int hakukohteitaTekematta = laskenta.getHakukohteitaTekematta();
         final int hakukohteitaValmiina = (hakukohteitaYhteensa - hakukohteitaKeskeytetty) - hakukohteitaTekematta;
+        final LaskentaTyyppi tyyppi = laskenta.getTyyppi();
+        final Integer valinnanvaihe = laskenta.getValinnanvaihe();
+        final Boolean valintakoelaskenta = laskenta.getValintakoelaskenta();
         long luotuTimestamp;
         if (luotu == null) {
             luotuTimestamp = new Date().getTime();
         } else {
             luotuTimestamp = luotu.getTime();
         }
-        return new YhteenvetoDto(uuid, userOID, laskenta.getHaunnimi(), laskenta.getNimi(), hakuOid, luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty, jonosijaSupplier.apply(luotu,tila));
+        return new YhteenvetoDto(uuid, userOID, laskenta.getHaunnimi(), laskenta.getNimi(), hakuOid,
+                luotuTimestamp, tila, hakukohteitaYhteensa, hakukohteitaValmiina, hakukohteitaKeskeytetty,
+                jonosijaSupplier.apply(luotu,tila), tyyppi, valinnanvaihe, valintakoelaskenta);
     }
 
     @Override
@@ -475,6 +485,9 @@ public class SeurantaDaoImpl implements SeurantaDao {
         fields.put("hakukohteitaYhteensa", 1);
         fields.put("hakukohteitaTekematta", 1);
         fields.put("hakukohteitaOhitettu", 1);
+        fields.put("tyyppi", 1);
+        fields.put("valinnanvaihe", 1);
+        fields.put("valintakoelaskenta", 1);
         return fields;
     }
 }
