@@ -52,6 +52,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             LOG.error("Ensuring indexes failed!", t);
         }
         this.datastore = datastore;
+        resetoiMeneillaanOlevatLaskennat();
     }
 
 
@@ -263,10 +264,6 @@ public class SeurantaDaoImpl implements SeurantaDao {
         datastore.delete(query);
     }
 
-    private LaskentaDto resetoiMeneillaanOlevatLaskennat() {
-
-    }
-
     @Override
     public LaskentaDto resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset) {
         ObjectId oid = new ObjectId(uuid);
@@ -274,6 +271,14 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (m == null) {
             throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla " + uuid);
         }
+        Optional<Laskenta> onGoing = orGetOnGoing(m);
+        if(onGoing.isPresent()) {
+            return onGoing.get().asDto(jonosijaProvider());
+        }
+        return resetLaskenta(nollaaIlmoitukset, LaskentaTila.ALOITTAMATTA, m);
+    }
+
+    private LaskentaDto resetLaskenta(boolean nollaaIlmoitukset, LaskentaTila resetointiTila, Laskenta m) {
         List<String> o = orEmpty(m.getOhitettu());
         List<String> t = orEmpty(m.getTekematta());
         List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size() + t.size());
@@ -281,10 +286,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
         uusiTekematta.addAll(t);
         Query<Laskenta> query = datastore
                 .createQuery(Laskenta.class)
-                .field("_id").equal(new ObjectId(uuid));
+                .field("_id").equal(m.getUuid());
         UpdateOperations<Laskenta> ops = datastore
                 .createUpdateOperations(Laskenta.class)
-                .set("tila", LaskentaTila.ALOITTAMATTA)
+                .set("tila", resetointiTila)
                 .set("hakukohteitaTekematta", uusiTekematta.size())
                 .set("hakukohteitaOhitettu", 0)
                 .set("valmiit", orEmpty(m.getValmiit()))
@@ -315,6 +320,20 @@ public class SeurantaDaoImpl implements SeurantaDao {
         ops.set("tila", tila);
         ilmoitusDtoOptional.ifPresent(ilmoitus -> ops.set("ilmoitus", asIlmoitus(ilmoitus)));
         return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
+    }
+
+    private void resetoiMeneillaanOlevatLaskennat() {
+        try {
+            final Query<Laskenta> query = datastore
+                    .createQuery(Laskenta.class)
+                    .field("tila").equal(LaskentaTila.MENEILLAAN);
+
+            final UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
+            ops.set("tila", LaskentaTila.PERUUTETTU);
+            datastore.findAndModify(query, ops);
+        } catch(Throwable t){
+            LOG.error("Meneillaan olevien laskentojen resetointi epaonnistui!", t);
+        }
     }
 
     private BiFunction<Date,LaskentaTila,Integer> jonosijaProvider() {
