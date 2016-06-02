@@ -322,15 +322,12 @@ public class SeurantaDaoImpl implements SeurantaDao {
         return laskentaAsYhteenvetoDto(datastore.findAndModify(query, ops),jonosijaProvider());
     }
 
-    private void resetoiMeneillaanOlevatLaskennat() {
+    public void resetoiMeneillaanOlevatLaskennat() {
         try {
-            final Query<Laskenta> query = datastore
-                    .createQuery(Laskenta.class)
-                    .field("tila").equal(LaskentaTila.MENEILLAAN);
-
-            final UpdateOperations<Laskenta> ops = datastore.createUpdateOperations(Laskenta.class);
-            ops.set("tila", LaskentaTila.PERUUTETTU);
-            datastore.findAndModify(query, ops);
+            WriteResult update = datastore.getCollection(Laskenta.class).update(
+                    dbobj("tila", LaskentaTila.MENEILLAAN.toString()),
+                    dbobj("$set", dbobj("tila", LaskentaTila.PERUUTETTU.toString())), false, true);
+            LOG.info("", update);
         } catch(Throwable t){
             LOG.error("Meneillaan olevien laskentojen resetointi epaonnistui!", t);
         }

@@ -47,6 +47,22 @@ public class SeurantaDaoTest {
     private static String randomHakukohde() {
         return "HAKUKOHDE_" + Math.abs(rnd.nextInt(100000000));
     }
+
+    @Test
+    public void testaaMeneillaanOlevienResetointi() {
+        final String hakukohde = randomHakukohde();
+        final String uuid = aloitaUusiLaskenta(Optional.of(hakukohde));
+
+        final String hakukohde2 = randomHakukohde();
+        final String uuid2 = aloitaUusiLaskenta(Optional.of(hakukohde2));
+
+        Assert.assertTrue(LaskentaTila.MENEILLAAN.equals(seurantaDao.haeLaskenta(uuid).getTila()));
+        Assert.assertTrue(LaskentaTila.MENEILLAAN.equals(seurantaDao.haeLaskenta(uuid2).getTila()));
+        seurantaDao.resetoiMeneillaanOlevatLaskennat();
+        Assert.assertTrue(LaskentaTila.PERUUTETTU.equals(seurantaDao.haeLaskenta(uuid).getTila()));
+        Assert.assertTrue(LaskentaTila.PERUUTETTU.equals(seurantaDao.haeLaskenta(uuid2).getTila()));
+    }
+
     @Test
     public void testaaMerkkaaLaskennanTilaJaHakukohteidenTilaKerrallaValmistuneelleLaskennalle() {
         String uuid = aloitaUusiLaskenta(Optional.of(randomHakukohde()));

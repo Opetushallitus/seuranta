@@ -74,6 +74,8 @@ public interface SeurantaDao {
 
     LaskentaDto resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset);
 
+    void resetoiMeneillaanOlevatLaskennat();
+
     void lisaaIlmoitus(String uuid, String hakukohdeOid, Ilmoitus ilmoitus);
 
     /**
