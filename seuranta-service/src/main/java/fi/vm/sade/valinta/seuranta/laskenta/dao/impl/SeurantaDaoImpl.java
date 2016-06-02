@@ -54,6 +54,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         this.datastore = datastore;
     }
 
+
+
     @Override
     public void siivoa(Date asti) {
         Query<Laskenta> query = datastore.createQuery(Laskenta.class)
@@ -261,6 +263,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
         datastore.delete(query);
     }
 
+    private LaskentaDto resetoiMeneillaanOlevatLaskennat() {
+
+    }
+
     @Override
     public LaskentaDto resetoiEiValmiitHakukohteet(String uuid, boolean nollaaIlmoitukset) {
         ObjectId oid = new ObjectId(uuid);
@@ -268,32 +274,27 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (m == null) {
             throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla " + uuid);
         }
-        Optional<Laskenta> onGoing = orGetOnGoing(m);
-        if(onGoing.isPresent()) {
-            return onGoing.get().asDto(jonosijaProvider());
-        } else {
-            List<String> o = orEmpty(m.getOhitettu());
-            List<String> t = orEmpty(m.getTekematta());
-            List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size() + t.size());
-            uusiTekematta.addAll(o);
-            uusiTekematta.addAll(t);
-            Query<Laskenta> query = datastore
-                    .createQuery(Laskenta.class)
-                    .field("_id").equal(new ObjectId(uuid));
-            UpdateOperations<Laskenta> ops = datastore
-                    .createUpdateOperations(Laskenta.class)
-                    .set("tila", LaskentaTila.ALOITTAMATTA)
-                    .set("hakukohteitaTekematta", uusiTekematta.size())
-                    .set("hakukohteitaOhitettu", 0)
-                    .set("valmiit", orEmpty(m.getValmiit()))
-                    .set("tekematta", uusiTekematta)
-                    .set("ohitettu", Collections.emptyList());
-            if (nollaaIlmoitukset) {
-                ops.set("ilmoitukset", Collections.emptyMap());
-            }
-            Laskenta uusi = datastore.findAndModify(query, ops);
-            return uusi.asDto(jonosijaProvider());
+        List<String> o = orEmpty(m.getOhitettu());
+        List<String> t = orEmpty(m.getTekematta());
+        List<String> uusiTekematta = Lists.newArrayListWithCapacity(o.size() + t.size());
+        uusiTekematta.addAll(o);
+        uusiTekematta.addAll(t);
+        Query<Laskenta> query = datastore
+                .createQuery(Laskenta.class)
+                .field("_id").equal(new ObjectId(uuid));
+        UpdateOperations<Laskenta> ops = datastore
+                .createUpdateOperations(Laskenta.class)
+                .set("tila", LaskentaTila.ALOITTAMATTA)
+                .set("hakukohteitaTekematta", uusiTekematta.size())
+                .set("hakukohteitaOhitettu", 0)
+                .set("valmiit", orEmpty(m.getValmiit()))
+                .set("tekematta", uusiTekematta)
+                .set("ohitettu", Collections.emptyList());
+        if (nollaaIlmoitukset) {
+            ops.set("ilmoitukset", Collections.emptyMap());
         }
+        Laskenta uusi = datastore.findAndModify(query, ops);
+        return uusi.asDto(jonosijaProvider());
     }
 
     private static <T> List<T> orEmpty(List<T> t) {
