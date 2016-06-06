@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
 import junit.framework.Assert;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -46,6 +47,11 @@ public class SeurantaDaoTest {
     private static final Random rnd = new Random(System.currentTimeMillis());
     private static String randomHakukohde() {
         return "HAKUKOHDE_" + Math.abs(rnd.nextInt(100000000));
+    }
+
+    @Before
+    public void siivoSeurannat() {
+        seurantaDao.siivoa(new Date());
     }
 
     @Test
@@ -120,7 +126,6 @@ public class SeurantaDaoTest {
 
     @Test
     public void testaaLaskennanAloittaminenIlmanLaskentaaPalauttaaNull() {
-        seurantaDao.siivoa(new Date());
         assertNull(seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
 
