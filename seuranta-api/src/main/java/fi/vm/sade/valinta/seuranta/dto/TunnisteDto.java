@@ -1,13 +1,8 @@
 package fi.vm.sade.valinta.seuranta.dto;
 
 public class TunnisteDto {
-    private final String uuid;
-    private final boolean luotiinkoUusiLaskenta;
-
-    public TunnisteDto() {
-        this.uuid = null;
-        this.luotiinkoUusiLaskenta = true;
-    }
+    private String uuid;
+    private boolean luotiinkoUusiLaskenta;
 
     public TunnisteDto(String uuid, boolean luotiinkoUusiLaskenta) {
         this.uuid = uuid;
