@@ -15,16 +15,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.valinta.seuranta.dto.*;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
-
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
 @Path("seuranta")
 public interface LaskentaSeurantaResource {
@@ -186,15 +179,15 @@ public interface LaskentaSeurantaResource {
     @Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    String luoLaskenta(@PathParam("hakuOid") String hakuOid,
-                       @PathParam("tyyppi") LaskentaTyyppi tyyppi,
-                       @QueryParam("userOID") String userOID,
-                       @QueryParam("haunnimi") String haunnimi,
-                       @QueryParam("nimi") String nimi,
-                       @QueryParam("erillishaku") Boolean erillishaku,
-                       @QueryParam("valinnanvaihe") Integer valinnanvaihe,
-                       @QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
-                       List<HakukohdeDto> hakukohdeOids);
+    TunnisteDto luoLaskenta(@PathParam("hakuOid") String hakuOid,
+                            @PathParam("tyyppi") LaskentaTyyppi tyyppi,
+                            @QueryParam("userOID") String userOID,
+                            @QueryParam("haunnimi") String haunnimi,
+                            @QueryParam("nimi") String nimi,
+                            @QueryParam("erillishaku") Boolean erillishaku,
+                            @QueryParam("valinnanvaihe") Integer valinnanvaihe,
+                            @QueryParam("valintakoelaskenta") Boolean valintakoelaskenta,
+                            List<HakukohdeDto> hakukohdeOids);
 
     /**
      * Poistaa laskennan

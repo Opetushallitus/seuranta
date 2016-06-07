@@ -173,7 +173,7 @@ public class SeurantaDaoTest {
         assertEquals(LaskentaTila.VALMIS, seurantaDao.haeLaskenta(uuid).getTila());
         seurantaDao.merkkaaTila(uuid, "hk3", HakukohdeTila.VALMIS, new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei2"));
         seurantaDao.lisaaIlmoitus(uuid, "hk3", new IlmoitusDto(IlmoitusTyyppi.VAROITUS, "Hehei3"));
-        String uuid2 = seurantaDao.luoLaskenta("U0","", "", hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        String uuid2 = seurantaDao.luoLaskenta("U0","", "", hakuOid, LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids).getUuid();
         assertNotSame(uuid, uuid2);
         assertEquals(seurantaDao.resetoiEiValmiitHakukohteet(uuid, false).getUuid(), uuid2);
         assertEquals(2, seurantaDao.haeYhteenvedotHaulle(hakuOid).size());
@@ -223,8 +223,8 @@ public class SeurantaDaoTest {
     @Test
     public void testaaTyonAlleOttaminenPalauttaaVanhimmanAloittamattaOlleenLaskennan() {
         Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-        String oldestUuid = seurantaDao.luoLaskenta("U0","", "", "hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
-        String newestUuid = seurantaDao.luoLaskenta("U0","", "", "hk2", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        String oldestUuid = seurantaDao.luoLaskenta("U0","", "", "hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids).getUuid();
+        String newestUuid = seurantaDao.luoLaskenta("U0","", "", "hk2", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids).getUuid();
         assertEquals(oldestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
         assertEquals(newestUuid, seurantaDao.otaSeuraavaLaskentaTyonAlle());
     }
@@ -241,7 +241,7 @@ public class SeurantaDaoTest {
     }
     private String luoUusiLaskenta(Optional<String> hakukohdeOid) {
         Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto(hakukohdeOid.orElse("h1"), "o1"), new HakukohdeDto("h2", "o2"));
-        String uuid = seurantaDao.luoLaskenta("U0","", "", "hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        String uuid = seurantaDao.luoLaskenta("U0","", "", "hk1", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids).getUuid();
         return uuid;
     }
     private String aloitaUusiLaskenta(Optional<String> hakukohdeOid) {

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.valinta.seuranta.dto.*;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,6 @@ import com.google.gson.GsonBuilder;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.service.SeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
@@ -176,8 +170,8 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-    public String luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String nimi, Boolean erillishaku, Integer valinnanvaihe,
-            Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
+    public TunnisteDto luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String nimi, Boolean erillishaku, Integer valinnanvaihe,
+                                   Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
         if (hakukohdeOids == null) {
             LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
             throw new NullPointerException("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");

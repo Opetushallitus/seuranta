@@ -47,7 +47,7 @@ public class TestSeurantaDaoConcurrentIntegration {
 
     private String aloitaUusiLaskenta(int i) {
         Collection<HakukohdeDto> hakukohdeOids = Arrays.asList(new HakukohdeDto("h1", "o1"), new HakukohdeDto("h2", "o2"));
-        return seurantaDao.luoLaskenta("U0","", "", "hk", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids);
+        return seurantaDao.luoLaskenta("U0","", "", "hk", LaskentaTyyppi.HAKU, true, null, null, hakukohdeOids).getUuid();
     }
 
     @Ignore

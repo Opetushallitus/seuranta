@@ -17,6 +17,7 @@ public class LaskentaDto {
     private final Integer valinnanvaihe;
     private final Boolean valintakoelaskenta;
     private final Integer jonosija;
+    private final boolean luotiinkoUusiLaskenta;
 
     public LaskentaDto(String uuid, String userOID, String haunnimi, String nimi, String hakuOid, long luotu,
                        LaskentaTila tila, LaskentaTyyppi tyyppi,
@@ -25,7 +26,8 @@ public class LaskentaDto {
                        Boolean erillishaku,
                        Integer valinnanvaihe,
                        Boolean valintakoelaskenta,
-                       Integer jonosija) {
+                       Integer jonosija,
+                       boolean luotiinkoUusiLaskenta) {
         this.haunnimi = haunnimi;
         this.nimi = nimi;
         this.jonosija = jonosija;
@@ -40,6 +42,23 @@ public class LaskentaDto {
         this.erillishaku = erillishaku;
         this.valinnanvaihe = valinnanvaihe;
         this.valintakoelaskenta = valintakoelaskenta;
+        this.luotiinkoUusiLaskenta = luotiinkoUusiLaskenta;
+    }
+
+    public boolean getLuotiinkoUusiLaskenta() {
+        return luotiinkoUusiLaskenta;
+    }
+
+    public boolean isLuotiinkoUusiLaskenta() {
+        return luotiinkoUusiLaskenta;
+    }
+
+    public Integer getJonosija() {
+        return jonosija;
+    }
+
+    public Boolean getErillishaku() {
+        return erillishaku;
     }
 
     public String getHaunnimi() {

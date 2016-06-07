@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import fi.vm.sade.valinta.seuranta.dto.*;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.AdvancedDatastore;
 import org.slf4j.Logger;
@@ -25,13 +26,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
@@ -73,7 +67,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             LOG.error("Laskentaa ei ole olemassa uuid:lla {}", uuid);
             throw new RuntimeException("Laskentaa ei ole olemassa uuid:lla " + uuid);
         }
-        return m.asDto(jonosijaProvider());
+        return m.asDto(jonosijaProvider(), true);
     }
 
     @Override
@@ -273,7 +267,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         }
         Optional<Laskenta> onGoing = orGetOnGoing(m);
         if(onGoing.isPresent()) {
-            return onGoing.get().asDto(jonosijaProvider());
+            return onGoing.get().asDto(jonosijaProvider(), false);
         }
         return resetLaskenta(nollaaIlmoitukset, LaskentaTila.ALOITTAMATTA, m);
     }
@@ -299,7 +293,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             ops.set("ilmoitukset", Collections.emptyMap());
         }
         Laskenta uusi = datastore.findAndModify(query, ops);
-        return uusi.asDto(jonosijaProvider());
+        return uusi.asDto(jonosijaProvider(), true);
     }
 
     private static <T> List<T> orEmpty(List<T> t) {
@@ -433,7 +427,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         }
     }
 
-    public String luoLaskenta(
+    public TunnisteDto luoLaskenta(
             String userOID,
             String haunnimi,
             String nimi,
@@ -450,10 +444,10 @@ public class SeurantaDaoImpl implements SeurantaDao {
         Laskenta l = new Laskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
         Optional<Laskenta> onGoing = orGetOnGoing(l);
         if(onGoing.isPresent()) {
-            return onGoing.get().getUuid().toString();
+            return new TunnisteDto(onGoing.get().getUuid().toString(), false);
         }
         datastore.save(l);
-        return l.getUuid().toString();
+        return new TunnisteDto(l.getUuid().toString(), true);
     }
     private Optional<Laskenta> orGetOnGoing(Laskenta l) {
         final String identityHash = l.getIdentityHash();

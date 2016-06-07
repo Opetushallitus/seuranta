@@ -4,14 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeDto;
-import fi.vm.sade.valinta.seuranta.dto.HakukohdeTila;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.IlmoitusTyyppi;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
+import fi.vm.sade.valinta.seuranta.dto.*;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 
 public interface SeurantaDao {
@@ -56,9 +49,9 @@ public interface SeurantaDao {
      */
     Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
 
-    String luoLaskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
-                       Integer valinnanvaihe, Boolean valintakoelaskenta,
-                       Collection<HakukohdeDto> hakukohdeOids);
+    TunnisteDto luoLaskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
+                            Integer valinnanvaihe, Boolean valintakoelaskenta,
+                            Collection<HakukohdeDto> hakukohdeOids);
 
     void poistaLaskenta(String uuid);
 

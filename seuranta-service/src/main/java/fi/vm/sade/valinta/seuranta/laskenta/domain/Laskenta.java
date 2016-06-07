@@ -233,7 +233,7 @@ public class Laskenta {
         return valintakoelaskenta;
     }
 
-    public LaskentaDto asDto(BiFunction<Date,LaskentaTila,Integer> jonosijaProvider) {
+    public LaskentaDto asDto(BiFunction<Date,LaskentaTila,Integer> jonosijaProvider, boolean luotiinkoUusiLaskenta) {
         try {
             List<HakukohdeDto> hakukohteet = Lists.newArrayListWithCapacity(getHakukohteitaYhteensa());
             hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(), HakukohdeTila.VALMIS, getIlmoitukset()));
@@ -242,7 +242,7 @@ public class Laskenta {
             return new LaskentaDto(getUuid().toString(), userOID, haunnimi, nimi, getHakuOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
                     getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
-                    valintakoelaskenta, jonosijaProvider.apply(luotu,getTila()));
+                    valintakoelaskenta, jonosijaProvider.apply(luotu,getTila()), luotiinkoUusiLaskenta);
         } catch (Exception e) {
             LOG.error("LaskentaDto:n muodostus Laskentaentiteetista epaonnistui!", e);
             throw e;
