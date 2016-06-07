@@ -178,7 +178,7 @@ public interface LaskentaSeurantaResource {
     @POST
     @Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     TunnisteDto luoLaskenta(@PathParam("hakuOid") String hakuOid,
                             @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                             @QueryParam("userOID") String userOID,
