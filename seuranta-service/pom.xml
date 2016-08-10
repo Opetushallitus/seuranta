@@ -41,17 +41,6 @@
 		<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-support-distributed-ehcache</artifactId>
-			<version>3.1.12</version>
-			<exclusions>
-				<exclusion>
-					<groupId>net.sf.ehcache</groupId>
-					<artifactId>ehcache</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -155,20 +144,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-ldap</artifactId>
 			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>fi.vm.sade.generic</groupId>
-			<artifactId>generic-common</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>validation-api</artifactId>
-					<groupId>javax.validation</groupId>
-				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>*</artifactId>
@@ -303,10 +278,12 @@
 			<version>${swagger.version}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>
-						jersey-container-servlet-core
-					</artifactId>
 					<groupId>org.glassfish.jersey.containers</groupId>
+					<artifactId>jersey-container-servlet-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.jersey.media</groupId>
+					<artifactId>jersey-media-multipart</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -318,7 +295,6 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.2.4</version>
 		</dependency>
 		<!-- EhCache Replication -->
 		<dependency>

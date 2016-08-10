@@ -1,5 +1,6 @@
 package fi.vm.sade.valinta.seuranta.laskenta.domain;
 
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -127,7 +128,7 @@ public class Laskenta {
         */
         final long DELIMETER = 1000000000L;
         return Hashing.md5().newHasher()
-                .putString(hakuOid)
+                .putString(hakuOid, Charset.forName("UTF-8"))
                 .putLong(DELIMETER + 1L)
                 .putInt(tyyppi != null ? tyyppi.ordinal() : -1 )
                 .putLong(DELIMETER + 2L)
@@ -144,9 +145,9 @@ public class Laskenta {
                         ComparisonChain.start().compare(h1.getHakukohdeOid(),h2.getHakukohdeOid())
                                 .compare(h1.getOrganisaatioOid(),h2.getOrganisaatioOid()).result()
                     ).forEach(h -> {
-                        sink.putString(h.getHakukohdeOid())
+                        sink.putString(h.getHakukohdeOid(), Charset.forName("UTF-8"))
                                 .putLong(DELIMETER + 7L)
-                                .putString(h.getOrganisaatioOid())
+                                .putString(h.getOrganisaatioOid(), Charset.forName("UTF-8"))
                                 .putLong(DELIMETER + 8L);
                     });
                 })
