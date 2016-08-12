@@ -244,33 +244,14 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
 			<artifactId>jersey-spring3</artifactId>
-			<version>${jersey.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>
-						jersey-container-servlet-core
-					</artifactId>
-					<groupId>org.glassfish.jersey.containers</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-sse</artifactId>
-			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.bundles</groupId>
 			<artifactId>jaxrs-ri</artifactId>
-			<version>${jersey.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>
-						jersey-container-servlet-core
-					</artifactId>
-					<groupId>org.glassfish.jersey.containers</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
