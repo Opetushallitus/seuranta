@@ -7,9 +7,6 @@
 	</parent>
 	<artifactId>seuranta-api</artifactId>
 	<name>Seurantapalvelu :: Api</name>
-	<properties>
-		<jersey.version>2.10.3</jersey.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>joda-time</groupId>
