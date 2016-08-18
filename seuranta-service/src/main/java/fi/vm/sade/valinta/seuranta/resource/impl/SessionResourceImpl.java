@@ -1,7 +1,7 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import fi.vm.sade.valinta.seuranta.resource.SessionResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;

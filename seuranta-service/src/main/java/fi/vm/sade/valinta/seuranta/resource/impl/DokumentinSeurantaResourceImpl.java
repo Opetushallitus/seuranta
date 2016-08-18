@@ -8,8 +8,8 @@ import java.util.List;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import fi.vm.sade.valinta.seuranta.dokumentti.dao.DokumenttiDao;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
 import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;

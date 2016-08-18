@@ -26,8 +26,8 @@ public class ResourceConfiguration extends ResourceConfig {
         register(SijoittelunSeurantaResourceImpl.class);
         register(SessionResourceImpl.class);
         registerInstances(
-                new com.wordnik.swagger.jaxrs.listing.ResourceListingProvider(),
-                new com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider());
-        register(com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON.class);
+                new io.swagger.jaxrs.listing.SwaggerSerializers(),
+                new io.swagger.jaxrs.listing.ApiListingResource(),
+                new io.swagger.jaxrs.listing.AcceptHeaderApiListingResource());
     }
 }
