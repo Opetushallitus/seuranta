@@ -9,7 +9,7 @@ import fi.vm.sade.valinta.seuranta.laskenta.service.DokumentinSeurantaSSEService
 import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import fi.vm.sade.valinta.seuranta.resource.impl.DokumentinSeurantaResourceImpl;
 import fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration;
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import org.bson.types.ObjectId;
 import org.junit.After;

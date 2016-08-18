@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +29,8 @@ import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.testcontext.SeurantaConfiguration;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
