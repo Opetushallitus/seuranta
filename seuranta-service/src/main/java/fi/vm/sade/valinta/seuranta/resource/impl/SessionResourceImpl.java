@@ -1,9 +1,8 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
+import fi.vm.sade.valinta.seuranta.resource.SessionResource;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import fi.vm.sade.valinta.seuranta.resource.SessionResource;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ public class SessionResourceImpl implements SessionResource {
 
     @GET
     @Path("/maxinactiveinterval")
-    @PreAuthorize("isAuthenticated()")
     @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(
             value = "Palauttaa session erääntymisen aikarajan sekunteina",

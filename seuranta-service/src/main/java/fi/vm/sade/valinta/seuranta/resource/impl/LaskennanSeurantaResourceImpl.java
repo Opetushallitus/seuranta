@@ -10,7 +10,6 @@ import org.glassfish.jersey.media.sse.EventOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.GsonBuilder;
@@ -78,25 +77,21 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
     }
 
-    // @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenveto laskennasta", response = Collection.class)
     public YhteenvetoDto yhteenveto(String uuid) {
         return seurantaDao.haeYhteenveto(uuid);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
     public Collection<YhteenvetoDto> hae(String hakuOid) {
         return seurantaDao.haeYhteenvedotHaulle(hakuOid);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
     public Collection<YhteenvetoDto> hae(String hakuOid, LaskentaTyyppi tyyppi) {
         return seurantaDao.haeYhteenvedotHaulle(hakuOid, tyyppi);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
     public LaskentaDto resetoiTilat(String uuid) {
         try {
@@ -113,19 +108,16 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
     public Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(String hakuOid) {
         return seurantaDao.haeKaynnissaOlevienYhteenvedotHaulle(hakuOid);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Yhteenvedot kaikista kaynnissa olevista laskennoista haulle", response = Collection.class)
     public Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille() {
         return seurantaDao.haeYhteenvetoKaikilleLaskennoille();
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Seuraavan työn alle otetun laskennan uuid", response = String.class)
     public Response otaSeuraavaLaskentaTyonAlle() {
         Optional<String> uuid = Optional.ofNullable(seurantaDao.otaSeuraavaLaskentaTyonAlle());
@@ -142,7 +134,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
 
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Laskennan tiedot", response = Collection.class)
     public LaskentaDto laskenta(String uuid) {
         try {
@@ -158,7 +149,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Laskennan tiedot", response = Collection.class)
     public Response lataa(String uuid) {
         LaskentaDto laskenta = seurantaDao.haeLaskenta(uuid);
@@ -168,7 +158,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
                 .build();
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
     public TunnisteDto luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String nimi, Boolean erillishaku, Integer valinnanvaihe,
                                    Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
@@ -190,7 +179,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         return seurantaDao.luoLaskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
     public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid, HakukohdeTila tila) {
         try {
@@ -208,7 +196,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
     public YhteenvetoDto lisaaIlmoitusHakukohteelle(String uuid, String hakukohdeOid, IlmoitusDto ilmoitus) {
         YhteenvetoDto y = seurantaDao.lisaaIlmoitus(uuid, hakukohdeOid, ilmoitus);
@@ -221,7 +208,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         return y;
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
     public YhteenvetoDto merkkaaHakukohteenTila(String uuid, String hakukohdeOid, HakukohdeTila tila, IlmoitusDto ilmoitus) {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, hakukohdeOid, tila, ilmoitus);
@@ -234,7 +220,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         return y;
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila) {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, Optional.empty());
@@ -246,7 +231,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
         return y;
     }
-    @PreAuthorize("isAuthenticated()")
+
     @ApiOperation(value = "Paivittaa laskennan tilaa ja merkkaa ilmoituksen", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, fi.vm.sade.valinta.seuranta.dto.LaskentaTila tila,
                                               IlmoitusDto ilmoitusDto) {
@@ -259,7 +244,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
         return y;
     }
-    @PreAuthorize("isAuthenticated()")
+
     @ApiOperation(value = "Paivittaa laskennan tilaa", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila) {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.empty());
@@ -270,7 +255,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         }
         return y;
     }
-    @PreAuthorize("isAuthenticated()")
+
     @ApiOperation(value = "Paivittaa laskennan tilaa ja merkkaa ilmoituksen", response = Response.class)
     public YhteenvetoDto merkkaaLaskennanTila(String uuid, LaskentaTila tila, HakukohdeTila hakukohteentila, IlmoitusDto ilmoitusDto) {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.ofNullable(ilmoitusDto));
@@ -282,7 +267,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         return y;
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiOperation(value = "Poistaa laskennan", response = Response.class)
     public Response poistaLaskenta(String uuid) {
         seurantaDao.poistaLaskenta(uuid);
