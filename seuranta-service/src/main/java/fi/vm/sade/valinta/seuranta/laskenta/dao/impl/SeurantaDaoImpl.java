@@ -37,19 +37,18 @@ public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
     private Datastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
+
     @Autowired
     public SeurantaDaoImpl(Datastore datastore) {
         try {
             this.datastore.ensureIndexes(Laskenta.class);
-        }catch (Throwable t) {
+        } catch (Throwable t) {
             t.printStackTrace();
             LOG.error("Ensuring indexes failed!", t);
         }
         this.datastore = datastore;
         resetoiMeneillaanOlevatLaskennat();
     }
-
-
 
     @Override
     public void siivoa(Date asti) {
