@@ -40,13 +40,13 @@ public class SeurantaDaoImpl implements SeurantaDao {
 
     @Autowired
     public SeurantaDaoImpl(Datastore datastore) {
+        this.datastore = datastore;
         try {
             this.datastore.ensureIndexes(Laskenta.class);
         } catch (Throwable t) {
             t.printStackTrace();
             LOG.error("Ensuring indexes failed!", t);
         }
-        this.datastore = datastore;
         resetoiMeneillaanOlevatLaskennat();
     }
 
