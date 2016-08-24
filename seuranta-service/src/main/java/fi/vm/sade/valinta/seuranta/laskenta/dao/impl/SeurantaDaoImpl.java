@@ -43,9 +43,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         this.datastore = datastore;
         try {
             this.datastore.ensureIndexes(Laskenta.class);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            LOG.error("Ensuring indexes failed!", t);
+        } catch (Exception e) {
+            LOG.error("Ensuring indexes failed!", e);
         }
         resetoiMeneillaanOlevatLaskennat();
     }
