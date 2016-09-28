@@ -3,12 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-
+         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:annotation-config/>
+
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.service.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.dao.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl"/>
@@ -37,6 +41,8 @@
 
 	<!-- Swagger -->
     <!-- Swagger configuration -->
+
+    <!-- Swagger configuration -->
     <bean id="swaggerConfig" class="io.swagger.jaxrs.config.BeanConfig">
         <property name="resourcePackage" value="fi.vm.sade.valinta.seuranta.resource.impl"/>
         <property name="version" value="1.0"/>
@@ -45,4 +51,25 @@
         <property name="title" value="Swagger API documentation"/>
         <property name="scan" value="true"/>
     </bean>
+    <bean id="swaggerResource" class="io.swagger.jaxrs.listing.ApiListingResource" />
+    <bean id="swaggerWriter" class="io.swagger.jaxrs.listing.SwaggerSerializers" />
+
+    <bean id="cors-filter" class="fi.vm.sade.valinta.seuranta.resource.impl.filter.CorsResponseFilter"/>
+
+    <jaxrs:server id="seurantapalvelunResurssit">
+        <jaxrs:serviceBeans>
+            <ref bean="dokumentinSeurantaResourceImpl"/>
+            <ref bean="laskennanSeurantaResourceImpl"/>
+            <ref bean="SessionResourceImpl"/>
+            <ref bean="sijoittelunSeurantaResourceImpl"/>
+
+            <ref bean="swaggerResource"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jsonProvider" />
+            <ref bean="cors-filter" />
+
+            <ref bean="swaggerWriter" />
+        </jaxrs:providers>
+    </jaxrs:server>
 </beans>
