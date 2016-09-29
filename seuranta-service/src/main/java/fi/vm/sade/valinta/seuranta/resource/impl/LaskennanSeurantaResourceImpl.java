@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.resource.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.valinta.seuranta.dto.*;
@@ -22,6 +23,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 @Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
+@Path("seuranta")
 public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     private final static Logger LOG = LoggerFactory.getLogger(LaskennanSeurantaResourceImpl.class);
 

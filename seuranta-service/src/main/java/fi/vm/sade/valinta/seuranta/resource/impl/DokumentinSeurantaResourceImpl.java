@@ -2,6 +2,7 @@ package fi.vm.sade.valinta.seuranta.resource.impl;
 
 import java.util.List;
 
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Api(value = "/dokumentinseuranta", description = "Dokumentinseurantarajapinta")
 @Component
+@Path("dokumentinseuranta")
 public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResource {
     private static final Logger LOG = LoggerFactory.getLogger(DokumentinSeurantaResourceImpl.class);
 
