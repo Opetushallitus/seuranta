@@ -16,19 +16,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.valinta.seuranta.dto.*;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseFeature;
 
 @Path("seuranta")
 public interface LaskentaSeurantaResource {
-
-    /**
-     * Kaikki yksityiskohdat
-     */
-    @GET
-    @Path("/yhteenveto/{uuid}/sse")
-    @Produces(SseFeature.SERVER_SENT_EVENTS)
-    EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
 
     /**
      * Yhteenvedot olemassa olevista laskennoista haulle

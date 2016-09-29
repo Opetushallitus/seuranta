@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.valinta.seuranta.dto.*;
-import org.glassfish.jersey.media.sse.EventOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
-import fi.vm.sade.valinta.seuranta.laskenta.service.SeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -28,38 +26,10 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     private final static Logger LOG = LoggerFactory.getLogger(LaskennanSeurantaResourceImpl.class);
 
     private SeurantaDao seurantaDao;
-    private SeurantaSSEService seurantaSSEService;
 
     @Autowired
-    public LaskennanSeurantaResourceImpl(SeurantaDao seurantaDao, SeurantaSSEService seurantaSSEService) {
+    public LaskennanSeurantaResourceImpl(SeurantaDao seurantaDao) {
         this.seurantaDao = seurantaDao;
-        this.seurantaSSEService = seurantaSSEService;
-    }
-
-    // @PreAuthorize("isAuthenticated()") ei tarvi, ei tarvisi muissakaan
-    @ApiOperation(value = "SSE Yhteenvedot kaikista hakuun tehdyista laskennoista", response = Collection.class)
-    public EventOutput yhteenvetoSSE(String uuid) {
-        LOG.debug("REKISTEROIDAAN KUUNTELIJA {}", uuid);
-        final EventOutput eventOutput = new EventOutput();
-        try {
-            seurantaSSEService.rekisteroi(uuid, eventOutput);
-        } catch (Exception e) {
-            LOG.error("Rekisterointi epaonnistui!" + uuid, e);
-        }
-        try {
-            YhteenvetoDto y = null;
-            try {
-                y = seurantaDao.haeYhteenveto(uuid);
-            } catch (Exception e) {
-                y = new YhteenvetoDto(uuid, EMPTY, EMPTY, EMPTY, EMPTY, new Date().getTime(),
-                        LaskentaTila.ALOITTAMATTA, 0, 0, 0, null, null, null, null);
-            }
-            seurantaSSEService.paivita(y);
-        } catch (Exception e) {
-            LOG.error("Yhteenvetoa ei ole viela saatavilla. Ehka laskentaa ei ole ehditty viela muodostaa." + uuid, e);
-        }
-        LOG.debug("REKISTEROITY {}", uuid);
-        return eventOutput;
     }
 
     @ApiOperation(value = "Laskennan tiedot", response = Collection.class)
@@ -98,8 +68,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             LaskentaDto ldto = seurantaDao.resetoiEiValmiitHakukohteet(uuid, true);
             if (ldto == null) {
                 LOG.error("Laskennan {} tila resetoitiin mutta ei saatu yhteenvetoa resetoinnista!", uuid);
-            } else {
-                seurantaSSEService.paivita(ldto.asYhteenveto());
             }
             return ldto;
         } catch (Exception e) {
@@ -124,9 +92,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         LOG.info("Ota seuraava tyon alle: " + (uuid.isPresent() ? uuid.get() : "Ei tyota"));
         if(uuid.isPresent()) {
             final String u = uuid.get();
-
-            final List<String> uuids = seurantaSSEService.aktiivisetUUIDt().stream().filter(id -> u.equals(id)).collect(Collectors.toList());
-            seurantaDao.haeYhteenvedotAlkamattomille(uuids).forEach(seurantaSSEService::paivita);
             return Response.ok(u).build();
         } else {
             return Response.noContent().build();
@@ -186,8 +151,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
             if (y == null) {
                 LOG.error("Seurantaan markattiin hakukohteen {} tila {} laskentaan {} mutta ei saatu yhteenvetoa lisayksesta!",
                         hakukohdeOid, tila, uuid);
-            } else {
-                seurantaSSEService.paivita(y);
             }
             return y;
         } catch (Exception e) {
@@ -202,8 +165,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         if (y == null) {
             LOG.error("Seurantaan lisattiin ilmoitus laskentaan {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, hakukohdeOid);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }
@@ -214,8 +175,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} hakukohteelle {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, tila, hakukohdeOid);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }
@@ -226,8 +185,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, tila);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }
@@ -239,8 +196,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!",
                     uuid, tila);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }
@@ -250,8 +205,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.empty());
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!", uuid, tila);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }
@@ -261,8 +214,6 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
         YhteenvetoDto y = seurantaDao.merkkaaTila(uuid, tila, hakukohteentila, Optional.ofNullable(ilmoitusDto));
         if (y == null) {
             LOG.error("Seurantaan paivitettiin laskennan {} tila {} mutta ei saatu yhteenvetoa lisayksesta!", uuid, tila);
-        } else {
-            seurantaSSEService.paivita(y);
         }
         return y;
     }

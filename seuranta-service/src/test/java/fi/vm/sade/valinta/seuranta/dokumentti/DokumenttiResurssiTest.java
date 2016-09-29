@@ -5,7 +5,6 @@ import de.flapdoodle.embed.mongo.MongodExecutable;
 import fi.vm.sade.valinta.seuranta.dokumentti.dao.impl.DokumenttiDaoImpl;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
-import fi.vm.sade.valinta.seuranta.laskenta.service.DokumentinSeurantaSSEService;
 import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import fi.vm.sade.valinta.seuranta.resource.impl.DokumentinSeurantaResourceImpl;
 import fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration;
@@ -14,7 +13,6 @@ import junit.framework.TestCase;
 import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mongodb.morphia.Datastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +27,11 @@ public class DokumenttiResurssiTest extends TestCase {
     private final DokumentinSeurantaResource resurssi;
     private final MongodExecutable exe;
     private final Datastore datastore;
-    private final DokumentinSeurantaSSEService sseService;
     public DokumenttiResurssiTest() throws Exception {
         MongoConfiguration mongocfg = new MongoConfiguration();
         this.exe = mongocfg.getMongodExecutable();
         this.datastore = mongocfg.getDatastore(mongocfg.getMorphia(), mongocfg.getMongo(mongocfg.getMongoProcess(exe)));
-        this.sseService = Mockito.mock(DokumentinSeurantaSSEService.class);
-        this.resurssi = new DokumentinSeurantaResourceImpl(new DokumenttiDaoImpl(datastore), sseService);
+        this.resurssi = new DokumentinSeurantaResourceImpl(new DokumenttiDaoImpl(datastore));
     }
 
     @After

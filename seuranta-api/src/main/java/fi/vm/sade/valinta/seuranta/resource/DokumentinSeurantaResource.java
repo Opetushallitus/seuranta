@@ -3,7 +3,6 @@ package fi.vm.sade.valinta.seuranta.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,23 +11,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseFeature;
-
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 
 @Path("dokumentinseuranta")
 public interface DokumentinSeurantaResource {
-
-    /**
-     * Kaikki yksityiskohdat
-     */
-    @GET
-    @Path("/{uuid}/sse")
-    @Produces(SseFeature.SERVER_SENT_EVENTS)
-    EventOutput dokumenttiSSE(@PathParam("uuid") String uuid);
 
     /**
      * Kaikki yksityiskohdat

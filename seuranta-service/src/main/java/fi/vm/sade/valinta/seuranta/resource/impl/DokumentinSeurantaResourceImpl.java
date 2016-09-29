@@ -1,26 +1,15 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import fi.vm.sade.valinta.seuranta.dokumentti.dao.DokumenttiDao;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
-import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
-import fi.vm.sade.valinta.seuranta.laskenta.service.DokumentinSeurantaSSEService;
 
 import static org.apache.commons.lang.StringUtils.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.glassfish.jersey.media.sse.EventOutput;
 
 import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import org.slf4j.Logger;
@@ -34,15 +23,14 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
     private static final Logger LOG = LoggerFactory.getLogger(DokumentinSeurantaResourceImpl.class);
 
     private final DokumenttiDao dokumenttiDao;
-    private final DokumentinSeurantaSSEService sseService;
 
     @Autowired
-    public DokumentinSeurantaResourceImpl(DokumenttiDao dokumenttiDao, DokumentinSeurantaSSEService sseService) {
+    public DokumentinSeurantaResourceImpl(DokumenttiDao dokumenttiDao) {
         this.dokumenttiDao = dokumenttiDao;
-        this.sseService = sseService;
     }
 
-    public Response dokumentti(@PathParam("uuid") String uuid) {
+    @Override
+    public Response dokumentti(String uuid) {
         try {
             if (trimToNull(uuid) == null) {
                 LOG.error("Uuid({}) ei saa olla tyhjä!", uuid);
@@ -63,36 +51,11 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
                 throw new RuntimeException("Uuid tai kuvaus ei saa olla tyhjä!");
             }
             DokumenttiDto dokkari = dokumenttiDao.paivitaDokumenttiId(uuid, dokumenttiId);
-            sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä(" + dokumenttiId + ") paivitettaessa uuid:lle " +  uuid, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
-    }
-
-    @ApiOperation(value = "Dokumentti SSE-tapahtumana", response = DokumenttiDto.class)
-    public EventOutput dokumenttiSSE(String uuid) {
-        LOG.debug("REKISTEROIDAAN KUUNTELIJA {}", uuid);
-        final EventOutput eventOutput = new EventOutput();
-        try {
-            sseService.rekisteroi(uuid, eventOutput);
-        } catch (Exception e) {
-            LOG.error("Rekisterointi epaonnistui! uuid=" + uuid, e);
-        }
-        try {
-            DokumenttiDto y = null;
-            try {
-                y = dokumenttiDao.haeDokumentti(uuid);
-            } catch (Exception e) {
-                LOG.error("Dokumenttia ei ole viela saatavilla. Ehka seurantaoliota ei ole ehditty viela muodostaa uuid=" + uuid, e);
-            }
-            sseService.paivita(y);
-        } catch (Exception e) {
-            LOG.error("Dokumenttia ei ole viela saatavilla. Ehka seurantaoliota ei ole ehditty viela muodostaa uuid=" + uuid, e);
-        }
-        LOG.debug("REKISTEROITY {}", uuid);
-        return eventOutput;
     }
 
     @Override
@@ -118,7 +81,6 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             }
 
             DokumenttiDto dokkari = dokumenttiDao.paivitaKuvaus(uuid, kuvaus);
-            sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa uuid:lle " + uuid, t);
@@ -134,7 +96,6 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
                 throw new RuntimeException("Uuid tai virheet ei saa olla tyhjä!");
             }
             DokumenttiDto dokkari = dokumenttiDao.lisaaVirheita(uuid, virheita);
-            sseService.paivita(dokkari);
             return Response.ok(dokkari).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa virhetiloja lisattaessa!", t);
