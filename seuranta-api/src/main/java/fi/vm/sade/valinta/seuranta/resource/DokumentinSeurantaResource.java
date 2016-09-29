@@ -3,18 +3,21 @@ package fi.vm.sade.valinta.seuranta.resource;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.sse.SseContext;
-import javax.ws.rs.sse.SseEventOutput;
 
+import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.SseFeature;
+
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTyyppi;
 
 @Path("dokumentinseuranta")
 public interface DokumentinSeurantaResource {
@@ -24,8 +27,8 @@ public interface DokumentinSeurantaResource {
      */
     @GET
     @Path("/{uuid}/sse")
-    @Produces("text/event-stream")
-    SseEventOutput dokumenttiSSE(@Context SseContext sseContext, @PathParam("uuid") String uuid);
+    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    EventOutput dokumenttiSSE(@PathParam("uuid") String uuid);
 
     /**
      * Kaikki yksityiskohdat
@@ -33,7 +36,7 @@ public interface DokumentinSeurantaResource {
     @GET
     @Path("/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    Response dokumentti(@Context SseContext sseContext, @PathParam("uuid") String uuid);
+    Response dokumentti(@PathParam("uuid") String uuid);
 
     /**
      * Luo uuden dokumentin seurantaan
@@ -43,7 +46,7 @@ public interface DokumentinSeurantaResource {
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    Response luoDokumentti(@Context SseContext sseContext, String kuvaus);
+    Response luoDokumentti(String kuvaus);
 
     /**
      * Paivita kuvaus
@@ -54,7 +57,7 @@ public interface DokumentinSeurantaResource {
     @Path("/{uuid}/paivita_kuvaus")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    Response paivitaKuvaus(@Context SseContext sseContext, @PathParam("uuid") String uuid, String kuvaus);
+    Response paivitaKuvaus(@PathParam("uuid") String uuid, String kuvaus);
 
     /**
      * Paivita kuvaus
@@ -65,7 +68,7 @@ public interface DokumentinSeurantaResource {
     @Path("/{uuid}/paivita_dokumenttiId")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    Response dokumentinTunniste(@Context SseContext sseContext, @PathParam("uuid") String uuid, String dokumenttiId);
+    Response dokumentinTunniste(@PathParam("uuid") String uuid, String dokumenttiId);
 
     /**
      * Lisaa virheita
@@ -76,7 +79,7 @@ public interface DokumentinSeurantaResource {
     @Path("/{uuid}/lisaa_virheita")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    Response lisaaVirheita(@Context SseContext sseContext, @PathParam("uuid") String uuid, List<VirheilmoitusDto> virheita);
+    Response lisaaVirheita(@PathParam("uuid") String uuid, List<VirheilmoitusDto> virheita);
 
 
     /**
@@ -88,5 +91,5 @@ public interface DokumentinSeurantaResource {
     @Path("/{uuid}/poista")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    Response poista(@Context SseContext sseContext, @PathParam("uuid") String uuid);
+    Response poista(@PathParam("uuid") String uuid);
 }

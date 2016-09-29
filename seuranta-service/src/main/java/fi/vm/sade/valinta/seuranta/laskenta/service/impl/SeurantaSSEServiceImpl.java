@@ -1,26 +1,29 @@
 package fi.vm.sade.valinta.seuranta.laskenta.service.impl;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.sse.OutboundSseEvent;
-import javax.ws.rs.sse.SseBroadcaster;
-import javax.ws.rs.sse.SseContext;
-import javax.ws.rs.sse.SseEventOutput;
 
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.gson.Gson;
 
+import fi.vm.sade.valinta.seuranta.dto.LaskentaTila;
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.laskenta.service.SeurantaSSEService;
 
@@ -36,7 +39,7 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
             .removalListener(new RemovalListener<String, SseBroadcaster>() {
                 public void onRemoval(RemovalNotification<String, SseBroadcaster> notification) {
                     try {
-                        notification.getValue().close();
+                        notification.getValue().closeAll();
                     } catch (Exception e) {
                         LOG.error("Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}", notification.getKey());
                     }
@@ -48,39 +51,36 @@ public class SeurantaSSEServiceImpl implements SeurantaSSEService {
         return EVENT_CACHE.asMap().keySet();
     }
 
-    @Override
-    public void paivita(SseContext sseContext, YhteenvetoDto yhteenveto) {
+    public void paivita(YhteenvetoDto yhteenveto) {
         if (yhteenveto == null) {
             LOG.error("Yhteenveto oli null SSE paivitysta yritettaessa!");
             throw new RuntimeException("Yhteenveto oli null SSE paivitysta yritettaessa!");
         }
         SseBroadcaster outputs = EVENT_CACHE.getIfPresent(yhteenveto.getUuid());
         if (outputs == null) {
-            LOG.info("KUKAAN EI KUUNTELE {}", yhteenveto.getUuid());
+            LOG.debug("KUKAAN EI KUUNTELE {}", yhteenveto.getUuid());
             return;
         }
-        final OutboundSseEvent.Builder eventBuilder = sseContext.newEvent();
+        final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
         eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
         eventBuilder.data(new Gson().toJson(yhteenveto));
         outputs.broadcast(eventBuilder.build());
-        LOG.info("VIESTI {} LAHETETTY KIINNOSTUNEILLE", yhteenveto.getUuid());
+        LOG.debug("VIESTI LAHETETTY KIINNOSTUNEILLE {}", yhteenveto.getUuid());
     }
 
-    @Override
-    public void rekisteroi(SseContext sseContext, String uuid, final SseEventOutput event) {
+    public void rekisteroi(String uuid, final EventOutput event) {
         SseBroadcaster outputs;
         try {
-            outputs = EVENT_CACHE.get(uuid, () -> sseContext.newBroadcaster());
-            outputs.register(event);
+            outputs = EVENT_CACHE.get(uuid, () -> new SseBroadcaster());
+            outputs.add(event);
         } catch (ExecutionException e) {
             LOG.error("Eventoutputin lisays cacheen epaonnistui!", e);
         }
     }
 
-    @Override
     public void sammuta(String uuid) {
-        LOG.info("SAMMUTETAAN SSE BROADCASTER UUID:LLE {}", uuid);
+        LOG.error("SAMMUTETAAN SSE BROADCASTER UUID:LLE {}", uuid);
         SseBroadcaster outputs = EVENT_CACHE.asMap().remove(uuid);
-        outputs.close();
+        outputs.closeAll();
     }
 }

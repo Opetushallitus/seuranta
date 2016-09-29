@@ -6,16 +6,17 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.gson.Gson;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
+import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 import fi.vm.sade.valinta.seuranta.laskenta.service.DokumentinSeurantaSSEService;
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.OutboundEvent;
+import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.sse.OutboundSseEvent;
-import javax.ws.rs.sse.SseBroadcaster;
-import javax.ws.rs.sse.SseContext;
-import javax.ws.rs.sse.SseEventOutput;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +29,7 @@ public class DokumentinSeurantaSSEServiceImpl implements DokumentinSeurantaSSESe
             .removalListener(new RemovalListener<String, SseBroadcaster>() {
                 public void onRemoval(RemovalNotification<String, SseBroadcaster> notification) {
                     try {
-                        notification.getValue().close();
+                        notification.getValue().closeAll();
                     } catch (Exception e) {
                         LOG.error(
                                 "Yhteys selaimeen oli viela auki! Onkohan 45minuutin timeout riittava? {}",
@@ -37,7 +38,7 @@ public class DokumentinSeurantaSSEServiceImpl implements DokumentinSeurantaSSESe
                 }
             }).build();
 
-    public void paivita(SseContext sseContext, DokumenttiDto dokumentti) {
+    public void paivita(DokumenttiDto dokumentti) {
         if (dokumentti == null) {
             LOG.error("Dokumentti oli null SSE paivitysta yritettaessa!");
             throw new RuntimeException(
@@ -45,29 +46,34 @@ public class DokumentinSeurantaSSEServiceImpl implements DokumentinSeurantaSSESe
         }
         SseBroadcaster outputs = EVENT_CACHE.getIfPresent(dokumentti.getUuid());
         if (outputs == null) {
-            LOG.info("KUKAAN EI KUUNTELE {}", dokumentti.getUuid());
+            LOG.debug("KUKAAN EI KUUNTELE {}", dokumentti.getUuid());
             return;
         }
-        final OutboundSseEvent.Builder eventBuilder = sseContext.newEvent();
+        final OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
         eventBuilder.mediaType(MediaType.APPLICATION_JSON_TYPE);
         eventBuilder.data(new Gson().toJson(dokumentti));
         outputs.broadcast(eventBuilder.build());
-        LOG.info("VIESTI LAHETETTY KIINNOSTUNEILLE {}", dokumentti.getUuid());
+        LOG.debug("VIESTI LAHETETTY KIINNOSTUNEILLE {}", dokumentti.getUuid());
     }
 
-    public void rekisteroi(SseContext sseContext, String uuid, final SseEventOutput event) {
+    public void rekisteroi(String uuid, final EventOutput event) {
         SseBroadcaster outputs;
         try {
-            outputs = EVENT_CACHE.get(uuid, () -> sseContext.newBroadcaster());
-            outputs.register(event);
+            outputs = EVENT_CACHE.get(uuid, new Callable<SseBroadcaster>() {
+                @Override
+                public SseBroadcaster call() throws Exception {
+                    return new SseBroadcaster();
+                }
+            });
+            outputs.add(event);
         } catch (ExecutionException e) {
             LOG.error("Eventoutputin lisays cacheen epaonnistui!", e);
         }
     }
 
     public void sammuta(String uuid) {
-        LOG.info("SAMMUTETAAN SSE BROADCASTER UUID:LLE {}", uuid);
+        LOG.error("SAMMUTETAAN SSE BROADCASTER UUID:LLE {}", uuid);
         SseBroadcaster outputs = EVENT_CACHE.asMap().remove(uuid);
-        outputs.close();
+        outputs.closeAll();
     }
 }

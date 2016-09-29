@@ -48,7 +48,7 @@ public class DokumenttiResurssiTest extends TestCase {
         final String uuid;
         // CREATE
         {
-            Response r = resurssi.luoDokumentti(null, "Uuden dokumentin kuvaus");
+            Response r = resurssi.luoDokumentti("Uuden dokumentin kuvaus");
             Assert.assertEquals(200, r.getStatus());
             // throws if null or invalid id
             uuid = (String) r.getEntity();
@@ -57,7 +57,7 @@ public class DokumenttiResurssiTest extends TestCase {
         }
         // READ
         {
-            Response r = resurssi.dokumentti(null, uuid);
+            Response r = resurssi.dokumentti(uuid);
             DokumenttiDto dokumentti = (DokumenttiDto)r.getEntity();
 
             LOG.info("{}", new GsonBuilder().setPrettyPrinting().create().toJson(dokumentti));
@@ -65,12 +65,12 @@ public class DokumenttiResurssiTest extends TestCase {
             Assert.assertEquals("Uuden dokumentin kuvaus",dokumentti.getKuvaus());
 
 
-            resurssi.paivitaKuvaus(null, uuid,"Päivitetty kuvaus!");
+            resurssi.paivitaKuvaus(uuid,"Päivitetty kuvaus!");
 
         }
         // UPDATE KUVAUS
         {
-            Response r = resurssi.paivitaKuvaus(null, uuid, "Päivitetty kuvaus!");
+            Response r = resurssi.paivitaKuvaus(uuid, "Päivitetty kuvaus!");
             DokumenttiDto dokumentti = (DokumenttiDto)r.getEntity();
 
             LOG.info("{}", new GsonBuilder().setPrettyPrinting().create().toJson(dokumentti));
@@ -82,7 +82,7 @@ public class DokumenttiResurssiTest extends TestCase {
         }
         // UPDATE VIRHEILMOT
         {
-            Response r = resurssi.lisaaVirheita(null, uuid, asList(new VirheilmoitusDto("Virhetyyppi!", "Virheilmoitus!")));
+            Response r = resurssi.lisaaVirheita(uuid, asList(new VirheilmoitusDto("Virhetyyppi!", "Virheilmoitus!")));
             DokumenttiDto dokumentti = (DokumenttiDto)r.getEntity();
 
             LOG.info("{}", new GsonBuilder().setPrettyPrinting().create().toJson(dokumentti));
@@ -91,16 +91,16 @@ public class DokumenttiResurssiTest extends TestCase {
             Assert.assertEquals(virheilmo.getIlmoitus(), "Virheilmoitus!");
 
 
-            Response r0 = resurssi.lisaaVirheita(null, uuid, asList(new VirheilmoitusDto("Virhetyyppi2!", "Virheilmoitus2!")));
+            Response r0 = resurssi.lisaaVirheita(uuid, asList(new VirheilmoitusDto("Virhetyyppi2!", "Virheilmoitus2!")));
             DokumenttiDto dokumentti2 = (DokumenttiDto)r0.getEntity();
             LOG.info("{}", new GsonBuilder().setPrettyPrinting().create().toJson(dokumentti2));
             Assert.assertEquals(2, dokumentti2.getVirheilmoitukset().size());
         }
         // DELETE
         {
-            Response rx = resurssi.poista(null, uuid);
+            Response rx = resurssi.poista(uuid);
 
-            Response r0 = resurssi.dokumentti(null, uuid);
+            Response r0 = resurssi.dokumentti(uuid);
 
             Assert.assertEquals(500, r0.getStatus());
         }
