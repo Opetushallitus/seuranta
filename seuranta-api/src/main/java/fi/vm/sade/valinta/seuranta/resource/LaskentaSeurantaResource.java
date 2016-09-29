@@ -12,12 +12,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.valinta.seuranta.dto.*;
-import org.glassfish.jersey.media.sse.EventOutput;
-import org.glassfish.jersey.media.sse.SseFeature;
+
+import javax.ws.rs.sse.SseContext;
+import javax.ws.rs.sse.SseEventOutput;
 
 @Path("seuranta")
 public interface LaskentaSeurantaResource {
@@ -27,8 +29,8 @@ public interface LaskentaSeurantaResource {
      */
     @GET
     @Path("/yhteenveto/{uuid}/sse")
-    @Produces(SseFeature.SERVER_SENT_EVENTS)
-    EventOutput yhteenvetoSSE(@PathParam("uuid") String uuid);
+    @Produces("text/event-stream")
+    SseEventOutput yhteenvetoSSE(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Yhteenvedot olemassa olevista laskennoista haulle
@@ -36,7 +38,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/hae/{hakuOid}")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid);
+    Collection<YhteenvetoDto> hae(@Context SseContext sseContext,@PathParam("hakuOid") String hakuOid);
 
     /**
      * Yhteenvedot olemassa olevista tietyn tyyppisista laskennoista haulle
@@ -44,7 +46,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/hae/{hakuOid}/tyyppi/{tyyppi}")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> hae(@PathParam("hakuOid") String hakuOid, @PathParam("tyyppi") LaskentaTyyppi tyyppi);
+    Collection<YhteenvetoDto> hae(@Context SseContext sseContext, @PathParam("hakuOid") String hakuOid, @PathParam("tyyppi") LaskentaTyyppi tyyppi);
 
     /**
      * Yhteenvedot olemassa olevista laskennoista haulle
@@ -52,7 +54,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/hae/{hakuOid}/kaynnissa")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(@PathParam("hakuOid") String hakuOid);
+    Collection<YhteenvetoDto> haeKaynnissaOlevatLaskennat(@Context SseContext sseContext, @PathParam("hakuOid") String hakuOid);
 
     /**
      * Yhteenvedot olemassa olevista laskennoista
@@ -60,13 +62,13 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/yhteenvetokaikillelaskennoille")
     @Produces(MediaType.APPLICATION_JSON)
-    Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
+    Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille(@Context SseContext sseContext);
 
 
     @GET
     @Path("/laskenta/otaSeuraavaLaskentaTyonAlle")
     @Produces(MediaType.TEXT_PLAIN)
-    Response otaSeuraavaLaskentaTyonAlle();
+    Response otaSeuraavaLaskentaTyonAlle(@Context SseContext sseContext);
 
     /**
      * Kaikki yksityiskohdat
@@ -74,7 +76,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/laskenta/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    LaskentaDto laskenta(@PathParam("uuid") String uuid);
+    LaskentaDto laskenta(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Kaikki yksityiskohdat
@@ -82,7 +84,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/kuormantasaus/laskenta/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    LaskentaDto kuormantasausLaskenta(@PathParam("uuid") String uuid);
+    LaskentaDto kuormantasausLaskenta(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Kaikki yksityiskohdat
@@ -90,7 +92,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/lataa/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    Response lataa(@PathParam("uuid") String uuid);
+    Response lataa(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Kaikki yksityiskohdat
@@ -98,7 +100,7 @@ public interface LaskentaSeurantaResource {
     @GET
     @Path("/yhteenveto/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    YhteenvetoDto yhteenveto(@PathParam("uuid") String uuid);
+    YhteenvetoDto yhteenveto(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Paivittaa yksittaisen hakukohteen tilaa laskennassa
@@ -106,7 +108,8 @@ public interface LaskentaSeurantaResource {
     @PUT
     @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
     @Produces(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaHakukohteenTila(@Context SseContext sseContext,
+                                         @PathParam("uuid") String uuid,
                                          @PathParam("hakukohdeOid") String hakukohdeOid,
                                          @PathParam("tila") HakukohdeTila tila);
 
@@ -117,7 +120,8 @@ public interface LaskentaSeurantaResource {
     @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}/tila/{tila}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaHakukohteenTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaHakukohteenTila(@Context SseContext sseContext,
+                                         @PathParam("uuid") String uuid,
                                          @PathParam("hakukohdeOid") String hakukohdeOid,
                                          @PathParam("tila") HakukohdeTila tila, IlmoitusDto ilmoitus);
 
@@ -128,7 +132,8 @@ public interface LaskentaSeurantaResource {
     @Path("/kuormantasaus/laskenta/{uuid}/hakukohde/{hakukohdeOid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    YhteenvetoDto lisaaIlmoitusHakukohteelle(@PathParam("uuid") String uuid,
+    YhteenvetoDto lisaaIlmoitusHakukohteelle(@Context SseContext sseContext,
+                                             @PathParam("uuid") String uuid,
                                              @PathParam("hakukohdeOid") String hakukohdeOid, IlmoitusDto ilmoitus);
 
     /**
@@ -137,7 +142,7 @@ public interface LaskentaSeurantaResource {
     @PUT
     @Path("/kuormantasaus/laskenta/{uuid}/resetoi")
     @Produces(MediaType.APPLICATION_JSON)
-    LaskentaDto resetoiTilat(@PathParam("uuid") String uuid);
+    LaskentaDto resetoiTilat(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 
     /**
      * Paivittaa laskennan tilan
@@ -145,13 +150,15 @@ public interface LaskentaSeurantaResource {
     @PUT
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
     @Produces(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaLaskennanTila(@Context SseContext sseContext,
+                                       @PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila);
     @POST
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaLaskennanTila(@Context SseContext sseContext,
+                                       @PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila, IlmoitusDto ilmoitus);
     /**
      * Paivittaa laskennan tilan ja kaikki hakukohteet samalla
@@ -159,14 +166,16 @@ public interface LaskentaSeurantaResource {
     @PUT
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
     @Produces(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaLaskennanTila(@Context SseContext sseContext,
+                                       @PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila,
                                        @PathParam("hakukohteentila") HakukohdeTila hakukohteentila);
     @POST
     @Path("/kuormantasaus/laskenta/{uuid}/tila/{tila}/hakukohde/{hakukohteentila}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    YhteenvetoDto merkkaaLaskennanTila(@PathParam("uuid") String uuid,
+    YhteenvetoDto merkkaaLaskennanTila(@Context SseContext sseContext,
+                                       @PathParam("uuid") String uuid,
                                        @PathParam("tila") LaskentaTila tila,
                                        @PathParam("hakukohteentila") HakukohdeTila hakukohteentila,
                                        IlmoitusDto ilmoitus);
@@ -179,7 +188,8 @@ public interface LaskentaSeurantaResource {
     @Path("/kuormantasaus/laskenta/{hakuOid}/tyyppi/{tyyppi}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    TunnisteDto luoLaskenta(@PathParam("hakuOid") String hakuOid,
+    TunnisteDto luoLaskenta(@Context SseContext sseContext,
+                            @PathParam("hakuOid") String hakuOid,
                             @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                             @QueryParam("userOID") String userOID,
                             @QueryParam("haunnimi") String haunnimi,
@@ -197,5 +207,5 @@ public interface LaskentaSeurantaResource {
     @DELETE
     @Path("/kuormantasaus/laskenta/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    Response poistaLaskenta(@PathParam("uuid") String uuid);
+    Response poistaLaskenta(@Context SseContext sseContext, @PathParam("uuid") String uuid);
 }

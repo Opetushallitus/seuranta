@@ -1,9 +1,9 @@
 package fi.vm.sade.valinta.seuranta.laskenta.service;
 
-import org.glassfish.jersey.media.sse.EventOutput;
-
 import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
 
+import javax.ws.rs.sse.SseContext;
+import javax.ws.rs.sse.SseEventOutput;
 import java.util.Collection;
 
 /**
@@ -13,9 +13,9 @@ public interface SeurantaSSEService {
 
     Collection<String> aktiivisetUUIDt();
 
-    void paivita(YhteenvetoDto yhteenveto);
+    void paivita(SseContext sseContext, YhteenvetoDto yhteenveto);
 
-    void rekisteroi(String uuid, EventOutput event);
+    void rekisteroi(SseContext sseContext, String uuid, SseEventOutput event);
 
     void sammuta(String uuid);
 }

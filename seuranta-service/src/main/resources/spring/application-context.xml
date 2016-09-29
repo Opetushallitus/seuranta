@@ -56,7 +56,7 @@
 
     <bean id="cors-filter" class="fi.vm.sade.valinta.seuranta.resource.impl.filter.CorsResponseFilter"/>
 
-    <jaxrs:server id="seurantapalvelunResurssit">
+    <jaxrs:server id="seurantapalvelunResurssit" transportId="http://cxf.apache.org/transports/http/sse">
         <jaxrs:serviceBeans>
             <ref bean="dokumentinSeurantaResourceImpl"/>
             <ref bean="laskennanSeurantaResourceImpl"/>

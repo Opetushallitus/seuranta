@@ -1,13 +1,14 @@
 package fi.vm.sade.valinta.seuranta.laskenta.service;
 
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
-import fi.vm.sade.valinta.seuranta.dto.YhteenvetoDto;
-import org.glassfish.jersey.media.sse.EventOutput;
+
+import javax.ws.rs.sse.SseContext;
+import javax.ws.rs.sse.SseEventOutput;
 
 public interface DokumentinSeurantaSSEService {
-    void paivita(DokumenttiDto dokumentti);
+    void paivita(SseContext sseContext, DokumenttiDto dokumentti);
 
-    void rekisteroi(String uuid, EventOutput event);
+    void rekisteroi(SseContext sseContext, String uuid, SseEventOutput event);
 
     void sammuta(String uuid);
 }
