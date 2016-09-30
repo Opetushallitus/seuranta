@@ -3,6 +3,7 @@ package fi.vm.sade.valinta.seuranta.resource.impl;
 import fi.vm.sade.valinta.seuranta.resource.SessionResource;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+@PreAuthorize("isAuthenticated()")
 @Component("SessionResourceImpl")
 @Path("session")
 @Api(value = "/session", description = "Sessionhallinta")

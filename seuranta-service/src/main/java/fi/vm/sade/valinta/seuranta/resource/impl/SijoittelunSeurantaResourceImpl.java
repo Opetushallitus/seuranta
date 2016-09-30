@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.Path;
@@ -15,9 +16,10 @@ import javax.ws.rs.core.Response;
 import java.util.Collection;
 import java.util.Date;
 
-@Api(value = "/sijoittelunseuranta", description = "Sijoittelun seurantapalvelun rajapinta")
+@PreAuthorize("isAuthenticated()")
 @Component
 @Path("sijoittelunseuranta")
+@Api(value = "/sijoittelunseuranta", description = "Sijoittelun seurantapalvelun rajapinta")
 public class SijoittelunSeurantaResourceImpl implements SijoittelunSeurantaResource {
     private static final Logger LOG = LoggerFactory.getLogger(SijoittelunSeurantaResourceImpl.class);
 

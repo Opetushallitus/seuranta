@@ -10,6 +10,7 @@ import fi.vm.sade.valinta.seuranta.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.GsonBuilder;
@@ -21,9 +22,10 @@ import fi.vm.sade.valinta.seuranta.resource.LaskentaSeurantaResource;
 
 import static org.apache.commons.lang.StringUtils.*;
 
-@Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 @Component
+@PreAuthorize("isAuthenticated()")
 @Path("seuranta")
+@Api(value = "/seuranta", description = "Seurantapalvelun rajapinta")
 public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     private final static Logger LOG = LoggerFactory.getLogger(LaskennanSeurantaResourceImpl.class);
 

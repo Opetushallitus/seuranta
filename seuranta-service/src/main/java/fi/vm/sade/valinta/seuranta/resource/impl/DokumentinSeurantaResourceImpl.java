@@ -16,11 +16,13 @@ import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-@Api(value = "/dokumentinseuranta", description = "Dokumentinseurantarajapinta")
+@PreAuthorize("isAuthenticated()")
 @Component
 @Path("dokumentinseuranta")
+@Api(value = "/dokumentinseuranta", description = "Dokumentinseurantarajapinta")
 public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResource {
     private static final Logger LOG = LoggerFactory.getLogger(DokumentinSeurantaResourceImpl.class);
 
