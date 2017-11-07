@@ -5,8 +5,8 @@ public class HakukohdeJaOrganisaatio {
     private final String organisaatioOid;
 
     public HakukohdeJaOrganisaatio() {
-        this.hakukohdeOid = null;
-        this.organisaatioOid = null;
+        this.hakukohdeOid = "***HakukohdeJaOrganisaation hakukohdeOid asetettu ilman parametria, tämän näkyminen logilla indikoi ongelmaa***";
+        this.organisaatioOid = "***HakukohdeJaOrganisaation organisaatioOid asetettu ilman parametria, tämän näkyminen logilla indikoi ongelmaa***";
     }
 
     public HakukohdeJaOrganisaatio(String hakukohdeOid, String organisaatioOid) {
