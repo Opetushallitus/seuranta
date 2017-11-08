@@ -58,4 +58,14 @@ public class IlmoitusDto {
     public static IlmoitusDto ilmoitus(String ilmoitus, String... dataa) {
         return new IlmoitusDto(IlmoitusTyyppi.ILMOITUS, ilmoitus, Arrays.asList(dataa));
     }
+
+    @Override
+    public String toString() {
+        return "IlmoitusDto{" +
+            "tyyppi=" + tyyppi +
+            ", otsikko='" + otsikko + '\'' +
+            ", paivamaara=" + paivamaara +
+            ", data=" + data +
+            '}';
+    }
 }
