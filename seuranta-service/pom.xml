@@ -13,6 +13,7 @@
 	<properties>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>
+
 	<repositories>
 		<repository>
 			<id>java.net2</id>
