@@ -1,0 +1,52 @@
+sudo: required
+
+language: java
+
+jdk:
+- oraclejdk8
+
+services:
+- docker
+
+cache:
+  directories:
+  - $HOME/.m2
+
+env:
+  global:
+  # ARTIFACTORY_USERNAME
+  - secure: "jxKanJxdaG4i73nSbVdoFuIvZlTM7tTSf07F+34wITYWR0byp+1r4zEn9rwQKYBZJN7x+C2QL5MIvSfrimvLgPC3l5s/N9OuFp8JCwRDHzYyZHPs5sw2FgvEpelYWqzzSWBf+j+A6jPe5U8DAFphANCFXeIL2q3Wpi9B+zUwW2jjzxDiTCkDPjEDnJtCbphbF6VziqSIYVMCbCh/9bWyjxwFGQ77RRMmiWlbeHJcf4E7Krud3yboN4c+jtoYfbzlH/0eQfVLlViTHv5meCNCUxgsKGT649xjMYoiUqxzRGr81stE4IUjY0Na3OgzYU6DC1Td0fRruk1bCzeEoVs+ryIo9xx81QHCI3oTgKbGfcYAMZpocQDNEJMEWLSVQuXXb7lqmQKFvV6Pz9dbxvHswAcHb0RlEeBzjQ9xvQXM5vxOqU2RdesYlZ1vBr89SdYe7tb5g1cny8rEgCzUZi7nSsDGsztNxZMbvbDmfswSYoFX6wITiZ4ozWf5UkGVXbi2bmR+PCtWhZf5mlamZdOExrVZ/EI7q7Pw1zplqLMgLyMZiZhhnV4jfe7so15yHxCfkvR33rrZlAAb68Xv/SZ8xov/xqRUZh8qSt0RchDwXccT3b97vPASYuhUdKl/Vu3TkJdau98+JlP3I++X4uMU/fWFwWwnhgIM3L1Loblp7Dk="
+  # ARTIFACTORY_PASSWORD
+  - secure: "CvdhWkuHd/kzwaW3DQG1UlIrIN8K4fXl+1BVOcnhwQg0M1d2MIlH7xxFfei3ajQkuSWkfaw+qxSUf8G4kEYQ0EfMHU1gB7VWCBI/kIkYVDUAtIDMZa5UuXTGrrt8I/xrpoKs5adt2GTc0fqeN82CvE9shXlF2/LyGysOAIHHJmc9EbBuiGR93YJgJuSHNoicnqDGfilVPSrQJ25UrRmsCx0KUwN8XdQZe+QjT789fd7m1kpHaBCVed505yYzL7TBrkYXvknlDyrAIbOsAQ9cP8A1GAyV3ARdZtXeRtj6Z3lLtIBdUOY4ObpzgerMZ9Hh61ZrbiRmLEiFSV31Tyim6FcFBgtVU5My0zQXUdJGlOLF5OwQZEPwaKoOFRSc+TGTL7JePRuulJXdPrvGI48w/L3K9iYQF+2hpnleCHMEwyHR06SJKNSEC4s6Mq1no/S7fiXM9BLXtUgcw8yAOSko5pFz7prAM1xvcmAgN0+FabQoLpJiiolhn3/9PjD0i3GukuGB1/z1gtKIlwxJJ9xRH4c1YYJmYr/uU5TCRVY7VtbQ3GGSxwCSd9lntwAYHq7ChsJPXLtTSJuUZkxJFT2ly5lUxMTASUCdfdjzKrXeYH5xt8bm+rktoJhh44A+CZPAmv2+gwPrWGVC9vNapYaGyVhizgmOq9Uk1vWVXaS8TcI="
+  # AWS_ACCESS_KEY_ID
+  - secure: "VeXmdYYaXXNpDkb0vxKi3NtSKEhdV1w/EG/RRcMJgDBRJtXhhjkbRPyCi16a4c5eTgdQRgm4VaJFzzV9pDZPO3w3Bdy8AUjBr7vUNPykgh71jof2DD6HnNGxJuwJ9a/L2LZ2A7Y6i1FNLMJBWrSI9rZRzOzqnHKYQYRbJrpnSczqRrVgWiOoKvYpUBULeFleSf/cFB5KlLSCeZ1ryzKKNYGxYzeLsOpbpfgq4+79WtfoNBn5tIpxQlm8aJYEn0mVRiaOkxVc0fWVBPp6fuVD/smxwayPFKhU48DLsvI80QVVVhfKNLwJXl2/4sfPaY7OSFCvsl0ZS2+TDPK/kHAeKR4b7nYHyR0sNbUCj3jMCSJZiB1fYX8gT9Q3FAXJNcYUAPsmwUJNFVKbgNUXiDsDNUqWnknIgvtkxxz4lEDRyMXPamfkvsz6TbDl09/BHpLBd7WNdYe6Y6a0w6gmNr/BBDpieFbcZNHj/4HGO7/rt7OKaRXsL4rd5bCdLnG8JPmjlFosFuKTozarVh9KVLFg0ri7Ww4dNqnuNXh7pe8rMhEDCTOQN44wLyFqOJYjZ7KmSEfl8Im2gCqUXynZcFlr05I98SCARABOQm1U004VjFpW4B76woNu4tLvoC7NcEeHE8IXHE9Jn8zAQMLHt3nD0H4tKgU8hVWvdHWP1qGLpCQ="
+  # AWS_SECRET_ACCESS_KEY
+  - secure: "KjQGVTQLanzisQLns8qJXFmC0gHWRQxG34m2nTnOHzbRUWdLB+R0x/xnQOUgYgiBeAnoEqVWvR+pZokAtubNkK8v/9x0RPI9Zf6BojVdGcMcfb8DGDbm9c06my5SjDBsWDicDtH9tp+2hs1ZHjZ31Otnkp8Lu0pVLjgO3509M28YeWzKdIOMnt43mCTxkqS4j5XcqWatr5aYowxkgqwtx/Cz5MLlWiWyzdbRGw2/t1Ew9Dujy3ilhEO+mDSrVyvVVFPM10SjVxmaaCXQ7xNxTC0K7cP6sVo6a9w1jsoBdAv/4ZIGnBepksTEVJUyOy6qBSX7JNEpL3zsX9vu2c1K9NhGa80w0mqMPiNP3yyCIaGDHovVtW90wFGfuiDbxrdnvruPK/A9VDng4cONIox+s9lma0h5YJDmUfCcB2+Zo4cQu4g6v7KRjyjjf4krYs0AjPxPRfctYKb9sJh4ZZNdMoX82yjeMh9IR28Krihuz4egPcQ8UNgKwY8xnTOHHWppUBGkm54YBJnU3mQdWi20SG32tSr6IaQVo50/nfWsB81D6zvjzVPTBgdC/7tF5EK7QmsIimM/aE1mPhLr8dFEkmB9P8nYu4Uv3gm0URQHxT/jie6BiI3hDVOqKeSOIRK2Bnd1a0ZlKiMvIgJlF8OyrXjUUEcQsPxbzQ3guz7cuHU="
+
+install:
+- git clone https://github.com/Opetushallitus/ci-tools.git
+- source ci-tools/common/setup-tools.sh
+- sudo sh -c "printf '\n%s penaali.hard.ware.fi\n' $(dig +short artifactory.opintopolku.fi|head -n1) >> /etc/hosts"
+- export ARTIFACT_NAME="seuranta"
+
+script:
+- mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+
+- mv seuranta-service/target/seuranta-service.war $DOCKER_BUILD_DIR/artifact/seuranta-service.war
+- cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
+
+- export BASE_IMAGE="baseimage-war:master"
+- ./ci-tools/common/pull-image.sh
+- ./ci-tools/build/build-war.sh $ARTIFACT_NAME
+
+deploy:
+- provider: script
+  script: mvn deploy -pl seuranta-api -DskipTests --settings ci-tools/common/maven-settings.xml
+  skip_cleanup: true
+  on:
+#    all_branches: true
+    branch: master
+- provider: script
+  script: ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
+  on:
+    all_branches: true
