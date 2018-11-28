@@ -5,6 +5,7 @@ import java.util.List;
 public class LaskentaDto {
     private final String uuid;
     private final String hakuOid;
+    private final String valintaryhmaOid;
     private final String userOID;
     private final String haunnimi;
     private final String nimi;
@@ -19,8 +20,15 @@ public class LaskentaDto {
     private final Integer jonosija;
     private final boolean luotiinkoUusiLaskenta;
 
-    public LaskentaDto(String uuid, String userOID, String haunnimi, String nimi, String hakuOid, long luotu,
-                       LaskentaTila tila, LaskentaTyyppi tyyppi,
+    public LaskentaDto(String uuid,
+                       String userOID,
+                       String haunnimi,
+                       String nimi,
+                       String hakuOid,
+                       String valintaryhmaOid,
+                       long luotu,
+                       LaskentaTila tila,
+                       LaskentaTyyppi tyyppi,
                        IlmoitusDto ilmoitus,
                        List<HakukohdeDto> hakukohteet,
                        Boolean erillishaku,
@@ -34,6 +42,7 @@ public class LaskentaDto {
         this.userOID = userOID;
         this.uuid = uuid;
         this.hakuOid = hakuOid;
+        this.valintaryhmaOid = valintaryhmaOid;
         this.luotu = luotu;
         this.tyyppi = tyyppi;
         this.ilmoitus = ilmoitus;
@@ -111,6 +120,10 @@ public class LaskentaDto {
 
     public String getHakuOid() {
         return hakuOid;
+    }
+
+    public String getValintaryhmaOid() {
+        return valintaryhmaOid;
     }
 
     public Long getLuotu() {
