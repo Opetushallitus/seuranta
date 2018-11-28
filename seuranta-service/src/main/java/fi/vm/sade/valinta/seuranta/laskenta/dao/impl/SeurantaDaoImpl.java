@@ -430,6 +430,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
             String haunnimi,
             String nimi,
             String hakuOid,
+            String valintaryhmaOid,
             LaskentaTyyppi tyyppi,
             Boolean erillishaku,
             Integer valinnanvaihe,
@@ -439,7 +440,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
         if (hakukohdeOids == null || hakukohdeOids.isEmpty()) {
             throw new RuntimeException("Seurantaa ei muodosteta tyhjalle hakukohdejoukolle. Onko haulla hakukohteita tai rajaako hakukohdemaski kaikki hakukohteet pois? HakuOid = " + hakuOid);
         }
-        Laskenta l = new Laskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        Laskenta l = new Laskenta(userOID, haunnimi, nimi, hakuOid, valintaryhmaOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
         Optional<Laskenta> onGoing = orGetOnGoing(l);
         if(onGoing.isPresent()) {
             return new TunnisteDto(onGoing.get().getUuid().toString(), false);

@@ -30,6 +30,7 @@ public class Laskenta {
     private final String haunnimi;
     private final String nimi;
     private final String hakuOid;
+    private final String valintaryhmaOid;
     private final Date luotu;
     private final LaskentaTila tila;
     private final LaskentaTyyppi tyyppi;
@@ -58,6 +59,7 @@ public class Laskenta {
         this.hakukohteitaOhitettu = 0;
         this.uuid = null;
         this.hakuOid = null;
+        this.valintaryhmaOid = null;
         this.tila = null;
         this.ilmoitukset = null;
         this.luotu = null;
@@ -73,9 +75,15 @@ public class Laskenta {
         this.identityHash = null;
     }
 
-    public Laskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi,
+    public Laskenta(String userOID,
+                    String haunnimi,
+                    String nimi,
+                    String hakuOid,
+                    String valintaryhmaOid,
+                    LaskentaTyyppi tyyppi,
                     Boolean erillishaku,
-                    Integer valinnanvaihe, Boolean valintakoelaskenta,
+                    Integer valinnanvaihe,
+                    Boolean valintakoelaskenta,
                     Collection<HakukohdeDto> hakukohdeOids) {
         this.haunnimi = haunnimi;
         this.nimi = nimi;
@@ -85,6 +93,7 @@ public class Laskenta {
         this.uuid = null;
         this.userOID = userOID;
         this.hakuOid = hakuOid;
+        this.valintaryhmaOid = valintaryhmaOid;
         this.luotu = new Date();
         this.tila = LaskentaTila.ALOITTAMATTA;
         this.ilmoitukset = Collections.emptyMap();
@@ -214,6 +223,10 @@ public class Laskenta {
         return hakuOid;
     }
 
+    public String getvalintaryhmaOid() {
+        return valintaryhmaOid;
+    }
+
     public Date getLuotu() {
         return luotu;
     }
@@ -240,7 +253,7 @@ public class Laskenta {
             hakukohteet.addAll(ilmoituksetHakukohteelle(getValmiit(), HakukohdeTila.VALMIS, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getTekematta(), HakukohdeTila.TEKEMATTA, getIlmoitukset()));
             hakukohteet.addAll(ilmoituksetHakukohteelle(getOhitettu(), HakukohdeTila.KESKEYTETTY, getIlmoitukset()));
-            return new LaskentaDto(getUuid().toString(), userOID, haunnimi, nimi, getHakuOid(),
+            return new LaskentaDto(getUuid().toString(), userOID, haunnimi, nimi, getHakuOid(), getvalintaryhmaOid(),
                     luotu == null ? new Date().getTime() : luotu.getTime(),
                     getTila(), getTyyppi(), Optional.ofNullable(ilmoitus).map(Ilmoitus::asDto).orElse(null), hakukohteet, erillishaku, valinnanvaihe,
                     valintakoelaskenta, jonosijaProvider.apply(luotu,getTila()), luotiinkoUusiLaskenta);

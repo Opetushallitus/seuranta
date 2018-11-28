@@ -49,7 +49,7 @@ public interface SeurantaDao {
      */
     Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille();
 
-    TunnisteDto luoLaskenta(String userOID, String haunnimi, String nimi, String hakuOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
+    TunnisteDto luoLaskenta(String userOID, String haunnimi, String nimi, String hakuOid, String valintaryhmaOid, LaskentaTyyppi tyyppi, Boolean erillishaku,
                             Integer valinnanvaihe, Boolean valintakoelaskenta,
                             Collection<HakukohdeDto> hakukohdeOids);
 

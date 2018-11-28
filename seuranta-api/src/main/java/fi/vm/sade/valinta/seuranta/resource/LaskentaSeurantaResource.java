@@ -173,6 +173,7 @@ public interface LaskentaSeurantaResource {
                             @PathParam("tyyppi") LaskentaTyyppi tyyppi,
                             @QueryParam("userOID") String userOID,
                             @QueryParam("haunnimi") String haunnimi,
+                            @QueryParam("valintaryhmaoid") String valintaryhmaOid,
                             @QueryParam("nimi") String nimi,
                             @QueryParam("erillishaku") Boolean erillishaku,
                             @QueryParam("valinnanvaihe") Integer valinnanvaihe,

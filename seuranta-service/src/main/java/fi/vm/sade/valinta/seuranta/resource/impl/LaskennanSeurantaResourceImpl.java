@@ -128,7 +128,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
     }
 
     @ApiOperation(value = "Luo uuden laskennan", response = Response.class)
-    public TunnisteDto luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String nimi, Boolean erillishaku, Integer valinnanvaihe,
+    public TunnisteDto luoLaskenta(String hakuOid, LaskentaTyyppi tyyppi, String userOID, String haunnimi, String valintaryhmaOid, String nimi, Boolean erillishaku, Integer valinnanvaihe,
                                    Boolean valintakoelaskenta, List<HakukohdeDto> hakukohdeOids) {
         if (hakukohdeOids == null) {
             LOG.error("Laskentaa ei luoda tyhjalle (null) hakukohdedto referenssille!");
@@ -145,7 +145,7 @@ public class LaskennanSeurantaResourceImpl implements LaskentaSeurantaResource {
                 throw new NullPointerException("Laskentaa ei luoda hakukohdejoukkoobjektille koska joukossa oli null referensseja sisaltava hakukohde!");
             }
         });
-        return seurantaDao.luoLaskenta(userOID, haunnimi, nimi, hakuOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
+        return seurantaDao.luoLaskenta(userOID, haunnimi, nimi, hakuOid, valintaryhmaOid, tyyppi, erillishaku, valinnanvaihe, valintakoelaskenta, hakukohdeOids);
     }
 
     @ApiOperation(value = "Paivittaa hakukohteen tilaa laskennassa", response = Response.class)
