@@ -45,7 +45,7 @@ deploy:
   skip_cleanup: true
   on:
 #    all_branches: true
-    branch: BUG-1898__kayttooikeudet-valintaryhmalle
+    branch: master
 - provider: script
   script: ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
   on:
