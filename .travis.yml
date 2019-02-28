@@ -3,7 +3,7 @@ sudo: required
 language: java
 
 jdk:
-- oraclejdk8
+- openjdk11
 
 services:
 - docker
@@ -24,7 +24,7 @@ env:
   - secure: "KjQGVTQLanzisQLns8qJXFmC0gHWRQxG34m2nTnOHzbRUWdLB+R0x/xnQOUgYgiBeAnoEqVWvR+pZokAtubNkK8v/9x0RPI9Zf6BojVdGcMcfb8DGDbm9c06my5SjDBsWDicDtH9tp+2hs1ZHjZ31Otnkp8Lu0pVLjgO3509M28YeWzKdIOMnt43mCTxkqS4j5XcqWatr5aYowxkgqwtx/Cz5MLlWiWyzdbRGw2/t1Ew9Dujy3ilhEO+mDSrVyvVVFPM10SjVxmaaCXQ7xNxTC0K7cP6sVo6a9w1jsoBdAv/4ZIGnBepksTEVJUyOy6qBSX7JNEpL3zsX9vu2c1K9NhGa80w0mqMPiNP3yyCIaGDHovVtW90wFGfuiDbxrdnvruPK/A9VDng4cONIox+s9lma0h5YJDmUfCcB2+Zo4cQu4g6v7KRjyjjf4krYs0AjPxPRfctYKb9sJh4ZZNdMoX82yjeMh9IR28Krihuz4egPcQ8UNgKwY8xnTOHHWppUBGkm54YBJnU3mQdWi20SG32tSr6IaQVo50/nfWsB81D6zvjzVPTBgdC/7tF5EK7QmsIimM/aE1mPhLr8dFEkmB9P8nYu4Uv3gm0URQHxT/jie6BiI3hDVOqKeSOIRK2Bnd1a0ZlKiMvIgJlF8OyrXjUUEcQsPxbzQ3guz7cuHU="
 
 install:
-- git clone https://github.com/Opetushallitus/ci-tools.git
+- git clone --single-branch --branch jdk11 https://github.com/Opetushallitus/ci-tools.git
 - source ci-tools/common/setup-tools.sh
 - sudo sh -c "printf '\n%s penaali.hard.ware.fi\n' $(dig +short artifactory.opintopolku.fi|head -n1) >> /etc/hosts"
 - export ARTIFACT_NAME="seuranta"
@@ -35,7 +35,7 @@ script:
 - mv seuranta-service/target/seuranta-service.war $DOCKER_BUILD_DIR/artifact/seuranta-service.war
 - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
 
-- export BASE_IMAGE="baseimage-war:master"
+- export BASE_IMAGE="baseimage-war:jdk11"
 - ./ci-tools/common/pull-image.sh
 - ./ci-tools/build/build-war.sh $ARTIFACT_NAME
 
