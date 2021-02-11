@@ -37,6 +37,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
     private Datastore datastore;
     private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
+    private static final BasicDBObject YHTEENVETO_PROJECTION = createYhteenvetoProjection();
 
     @Autowired
     public SeurantaDaoImpl(Datastore datastore) {
@@ -74,11 +75,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         eqs.put("hakuOid", hakuOid);
         eqs.put("tila", LaskentaTila.MENEILLAAN);
         DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(dbobjs(
-                dbobjmap("$match", eqs),
-                dbobjmap("$project", YHTEENVETO_FIELDS)
-        ));
-        Iterator<DBObject> i = aggregation.results().iterator();
+        BasicDBObject query = dbobj(eqs);
+        Iterator<DBObject> i = collection.find(query, YHTEENVETO_PROJECTION).iterator();
         if (!i.hasNext()) {
             return Collections.emptyList();
         }
@@ -90,10 +88,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
     @Override
     public Collection<YhteenvetoDto> haeYhteenvetoKaikilleLaskennoille() {
         DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(dbobjs(
-                dbobjmap("$project", YHTEENVETO_FIELDS)
-        ));
-        Iterator<DBObject> i = aggregation.results().iterator();
+        Iterator<DBObject> i = collection.find(new BasicDBObject(), YHTEENVETO_PROJECTION).iterator();
         if (!i.hasNext()) {
             return Collections.emptyList();
         }
@@ -105,11 +100,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
     @Override
     public Collection<YhteenvetoDto> haeYhteenvedotHaulle(String hakuOid) {
         DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(dbobjs(
-                dbobj("$match", dbobj("hakuOid", hakuOid)),
-                dbobjmap("$project", YHTEENVETO_FIELDS)
-        ));
-        Iterator<DBObject> i = aggregation.results().iterator();
+        BasicDBObject query = dbobj("hakuOid", hakuOid);
+        Iterator<DBObject> i = collection.find(query, YHTEENVETO_PROJECTION).iterator();
         if (!i.hasNext()) {
             return Collections.emptyList();
         }
@@ -128,12 +120,8 @@ public class SeurantaDaoImpl implements SeurantaDao {
         Map<String, Object> matchValues = Maps.newHashMap();
         matchValues.put("hakuOid", hakuOid);
         matchValues.put("tyyppi", tyyppi.toString());
-        AggregationOutput aggregation = collection.aggregate(dbobjs(
-                dbobjmap("$match", matchValues),
-                dbobjmap("$project", YHTEENVETO_FIELDS)
-        ));
-
-        Iterator<DBObject> i = aggregation.results().iterator();
+        BasicDBObject query = dbobj(matchValues);
+        Iterator<DBObject> i = collection.find(query, YHTEENVETO_PROJECTION).iterator();
         if (!i.hasNext()) {
             return Collections.emptyList();
         }
@@ -152,17 +140,17 @@ public class SeurantaDaoImpl implements SeurantaDao {
     public BasicDBObject dbobj(String key, Object... value) {
         return new BasicDBObject(key, value);
     }
+    public BasicDBObject dbobj(Map<String, Object> map) {
+        return new BasicDBObject(map);
+    }
     public List<DBObject> dbobjs(BasicDBObject... objs) {
         return Lists.newArrayList(objs);
     }
 
     public YhteenvetoDto haeYhteenveto(String uuid) {
         DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(
-                dbobjs(dbobj("$match", dbobj("_id", new ObjectId(uuid))),
-                        dbobjmap("$project", YHTEENVETO_FIELDS))
-        );
-        Iterator<DBObject> i = aggregation.results().iterator();
+        BasicDBObject query = dbobj("_id", new ObjectId(uuid));
+        Iterator<DBObject> i = collection.find(query, YHTEENVETO_PROJECTION).iterator();
         if (!i.hasNext()) {
             return null;
         }
@@ -170,18 +158,11 @@ public class SeurantaDaoImpl implements SeurantaDao {
     }
     public Collection<YhteenvetoDto> haeYhteenvedotAlkamattomille(Collection<String> uuids) {
         DBCollection collection = datastore.getCollection(Laskenta.class);
-        AggregationOutput aggregation = collection.aggregate(
-                dbobjs(dbobj("$match",
-                        dbobj("$and",
-                                dbobj("_id", dbobj("$in", uuids.stream().map(u -> new ObjectId(u)).collect(Collectors.toList())))
-                                ,
-                                dbobj("tila", LaskentaTila.ALOITTAMATTA.toString())
-                                )
-                        ),
-                        dbobjmap("$project", YHTEENVETO_FIELDS))
-        );
-
-        List<YhteenvetoDto> yhteenvetoDtos = StreamSupport.stream(aggregation.results().spliterator(), false).map(db ->
+        Map<String, Object> matchValues = Maps.newHashMap();
+        matchValues.put("_id", dbobj("$in", uuids.stream().map(u -> new ObjectId(u)).collect(Collectors.toList())));
+        matchValues.put("tila", LaskentaTila.ALOITTAMATTA.toString());
+        BasicDBObject query = dbobj(matchValues);
+        List<YhteenvetoDto> yhteenvetoDtos = StreamSupport.stream(collection.find(query, YHTEENVETO_PROJECTION).spliterator(), false).map(db ->
                 dbObjectAsYhteenvetoDto(db, jonosijaProvider())).filter(Objects::nonNull).collect(Collectors.toList());
 
         return yhteenvetoDtos;
@@ -498,5 +479,23 @@ public class SeurantaDaoImpl implements SeurantaDao {
         fields.put("valinnanvaihe", 1);
         fields.put("valintakoelaskenta", 1);
         return fields;
+    }
+
+    private static BasicDBObject createYhteenvetoProjection() {
+        BasicDBObject projection = new BasicDBObject();
+        projection.append("_id", 1);
+        projection.append("hakuOid", 1);
+        projection.append("userOID", 1);
+        projection.append("luotu", 1);
+        projection.append("tila", 1);
+        projection.append("haunnimi", 1);
+        projection.append("nimi", 1);
+        projection.append("hakukohteitaYhteensa", 1);
+        projection.append("hakukohteitaTekematta", 1);
+        projection.append("hakukohteitaOhitettu", 1);
+        projection.append("tyyppi", 1);
+        projection.append("valinnanvaihe", 1);
+        projection.append("valintakoelaskenta", 1);
+        return projection;
     }
 }
