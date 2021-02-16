@@ -1,42 +1,35 @@
 package fi.vm.sade.valinta.seuranta.laskenta.dao.impl;
 
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import fi.vm.sade.valinta.seuranta.dto.*;
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.AdvancedDatastore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
-
+import fi.vm.sade.valinta.seuranta.dto.*;
 import fi.vm.sade.valinta.seuranta.laskenta.dao.SeurantaDao;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Ilmoitus;
 import fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.*;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static fi.vm.sade.valinta.seuranta.laskenta.domain.Laskenta.escapeHakukohdeOid;
 
 @Component
 public class SeurantaDaoImpl implements SeurantaDao {
     private final static Logger LOG = LoggerFactory.getLogger(SeurantaDaoImpl.class);
     private Datastore datastore;
-    private static final Map<String, Integer> YHTEENVETO_FIELDS = createYhteenvetoFields();
     private static final BasicDBObject YHTEENVETO_PROJECTION = createYhteenvetoProjection();
 
     @Autowired
@@ -130,14 +123,7 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 .collect(Collectors.toList());
     }
 
-    public BasicDBObject dbobjmap(String key, Map<?, ?> value) {
-        return new BasicDBObject(key, value);
-    }
-
     public BasicDBObject dbobj(String key, Object value) {
-        return new BasicDBObject(key, value);
-    }
-    public BasicDBObject dbobj(String key, Object... value) {
         return new BasicDBObject(key, value);
     }
     public BasicDBObject dbobj(Map<String, Object> map) {
@@ -461,24 +447,6 @@ public class SeurantaDaoImpl implements SeurantaDao {
                 .set("tila", LaskentaTila.MENEILLAAN);
         Laskenta laskenta = datastore.findAndModify(query, ops, false);
         return laskenta != null ? laskenta.getUuid().toString() : null;
-    }
-
-    private static Map<String, Integer> createYhteenvetoFields() {
-        Map<String, Integer> fields = Maps.newHashMap();
-        fields.put("_id", 1);
-        fields.put("hakuOid", 1);
-        fields.put("userOID", 1);
-        fields.put("luotu", 1);
-        fields.put("tila", 1);
-        fields.put("haunnimi", 1);
-        fields.put("nimi", 1);
-        fields.put("hakukohteitaYhteensa", 1);
-        fields.put("hakukohteitaTekematta", 1);
-        fields.put("hakukohteitaOhitettu", 1);
-        fields.put("tyyppi", 1);
-        fields.put("valinnanvaihe", 1);
-        fields.put("valintakoelaskenta", 1);
-        return fields;
     }
 
     private static BasicDBObject createYhteenvetoProjection() {
