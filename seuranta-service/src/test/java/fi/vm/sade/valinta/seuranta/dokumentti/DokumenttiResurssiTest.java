@@ -1,23 +1,32 @@
 package fi.vm.sade.valinta.seuranta.dokumentti;
 
 import com.google.gson.GsonBuilder;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import fi.vm.sade.valinta.seuranta.dokumentti.dao.impl.DokumenttiDaoImpl;
+import fi.vm.sade.valinta.dokumenttipalvelu.Dokumenttipalvelu;
+import fi.vm.sade.valinta.dokumenttipalvelu.dto.ObjectMetadata;
+import fi.vm.sade.valinta.seuranta.dokumentti.repository.DokumenttiRepository;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
 import fi.vm.sade.valinta.seuranta.resource.DokumentinSeurantaResource;
 import fi.vm.sade.valinta.seuranta.resource.impl.DokumentinSeurantaResourceImpl;
-import fi.vm.sade.valinta.seuranta.testcontext.MongoConfiguration;
 import org.junit.Assert;
 import junit.framework.TestCase;
-import org.bson.types.ObjectId;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.mongodb.morphia.Datastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static java.util.Arrays.*;
+import static org.mockito.Mockito.*;
+
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Jussi Jartamo
@@ -25,22 +34,14 @@ import javax.ws.rs.core.Response;
 public class DokumenttiResurssiTest extends TestCase {
     private final static Logger LOG = LoggerFactory.getLogger(DokumenttiResurssiTest.class);
     private final DokumentinSeurantaResource resurssi;
-    private final MongodExecutable exe;
-    private final Datastore datastore;
-    public DokumenttiResurssiTest() throws Exception {
-        MongoConfiguration mongocfg = new MongoConfiguration();
-        this.exe = mongocfg.getMongodExecutable();
-        this.datastore = mongocfg.getDatastore(mongocfg.getMorphia(), mongocfg.getMongo(mongocfg.getMongoProcess(exe)));
-        this.resurssi = new DokumentinSeurantaResourceImpl(new DokumenttiDaoImpl(datastore));
-    }
 
-    @After
-    public void stop() {
-        exe.stop();
+    public DokumenttiResurssiTest() {
+        this.resurssi = new DokumentinSeurantaResourceImpl(new DokumenttiRepositoryMock());
     }
 
     @Test
     public void testLisausPaivitysLukuJaPoisto() {
+        final String key = UUID.randomUUID().toString();
         final String uuid;
         // CREATE
         {
@@ -48,8 +49,7 @@ public class DokumenttiResurssiTest extends TestCase {
             Assert.assertEquals(200, r.getStatus());
             // throws if null or invalid id
             uuid = (String) r.getEntity();
-            ObjectId objId = new ObjectId(uuid);
-            LOG.error("{}", objId);
+            LOG.error("{}", uuid);
         }
         // READ
         {

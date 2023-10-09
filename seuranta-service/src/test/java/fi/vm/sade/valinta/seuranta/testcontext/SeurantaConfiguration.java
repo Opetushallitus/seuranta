@@ -1,6 +1,5 @@
 package fi.vm.sade.valinta.seuranta.testcontext;
 
-import org.mongodb.morphia.AdvancedDatastore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -14,7 +13,7 @@ import fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl.SijoittelunSeurantaDaoImp
 public class SeurantaConfiguration {
 
 	@Bean
-    public SeurantaDaoImpl getSeurantaDaoImpl(AdvancedDatastore datastore) {
+    public SeurantaDaoImpl getSeurantaDaoImpl(Datastore datastore) {
         return new SeurantaDaoImpl(datastore);
     }
 	

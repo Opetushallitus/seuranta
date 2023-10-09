@@ -1,13 +1,31 @@
 package fi.vm.sade.valinta.seuranta.resource.impl;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-import io.swagger.annotations.Api;
-import fi.vm.sade.valinta.seuranta.dokumentti.dao.DokumenttiDao;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fi.vm.sade.valinta.dokumenttipalvelu.Dokumenttipalvelu;
+import fi.vm.sade.valinta.dokumenttipalvelu.dto.ObjectEntity;
+import fi.vm.sade.valinta.dokumenttipalvelu.dto.ObjectMetadata;
+import fi.vm.sade.valinta.seuranta.dokumentti.repository.DokumenttiRepository;
 import fi.vm.sade.valinta.seuranta.dto.DokumenttiDto;
+import io.swagger.annotations.Api;
 import fi.vm.sade.valinta.seuranta.dto.VirheilmoitusDto;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -26,38 +44,43 @@ import org.springframework.stereotype.Component;
 public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResource {
     private static final Logger LOG = LoggerFactory.getLogger(DokumentinSeurantaResourceImpl.class);
 
-    private final DokumenttiDao dokumenttiDao;
+    private final DokumenttiRepository dokumenttiRepository;
 
     @Autowired
-    public DokumentinSeurantaResourceImpl(DokumenttiDao dokumenttiDao) {
-        this.dokumenttiDao = dokumenttiDao;
+    public DokumentinSeurantaResourceImpl(final DokumenttiRepository dokumenttiRepository) {
+        this.dokumenttiRepository = dokumenttiRepository;
     }
 
     @Override
-    public Response dokumentti(String uuid) {
+    public Response dokumentti(String key) {
         try {
-            if (trimToNull(uuid) == null) {
-                LOG.error("Uuid({}) ei saa olla tyhjä!", uuid);
-                throw new RuntimeException("Uuid ei saa olla tyhjä!");
+            if (trimToNull(key) == null) {
+                LOG.error("key({}) ei saa olla tyhjä!", key);
+                throw new RuntimeException("Key ei saa olla tyhjä!");
             }
-            return Response.ok(dokumenttiDao.haeDokumentti(uuid)).build();
+            return Response.ok(dokumenttiRepository.get(key)).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa dokumenttia luettauessa uuid=" + uuid, t);
+            LOG.error("Poikkeus dokumentinseurannassa dokumenttia luettauessa key=" + key, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
 
     @Override
-    public Response dokumentinTunniste(String uuid, String dokumenttiId) {
+    public Response dokumentinTunniste(String key, String dokumenttiId) {
         try {
-            if (trimToNull(dokumenttiId) == null || trimToNull(uuid) == null) {
-                LOG.error("Uuid({}) tai dokumenttiId({}) ei saa olla tyhjä!", uuid, dokumenttiId);
-                throw new RuntimeException("Uuid tai kuvaus ei saa olla tyhjä!");
+            if (trimToNull(dokumenttiId) == null || trimToNull(key) == null) {
+                LOG.error("Key({}) tai dokumenttiId({}) ei saa olla tyhjä!", key, dokumenttiId);
+                throw new RuntimeException("Key tai dokumenttiId ei saa olla tyhjä!");
             }
-            DokumenttiDto dokkari = dokumenttiDao.paivitaDokumenttiId(uuid, dokumenttiId);
-            return Response.ok(dokkari).build();
+            final DokumenttiDto dokumentti = dokumenttiRepository.get(key);
+            return Response.ok(dokumenttiRepository.update(key, new DokumenttiDto(
+                    dokumentti.getUuid(),
+                    dokumenttiId,
+                    dokumentti.getKuvaus(),
+                    dokumentti.getVirheilmoitukset()
+            ))).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä(" + dokumenttiId + ") paivitettaessa uuid:lle " +  uuid, t);
+            LOG.error("Poikkeus dokumentinseurannassa dokumenttiId:tä(" + dokumenttiId + ") paivitettaessa key:lle " +  key, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
@@ -69,7 +92,20 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
                 LOG.error("Kuvaus({}) ei saa olla tyhjä!", kuvaus);
                 throw new RuntimeException("Kuvaus ei saa olla tyhjä!");
             }
-            return Response.ok(dokumenttiDao.luoDokumentti(kuvaus)).build();
+            final DokumenttiDto dokumentti = new DokumenttiDto(
+                    UUID.randomUUID().toString(),
+                    null,
+                    kuvaus,
+                    null
+            );
+            final String key = dokumenttiRepository.save(
+                    dokumentti.getUuid(),
+                    "dokumentti_" + dokumentti.getUuid() + ".json",
+                    Date.from(Instant.now().plus(30, ChronoUnit.DAYS)),  // TODO tarkista järkevä säilytysaika
+                    Collections.singleton("seuranta"),
+                    "application/json",
+                    dokumentti);
+            return Response.ok(key).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa uutta dokumenttia luotaessa kuvauksella " + kuvaus, t);
             return Response.serverError().entity(t.getMessage()).build();
@@ -77,30 +113,41 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
     }
 
     @Override
-    public Response paivitaKuvaus(String uuid, String kuvaus) {
+    public Response paivitaKuvaus(String key, String kuvaus) {
         try {
-            if (trimToNull(kuvaus) == null || trimToNull(uuid) == null) {
-                LOG.error("Uuid({}) tai kuvaus({}) ei saa olla tyhjä!", uuid, kuvaus);
-                throw new RuntimeException("Uuid tai kuvaus ei saa olla tyhjä!");
+            if (trimToNull(kuvaus) == null || trimToNull(key) == null) {
+                LOG.error("Key({}) tai kuvaus({}) ei saa olla tyhjä!", key, kuvaus);
+                throw new RuntimeException("Key tai kuvaus ei saa olla tyhjä!");
             }
-
-            DokumenttiDto dokkari = dokumenttiDao.paivitaKuvaus(uuid, kuvaus);
-            return Response.ok(dokkari).build();
+            final DokumenttiDto dokumentti = dokumenttiRepository.get(key);
+            return Response.ok(dokumenttiRepository.update(key, new DokumenttiDto(
+                    dokumentti.getUuid(),
+                    dokumentti.getDokumenttiId(),
+                    kuvaus,
+                    dokumentti.getVirheilmoitukset()
+            ))).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa uuid:lle " + uuid, t);
+            LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa key:lle " + key, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
 
     @Override
-    public Response lisaaVirheita(String uuid, List<VirheilmoitusDto> virheita) {
+    public Response lisaaVirheita(String key, List<VirheilmoitusDto> virheita) {
         try {
-            if (virheita == null || virheita.isEmpty() || trimToNull(uuid) == null) {
-                LOG.error("Uuid({}) tai virheet({}) ei saa olla tyhjä!", uuid, virheita);
-                throw new RuntimeException("Uuid tai virheet ei saa olla tyhjä!");
+            if (virheita == null || virheita.isEmpty() || trimToNull(key) == null) {
+                LOG.error("Key({}) tai virheet({}) ei saa olla tyhjä!", key, virheita);
+                throw new RuntimeException("Key tai virheet ei saa olla tyhjä!");
             }
-            DokumenttiDto dokkari = dokumenttiDao.lisaaVirheita(uuid, virheita);
-            return Response.ok(dokkari).build();
+            final DokumenttiDto dokumentti = dokumenttiRepository.get(key);
+            return Response.ok(dokumenttiRepository.update(key, new DokumenttiDto(
+                    dokumentti.getUuid(),
+                    dokumentti.getDokumenttiId(),
+                    dokumentti.getKuvaus(),
+                    Stream.concat(dokumentti.getVirheilmoitukset() != null ?
+                            dokumentti.getVirheilmoitukset().stream() : Stream.empty(),
+                            virheita.stream()).collect(Collectors.toList())
+            ))).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa virhetiloja lisattaessa!", t);
             return Response.serverError().entity(t.getMessage()).build();
@@ -108,17 +155,19 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
     }
 
     @Override
-    public Response poista(String uuid) {
+    public Response poista(String key) {
         try {
-            if (trimToNull(uuid) == null) {
-                LOG.error("Uuid({}) ei saa olla tyhjä!", uuid);
+            if (trimToNull(key) == null) {
+                LOG.error("Key({}) ei saa olla tyhjä!", key);
                 throw new RuntimeException("Uuid ei saa olla tyhjä!");
             }
-            dokumenttiDao.poistaDokumentti(uuid);
-            return Response.ok(uuid).build();
+            dokumenttiRepository.delete(key);
+            return Response.ok(key).build();
         } catch (Throwable t) {
             LOG.error("Poistaminen epäonnistui virheeseen!", t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
+
+
 }

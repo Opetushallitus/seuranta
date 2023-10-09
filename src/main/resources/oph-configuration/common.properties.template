@@ -37,7 +37,6 @@ activeMq.targetDestination.learningopportunityprovider.public=fi.vm.sade.learnin
 activeMq.targetDestination.organisaatio=fi.vm.sade.organisaatio.service
 activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
-cas.callback.dokumenttipalvelu-service=http://{{ cluster_valinta_host | default("${server.name}") }}:{{ cluster_valinta_port | default("8309") }}/dokumenttipalvelu-service
 cas.callback.seuranta-service=http://{{ cluster_valinta_host | default("${server.name}") }}:{{ cluster_valinta_port | default("8309") }}/seuranta-service
 cas.callback.sijoittelu-service=http://{{ cluster_sijoittelu_service_host | default("${server.name}") }}:{{ cluster_sijoittelu_service_port | default("8309") }}/sijoittelu-service
 cas.callback.valintalaskentakoostepalvelu=http://{{ cluster_valinta_host | default("${server.name}") }}:{{ cluster_valinta_port | default("8309") }}/valintalaskentakoostepalvelu
@@ -53,7 +52,6 @@ cas.group-search-filter=(uniqueMember\={0})
 cas.sendRenew=false
 cas.user-search-base=ou\=people
 cas.user-search-filter=(|(mail\={0})(uid\={0}))
-cas.service.dokumenttipalvelu=https://${host.virkailija}/dokumenttipalvelu-service
 cas.service.seuranta=https://${host.virkailija}/seuranta-service
 cas.service.haku-service=https://${host.virkailija}/haku-app
 cas.service.ataru=https://${host.virkailija}/lomake-editori
@@ -71,8 +69,6 @@ cas.service.viestintapalvelu=https://${host.virkailija}/viestintapalvelu
 cas.service.suoritusrekisteri=https://${host.virkailija}/suoritusrekisteri
 cas.service.authentication-service=https://${host.virkailija}/authentication-service
 cas.service.oppijanumerorekisteri-service=https://${host.virkailija}/oppijanumerorekisteri-service
-dokumenttipalvelu.mongodb.dbname=dokumenttidb
-dokumenttipalvelu.mongodb.uri= {{ mongodb_dokumenttidb_uri | default("${mongodb.virkailija.uri}") }}/${dokumenttipalvelu.mongodb.dbname}
 flyway.initOnMigrate=true
 koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 koodisto.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodistoService
@@ -91,3 +87,6 @@ seuranta.mongodb.uri={{ mongodb_seurantadb_uri | default("${mongodb.virkailija.u
 valintalaskentakoostepalvelu.seuranta.rest.url=https://${host.virkailija}/seuranta-service/resources
 seuranta-service.swagger.basepath=/seuranta-service/resources
 seuranta-service.rest.url=https://${host.virkailija}/seuranta-service/resources
+
+aws.region={{aws_region}}
+aws.bucket.name={{dokumenttipalvelu_aws_bucket_name}}

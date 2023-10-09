@@ -16,7 +16,7 @@
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.service.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.dao.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl"/>
-    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.dokumentti.dao.impl"/>
+    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.dokumentti.repository"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.resource.impl"/>
 
     <context:property-placeholder
@@ -66,4 +66,9 @@
             <ref bean="swagger2Feature" />
         </jaxrs:features>
     </jaxrs:server>
+
+    <bean id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.Dokumenttipalvelu">
+        <constructor-arg index="0" value="${aws.region}" />
+        <constructor-arg index="1" value="${aws.bucket.name}" />
+    </bean>
 </beans>

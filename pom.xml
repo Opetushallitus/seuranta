@@ -15,7 +15,7 @@
 
     <properties>
         <cxf.version>3.3.2</cxf.version>
-        <flapdoodle.embed.mongo.version>1.50.5</flapdoodle.embed.mongo.version>
+        <flapdoodle.embed.mongo.version>4.6.2</flapdoodle.embed.mongo.version>
         <jetty.version>9.4.15.v20190215</jetty.version>
         <joda.version>2.9.4</joda.version>
         <slf4j.version>1.7.5</slf4j.version>
@@ -293,8 +293,19 @@
             </dependency>
             <dependency>
                 <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
-                <artifactId>dokumenttipalvelu-api</artifactId>
-                <version>5.3-SNAPSHOT</version>
+                <artifactId>dokumenttipalvelu</artifactId>
+                <version>6.9-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.15</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
