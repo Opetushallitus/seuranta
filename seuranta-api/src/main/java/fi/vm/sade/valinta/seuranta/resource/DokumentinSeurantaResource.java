@@ -20,9 +20,9 @@ public interface DokumentinSeurantaResource {
      * Kaikki yksityiskohdat
      */
     @GET
-    @Path("/{uuid}")
+    @Path("/{key}")
     @Produces(MediaType.APPLICATION_JSON)
-    Response dokumentti(@PathParam("uuid") String uuid);
+    Response dokumentti(@PathParam("key") String key);
 
     /**
      * Luo uuden dokumentin seurantaan
@@ -40,10 +40,10 @@ public interface DokumentinSeurantaResource {
      * @return 200 OK jos onnistui
      */
     @POST
-    @Path("/{uuid}/paivita_kuvaus")
+    @Path("/{key}/paivita_kuvaus")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    Response paivitaKuvaus(@PathParam("uuid") String uuid, String kuvaus);
+    Response paivitaKuvaus(@PathParam("key") String key, String kuvaus);
 
     /**
      * Paivita kuvaus
@@ -51,10 +51,10 @@ public interface DokumentinSeurantaResource {
      * @return 200 OK jos onnistui
      */
     @POST
-    @Path("/{uuid}/paivita_dokumenttiId")
+    @Path("/{key}/paivita_dokumenttiId")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    Response dokumentinTunniste(@PathParam("uuid") String uuid, String dokumenttiId);
+    Response dokumentinTunniste(@PathParam("key") String key, String dokumenttiId);
 
     /**
      * Lisaa virheita
@@ -62,20 +62,20 @@ public interface DokumentinSeurantaResource {
      * @return 200 OK jos onnistui
      */
     @POST
-    @Path("/{uuid}/lisaa_virheita")
+    @Path("/{key}/lisaa_virheita")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    Response lisaaVirheita(@PathParam("uuid") String uuid, List<VirheilmoitusDto> virheita);
+    Response lisaaVirheita(@PathParam("key") String key, List<VirheilmoitusDto> virheita);
 
 
     /**
-     * Luo uuden dokumentin seurantaan
+     * Poistaa dokumentin
      *
      * @return 200 OK jos onnistui
      */
     @POST
-    @Path("/{uuid}/poista")
+    @Path("/{key}/poista")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    Response poista(@PathParam("uuid") String uuid);
+    Response poista(@PathParam("key") String key);
 }

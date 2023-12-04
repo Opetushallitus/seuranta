@@ -14,7 +14,7 @@
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.service.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.laskenta.dao.impl"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.sijoittelu.dao.impl"/>
-    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.dokumentti.dao.impl"/>
+    <context:component-scan base-package="fi.vm.sade.valinta.seuranta.dokumentti.repository"/>
     <context:component-scan base-package="fi.vm.sade.valinta.seuranta.resource.impl"/>
 
 </beans>

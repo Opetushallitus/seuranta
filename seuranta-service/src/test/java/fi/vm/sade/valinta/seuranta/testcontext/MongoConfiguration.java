@@ -3,24 +3,20 @@ package fi.vm.sade.valinta.seuranta.testcontext;
 import java.io.IOException;
 import java.util.Random;
 
+import de.flapdoodle.embed.mongo.runtime.Mongod;
+import de.flapdoodle.embed.mongo.transitions.RunningMongodProcess;
+import de.flapdoodle.reverse.TransitionWalker;
+import de.flapdoodle.reverse.TransitionWalker.ReachedState;
+import org.mongodb.morphia.mapping.DefaultCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 
 /**
  * 
@@ -29,49 +25,36 @@ import de.flapdoodle.embed.process.runtime.Network;
  */
 @Configuration
 public class MongoConfiguration {
-	private static final Logger LOG = LoggerFactory.getLogger(MongoConfiguration.class);
-	public static final String DATABASE_NAME = "fakemongodb";
-
-	final int PORT = freePort();
-
-	private static int freePort() {
-		for (int i = 0; i < 10; ++i) {
-			try {
-				return Network.getFreeServerPort();
-			} catch (IOException ignored) { }
-		}
-		return 32452 - new Random(System.currentTimeMillis()).nextInt(20000);
+	@Bean(name = "mongodFactory", destroyMethod = "shutdown")
+	public MongodTestFactory mongodFactory() {
+		return new MongodTestFactory();
 	}
 
-	// fake mongo db
-	@Bean(destroyMethod = "stop")
-	public MongodExecutable getMongodExecutable() throws IOException {
-		LOG.error("\r\n###\r\n### Mongo kaynnistyy porttiin {}\r\n###", PORT);
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
-				.version(Version.Main.PRODUCTION)
-				.net(new Net(Network.getLocalHost().getHostAddress(), PORT, Network.localhostIsIPv6()))
-				.build();
-		MongodStarter runtime = MongodStarter.getDefaultInstance();
-		return runtime.prepare(mongodConfig);
+	@Bean(name = "mongo")
+	public MongoClient mongo(
+			@Qualifier("mongodFactory") final MongodTestFactory mongodFactory) {
+		return mongodFactory.newMongo();
 	}
 
-	@Bean(destroyMethod = "stop")
-	public MongodProcess getMongoProcess(MongodExecutable mongodExecutable) throws IOException {
-		return mongodExecutable.start();
+	@Bean(name = "morphia")
+	public Morphia morphia() {
+		Morphia morphia = new Morphia();
+		morphia
+				.getMapper()
+				.getOptions()
+				.setObjectFactory(
+						new DefaultCreator() {
+							@Override
+							protected ClassLoader getClassLoaderForClass() {
+								return MongoConfiguration.class.getClassLoader();
+							}
+						});
+		return morphia;
 	}
 
-	@Bean
-	public MongoClient getMongo(MongodProcess process) throws IOException {
-		return new MongoClient(new ServerAddress(Network.getLocalHost(), PORT));
-	}
-
-	@Bean
-	public Morphia getMorphia() {
-		return new Morphia();
-	}
-
-	@Bean
-	public Datastore getDatastore(Morphia morphia, MongoClient mongo) {
-		return morphia.createDatastore(mongo, DATABASE_NAME);
+	@Bean(name = "datastore2")
+	public Datastore datastore2(
+			@Qualifier("morphia") final Morphia morphia, @Qualifier("mongo") final MongoClient mongo) {
+		return morphia.createDatastore(mongo, "test");
 	}
 }
