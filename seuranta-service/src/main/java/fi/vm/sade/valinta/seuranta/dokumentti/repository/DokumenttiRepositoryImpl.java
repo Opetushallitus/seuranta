@@ -36,8 +36,9 @@ public class DokumenttiRepositoryImpl implements DokumenttiRepository {
     }
 
     @Override
-    public DokumenttiDto get(final String key) {
-        final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
+    public DokumenttiDto get(final String id) {
+        final ObjectEntity objectEntity = dokumenttipalvelu.getSeurantaDocumentById(id);
+
         return fromJson(new BufferedReader(
                 new InputStreamReader(objectEntity.entity, StandardCharsets.UTF_8))
                 .lines()
@@ -59,12 +60,12 @@ public class DokumenttiRepositoryImpl implements DokumenttiRepository {
                 contentType,
                 new ByteArrayInputStream(toJson(dokumentti).getBytes(StandardCharsets.UTF_8))
         );
-        return metadata.key;
+        return metadata.documentId;
     }
 
     @Override
-    public DokumenttiDto update(final String key, final DokumenttiDto updated) {
-        final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
+    public DokumenttiDto update(final String id, final DokumenttiDto updated) {
+        final ObjectEntity objectEntity = dokumenttipalvelu.getSeurantaDocumentById(id);
         dokumenttipalvelu.save(
                 objectEntity.documentId,
                 objectEntity.fileName,
