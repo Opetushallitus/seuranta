@@ -101,7 +101,6 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
             final String id = dokumenttiRepository.save(
                     dokumentti.getUuid(),
                     "dokumentti_" + dokumentti.getUuid() + ".json",
-                    Date.from(Instant.now().plus(30, ChronoUnit.DAYS)),  // TODO tarkista järkevä säilytysaika
                     Collections.singleton("seuranta"),
                     "application/json",
                     dokumentti);

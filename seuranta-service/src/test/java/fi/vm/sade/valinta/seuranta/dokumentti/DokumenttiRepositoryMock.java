@@ -24,7 +24,6 @@ public class DokumenttiRepositoryMock implements DokumenttiRepository {
     @Override
     public String save(final String documentId,
                        final String fileName,
-                       final Date expirationDate,
                        final Collection<String> tags,
                        final String contentType,
                        final DokumenttiDto dokumentti) {
