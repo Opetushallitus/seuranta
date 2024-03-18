@@ -73,6 +73,8 @@ public class DokumenttiRepositoryImpl implements DokumenttiRepository {
     public DokumenttiDto update(final String id, final DokumenttiDto updated) {
         String key = dokumenttipalvelu.composeKey(Collections.singletonList("seuranta"), id);
         final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
+        LOG.info("Deleting document {} by id {} before updating", updated, id);
+        dokumenttipalvelu.delete(key);
         LOG.info("Saving updated document {} by id {}", updated, id);
         dokumenttipalvelu.save(
                 objectEntity.documentId,
