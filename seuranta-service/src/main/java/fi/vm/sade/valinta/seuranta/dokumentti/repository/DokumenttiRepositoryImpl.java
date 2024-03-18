@@ -44,12 +44,26 @@ public class DokumenttiRepositoryImpl implements DokumenttiRepository {
     @Override
     public DokumenttiDto get(final String id) {
         String key = dokumenttipalvelu.composeKey(Collections.singletonList("seuranta"),id);
-        final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
-
-        return fromJson(new BufferedReader(
-                new InputStreamReader(objectEntity.entity, StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n")));
+        try {
+            final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
+            return fromJson(new BufferedReader(
+                    new InputStreamReader(objectEntity.entity, StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n")));
+        } catch (Exception e) {
+            LOG.error("Error when getting document by id" + id + ", retrying after 2 sec.", e);
+            try {
+                Thread.sleep(2000);
+                final ObjectEntity objectEntity = dokumenttipalvelu.get(key);
+                return fromJson(new BufferedReader(
+                        new InputStreamReader(objectEntity.entity, StandardCharsets.UTF_8))
+                        .lines()
+                        .collect(Collectors.joining("\n")));
+            } catch (Exception exceptionInRetry) {
+                LOG.error("Error on retry when getting document by id" + id, e);
+                throw e;
+            }
+        }
     }
 
     @Override
