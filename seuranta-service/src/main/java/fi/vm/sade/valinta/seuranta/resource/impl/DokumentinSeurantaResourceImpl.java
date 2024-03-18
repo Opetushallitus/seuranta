@@ -98,14 +98,13 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
                     kuvaus,
                     null
             );
-            final String key = dokumenttiRepository.save(
+            final String id = dokumenttiRepository.save(
                     dokumentti.getUuid(),
                     "dokumentti_" + dokumentti.getUuid() + ".json",
-                    Date.from(Instant.now().plus(30, ChronoUnit.DAYS)),  // TODO tarkista järkevä säilytysaika
                     Collections.singleton("seuranta"),
                     "application/json",
                     dokumentti);
-            return Response.ok(key).build();
+            return Response.ok(id).build();
         } catch (Throwable t) {
             LOG.error("Poikkeus dokumentinseurannassa uutta dokumenttia luotaessa kuvauksella " + kuvaus, t);
             return Response.serverError().entity(t.getMessage()).build();
@@ -113,21 +112,21 @@ public class DokumentinSeurantaResourceImpl implements DokumentinSeurantaResourc
     }
 
     @Override
-    public Response paivitaKuvaus(String key, String kuvaus) {
+    public Response paivitaKuvaus(String id, String kuvaus) {
         try {
-            if (trimToNull(kuvaus) == null || trimToNull(key) == null) {
-                LOG.error("Key({}) tai kuvaus({}) ei saa olla tyhjä!", key, kuvaus);
-                throw new RuntimeException("Key tai kuvaus ei saa olla tyhjä!");
+            if (trimToNull(kuvaus) == null || trimToNull(id) == null) {
+                LOG.error("Id({}) tai kuvaus({}) ei saa olla tyhjä!", id, kuvaus);
+                throw new RuntimeException("Id tai kuvaus ei saa olla tyhjä!");
             }
-            final DokumenttiDto dokumentti = dokumenttiRepository.get(key);
-            return Response.ok(dokumenttiRepository.update(key, new DokumenttiDto(
+            final DokumenttiDto dokumentti = dokumenttiRepository.get(id);
+            return Response.ok(dokumenttiRepository.update(id, new DokumenttiDto(
                     dokumentti.getUuid(),
                     dokumentti.getDokumenttiId(),
                     kuvaus,
                     dokumentti.getVirheilmoitukset()
             ))).build();
         } catch (Throwable t) {
-            LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa key:lle " + key, t);
+            LOG.error("Poikkeus dokumentinseurannassa kuvausta " + kuvaus + " paivitettaessa id:lle " + id, t);
             return Response.serverError().entity(t.getMessage()).build();
         }
     }
