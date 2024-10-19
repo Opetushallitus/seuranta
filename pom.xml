@@ -16,7 +16,7 @@
     <properties>
         <cxf.version>3.3.2</cxf.version>
         <flapdoodle.embed.mongo.version>4.6.2</flapdoodle.embed.mongo.version>
-        <jetty.version>9.4.15.v20190215</jetty.version>
+        <jetty.version>9.4.56.v20240826</jetty.version>
         <joda.version>2.9.4</joda.version>
         <slf4j.version>1.7.5</slf4j.version>
         <jackson2.version>2.9.5</jackson2.version>
@@ -397,8 +397,7 @@ vcsRevision=${revision}
 buildTtime=${maven.build.timestamp}
 ]]>
                                 </echo>
-                                <loadfile property="buildversiontxt"
-                                          srcFile="${project.build.outputDirectory}/webapp/buildversion.txt"/>
+                                <loadfile property="buildversiontxt" srcFile="${project.build.outputDirectory}/webapp/buildversion.txt"/>
                                 <echo message="${buildversiontxt}"/>
                                 <echo file="target/mavenversion.txt">${project.version}</echo>
                             </target>
